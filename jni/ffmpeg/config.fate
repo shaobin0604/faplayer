@@ -1,0 +1,1 @@
+config:arm:armv6:arm1136jf-s:linux:gcc 4.4.1 (Sourcery G++ Lite 2010q1-202):--enable-cross-compile --cross-prefix=arm-none-linux-gnueabi- --sysinclude=/opt/android-ndk-r4b/build/platforms/android-4/arch-arm/usr/include --arch=armv6j --cpu=arm1136jf-s --target-os=linux --enable-pic

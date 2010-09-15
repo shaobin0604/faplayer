@@ -1,0 +1,24 @@
+K 13
+svn:externals
+V 61
+libswscale     svn://svn.ffmpeg.org/mplayer/trunk/libswscale
+
+K 10
+svn:ignore
+V 98
+.config
+.version
+*.d
+*.exe
+*.ho
+*-test
+*_g
+config.*
+doxy
+ffmpeg
+ffplay
+ffprobe
+ffserver
+version.h
+
+END

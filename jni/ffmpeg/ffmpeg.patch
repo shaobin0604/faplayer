@@ -1,0 +1,68 @@
+--- ffmpeg/libavdevice/oss_audio.c.org	2010-08-19 09:41:44.451148000 +0800
++++ ffmpeg/libavdevice/oss_audio.c	2010-08-20 14:39:33.716085618 +0800
+@@ -26,7 +26,7 @@
+ #include <string.h>
+ #include <errno.h>
+ #if HAVE_SOUNDCARD_H
+-#include <soundcard.h>
++#include <linux/soundcard.h>
+ #else
+ #include <sys/soundcard.h>
+ #endif
+--- ffmpeg/libavcodec/arm/h264pred_init_arm.c.org	2010-08-19 09:41:39.791135000 +0800
++++ ffmpeg/libavcodec/arm/h264pred_init_arm.c	2010-08-20 16:21:39.980101371 +0800
+@@ -42,6 +42,7 @@ void ff_pred8x8_0lt_dc_neon(uint8_t *src
+ void ff_pred8x8_l00_dc_neon(uint8_t *src, int stride);
+ void ff_pred8x8_0l0_dc_neon(uint8_t *src, int stride);
+ 
++#if HAVE_NEON
+ static void ff_h264_pred_init_neon(H264PredContext *h, int codec_id)
+ {
+     h->pred8x8[VERT_PRED8x8     ] = ff_pred8x8_vert_neon;
+@@ -68,6 +69,7 @@ static void ff_h264_pred_init_neon(H264P
+     if (codec_id != CODEC_ID_SVQ3 && codec_id != CODEC_ID_RV40 && codec_id != CODEC_ID_VP8)
+         h->pred16x16[PLANE_PRED8x8  ] = ff_pred16x16_plane_neon;
+ }
++#endif
+ 
+ void ff_h264_pred_init_arm(H264PredContext *h, int codec_id)
+ {
+--- ffmpeg/libavcodec/arm/h264dsp_init_arm.c.org	2010-08-19 09:41:39.803135000 +0800
++++ ffmpeg/libavcodec/arm/h264dsp_init_arm.c	2010-08-20 16:34:08.196086912 +0800
+@@ -92,6 +92,7 @@ void ff_h264_idct8_add4_neon(uint8_t *ds
+                              DCTELEM *block, int stride,
+                              const uint8_t nnzc[6*8]);
+ 
++#if HAVE_NEON
+ static void ff_h264dsp_init_neon(H264DSPContext *c)
+ {
+     c->h264_v_loop_filter_luma   = ff_h264_v_loop_filter_luma_neon;
+@@ -126,6 +127,7 @@ static void ff_h264dsp_init_neon(H264DSP
+     c->h264_idct8_dc_add    = ff_h264_idct8_dc_add_neon;
+     c->h264_idct8_add4      = ff_h264_idct8_add4_neon;
+ }
++#endif
+ 
+ void ff_h264dsp_init_arm(H264DSPContext *c)
+ {
+--- ffmpeg/libavfilter/avfilter.c.org	2010-08-20 15:06:59.728086000 +0800
++++ ffmpeg/libavfilter/avfilter.c	2010-08-20 17:07:59.981086551 +0800
+@@ -21,7 +21,7 @@
+ 
+ /* #define DEBUG */
+ 
+-#include "libavcodec/audioconvert.c"
++//#include "libavcodec/audioconvert.c"
+ #include "libavutil/pixdesc.h"
+ #include "libavcore/imgutils.h"
+ #include "avfilter.h"
+--- ffmpeg/libavcodec/inverse.c.org	2010-08-19 09:41:41.039134000 +0800
++++ ffmpeg/libavcodec/inverse.c	2010-08-20 17:13:27.156086231 +0800
+@@ -1 +1,6 @@
+-#include "libavutil/inverse.c"
++//#include "libavutil/inverse.c"
++
++#include "libavutil/intmath.h"
++
++extern const uint32_t ff_inverse[257];
++

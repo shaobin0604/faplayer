@@ -1,0 +1,49 @@
+10
+
+dir
+25117
+svn://svn.ffmpeg.org/ffmpeg/trunk/tests/ref
+svn://svn.ffmpeg.org/ffmpeg
+
+
+
+2010-09-11T19:52:09.786250Z
+25107
+jbr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9553f0bf-9b14-0410-a0b8-cfaf0461ba5b
+
+fate
+dir
+
+lavfi
+dir
+
+seek
+dir
+
+lavf
+dir
+
+vsynth1
+dir
+
+vsynth2
+dir
+
+acodec
+dir
+

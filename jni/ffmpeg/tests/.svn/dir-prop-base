@@ -1,0 +1,16 @@
+K 10
+svn:ignore
+V 85
+*.d
+*.exe
+audiogen
+base64
+data
+rotozoom
+seek_test
+tiny_psnr
+videogen
+vsynth1
+vsynth2
+
+END
