@@ -1,15 +1,15 @@
 10
 
 dir
-25117
+25124
 svn://svn.ffmpeg.org/ffmpeg/trunk
 svn://svn.ffmpeg.org/ffmpeg
 
 
 
-2010-09-14T00:17:58.335686Z
-25117
-michael
+2010-09-15T04:46:55.924536Z
+25124
+reimar
 has-props
 
 
@@ -32,10 +32,10 @@ file
 
 
 
-2010-09-08T11:03:44.226119Z
-5d63f024870ffc4ce1998a5e04072be6
-2010-09-03T21:27:19.656251Z
-25039
+2010-09-15T06:31:49.639022Z
+507ab426f37002acb19229d3513815d7
+2010-09-14T18:55:20.104960Z
+25122
 mru
 has-props
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-98549
+98894
 
 Doxyfile
 file
@@ -134,11 +134,11 @@ file
 
 
 
-2010-09-14T08:09:34.147311Z
-74792b71af6d949f42b000ede6f911f2
-2010-09-13T22:08:51.395968Z
-25115
-cehoyos
+2010-09-15T06:31:49.639022Z
+38e436d5b2cc4bb7d936e9ad544c3195
+2010-09-14T13:21:13.871809Z
+25118
+stefano
 has-props
 
 
@@ -160,7 +160,7 @@ has-props
 
 
 
-20715
+20735
 
 libavutil
 dir
@@ -347,9 +347,6 @@ diego
 tests
 dir
 
-doc
-dir
-
 cmdutils.c
 file
 
@@ -384,7 +381,7 @@ has-props
 
 23264
 
-libavcore
+doc
 dir
 
 INSTALL
@@ -420,6 +417,9 @@ has-props
 
 
 480
+
+libavcore
+dir
 
 cmdutils.h
 file
@@ -489,9 +489,6 @@ has-props
 
 26528
 
-libavdevice
-dir
-
 Makefile
 file
 
@@ -525,6 +522,9 @@ has-props
 
 
 9070
+
+libavdevice
+dir
 
 LICENSE
 file
@@ -699,9 +699,6 @@ has-props
 
 102343
 
-libavfilter
-dir
-
 ffserver.c
 file
 
@@ -735,6 +732,9 @@ has-props
 
 
 159003
+
+libavfilter
+dir
 
 ffprobe.c
 file

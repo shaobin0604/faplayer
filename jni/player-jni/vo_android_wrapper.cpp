@@ -25,6 +25,10 @@ void createSurfaceLock() {
 }
 
 void destroySurfaceLock() {
+    pthread_mutex_lock(&mutex);
+    surface = 0;
+    locked = 0;
+    pthread_mutex_unlock(&mutex);
     pthread_mutex_destroy(&mutex);
 }
 
@@ -79,9 +83,12 @@ jint attach(JNIEnv* env, jobject thiz, jobject surf) {
 }
 
 void detach(JNIEnv* env, jobject thiz) {
-    pthread_mutex_lock(&mutex);
-    surface = 0;
-    pthread_mutex_unlock(&mutex);
+    if (surface) {
+        pthread_mutex_lock(&mutex);
+        surface = 0;
+        locked = 0;
+        pthread_mutex_unlock(&mutex);
+    }
 }
 
 }

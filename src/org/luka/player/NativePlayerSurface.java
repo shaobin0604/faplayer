@@ -8,19 +8,22 @@ import android.view.SurfaceView;
 public class NativePlayerSurface extends SurfaceView implements
 		SurfaceHolder.Callback {
 
-	private NativePlayer mPlayer;
+	private NativePlayer mPlayer = null;
+
 	private SurfaceHolder mSurfaceHolder;
 
 	public NativePlayerSurface(Context context) {
 		super(context);
-		int version = Build.VERSION.SDK_INT;
-		if (version >= 4 && version < 8) {
-			mPlayer = new NativePlayer4();
-		} else if (version == 8) {
-			mPlayer = new NativePlayer8();
-		}
 		mSurfaceHolder = getHolder();
 		mSurfaceHolder.addCallback(this);
+		if (mPlayer == null) {
+			int version = Build.VERSION.SDK_INT;
+			if (version >= 4 && version < 8) {
+				mPlayer = new NativePlayer4();
+			} else if (version == 8) {
+				mPlayer = new NativePlayer8();
+			}
+		}
 	}
 
 	@Override
@@ -38,6 +41,8 @@ public class NativePlayerSurface extends SurfaceView implements
 	public void surfaceCreated(SurfaceHolder holder) {
 	}
 
+	// ----------------
+
 	public int open(String file) {
 		return mPlayer.open(file);
 	}
@@ -46,11 +51,11 @@ public class NativePlayerSurface extends SurfaceView implements
 		mPlayer.close();
 	}
 
-	public int play(int start, int ast, int vst, int sst) {
-		return mPlayer.play(start, ast, vst, sst);
+	public int play(double start, int ast, int sst) {
+		return mPlayer.play(start, ast, sst);
 	}
 
-	public int setVideoMode(int mode) {
-		return mPlayer.setVideoMode(mode);
+	public double getCurrentTime() {
+		return mPlayer.getCurrentTime();
 	}
 }

@@ -8,16 +8,12 @@ class NativePlayer8 implements NativePlayer {
 		System.loadLibrary("ffmpeg");
 		System.loadLibrary("player-8");
 	}
-
-	public static final int VIDEO_MODE_NONE = 0;
-	public static final int VIDEO_MODE_FIT = 1;
-	public static final int VIDEO_MODE_FILL = 2;
 	
 	public native int open(String file);
 
 	public native void close();
 
-	public native int play(int start, int ast, int vst, int sst);
+	public native int play(double start, int ast, int sst);
 
 	public native void pause();
 
@@ -32,6 +28,8 @@ class NativePlayer8 implements NativePlayer {
 	public native int getVideoHeight();
 
 	public native int getDuration();
+	
+	public native double getCurrentTime();
 
 	public native boolean isPlaying();
 

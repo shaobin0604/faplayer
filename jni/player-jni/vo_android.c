@@ -23,7 +23,7 @@ static int vo_init_android() {
     return 0;
 }
 
-static void vo_display_android(Picture* pic) {
+static int vo_display_android(Picture* pic) {
     AVPicture dest;
     void* screen;
     int sw, sh, ssz, psz;
@@ -34,7 +34,7 @@ static void vo_display_android(Picture* pic) {
     int64_t bgn, end;
 
     if (!pic->width || !pic->height)
-        return;
+        return 0;
     lockSurface();
     sw = getSurfaceWidth();
     sh = getSurfaceHeight();
@@ -46,7 +46,7 @@ static void vo_display_android(Picture* pic) {
             buffer = av_malloc(ssz > psz ? ssz * 2 : psz * 2);
             if (!buffer) {
                 unlockSurface();
-                return;
+                return 0;
             }
         }
         if (gCtx->mode == 0 && pic->width <= sw && pic->height <= sh) {
@@ -78,7 +78,6 @@ static void vo_display_android(Picture* pic) {
             scale_fit = sws_getCachedContext(scale_fit, pic->width, pic->height, pic->format, nw, nh, PIX_FMT_RGB565, SWS_FAST_BILINEAR, 0, 0, 0);
             ctx = scale_fit;
         }
-        debug("picture %dx%d surface %dx%d scaled picture %dx%d\n", pic->width, pic->height, sw, sh, nw, nh);
         bgn = av_gettime();
         avpicture_fill(&dest, buffer, PIX_FMT_RGB565, nw, nh);
         sws_scale(ctx, (const uint8_t * const*) pic->picture.data, pic->picture.linesize, 0, pic->height, dest.data, dest.linesize);
@@ -100,7 +99,12 @@ static void vo_display_android(Picture* pic) {
         else
             memcpy(screen + top * sw * 2, buffer, nw * nh * 2);
     }
+    else {
+        unlockSurface();
+        return -1;
+    }
     unlockSurface();
+    return 0;
 }
 
 static void vo_free_android() {

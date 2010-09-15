@@ -10,7 +10,7 @@ static AudioTrack* audio = 0;
 
 extern "C" {
 
-void audio_track_create(int rate, int format, int channel) {
+int audio_track_create(int rate, int format, int channel) {
    if (audio) {
         switch(format) {
             case 0: // SAMPLE_FMT_U8
@@ -51,14 +51,13 @@ void audio_track_create(int rate, int format, int channel) {
         }
         if (status == NO_ERROR) {
             audio->start();
-            debug("Got AudioTrack! %p\n", audio);
         }
         else {
             delete audio;
             audio = 0;
-            debug("Failed to get AudioTrack\n");
         }
     }
+    return audio ? 0 : -1;
 }
 
 void audio_track_play(const void* buffer, int length) {

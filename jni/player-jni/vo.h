@@ -12,7 +12,7 @@ typedef struct _vo_ {
     char* name;
     int (*init)();
     void (*free)();
-    void (*display)(Picture*);
+    int (*display)(Picture*);
     struct _vo_* next;
 }vo_t;
 

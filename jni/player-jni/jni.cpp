@@ -6,11 +6,12 @@ extern "C" {
 // definations from player.c
 int player_open(const char* file);
 void player_close();
-int player_play(int start, int ast, int vst, int sst);
+int player_play(double start, int ast, int sst);
 void player_pause();
 void player_resume();
 
 int player_get_duration();
+double player_get_current_time();
 
 int player_set_video_mode(int mode);
 
@@ -47,8 +48,8 @@ JNIEXPORT void JNICALL NAME(close)(JNIEnv *env, jobject thiz) {
     player_close();
 }
 
-JNIEXPORT jint JNICALL NAME(play)(JNIEnv *env, jobject thiz, jint start, jint ast, jint vst, jint sst) {
-    return player_play(start, ast, vst, sst);
+JNIEXPORT jint JNICALL NAME(play)(JNIEnv *env, jobject thiz, jdouble start, jint ast, jint sst) {
+    return player_play(start, ast, sst);
 }
 
 JNIEXPORT void JNICALL NAME(pause)(JNIEnv *env, jobject thiz) {
@@ -61,6 +62,10 @@ JNIEXPORT void JNICALL NAME(resume)(JNIEnv *env, jobject thiz) {
 
 JNIEXPORT jint JNICALL NAME(getDuration)(JNIEnv *env, jobject thiz) {
     return player_get_duration();
+}
+
+JNIEXPORT jint JNICALL NAME(getCurrentTime)(JNIEnv *env, jobject thiz) {
+    return player_get_current_time();
 }
 
 JNIEXPORT jint JNICALL NAME(setVideoMode)(JNIEnv *env, jobject thiz, jint mode) {

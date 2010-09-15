@@ -20,8 +20,7 @@ public class PlayerActivity extends Activity {
 		Bundle bundle = getIntent().getExtras();
 		String file = bundle.getString("file");
 		mPlayer.open(file);
-		// mPlayer.setVideoMode(NativePlayer.VIDEO_MODE_FIT);
-		mPlayer.play(0, 0, 0, 0);
+		mPlayer.play(0, 0, 0);
 	}
 
 	@Override

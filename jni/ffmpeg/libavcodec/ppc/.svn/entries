@@ -1,7 +1,7 @@
 10
 
 dir
-25117
+25124
 svn://svn.ffmpeg.org/ffmpeg/trunk/libavcodec/ppc
 svn://svn.ffmpeg.org/ffmpeg
 
@@ -25,40 +25,6 @@ has-props
 
 
 9553f0bf-9b14-0410-a0b8-cfaf0461ba5b
-
-asm.S
-file
-
-
-
-
-2010-08-19T01:41:38.108132Z
-487b23bb244388bf3d5e8a2c5963306d
-2010-07-04T18:33:40.588988Z
-24042
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2260
 
 dsputil_altivec.h
 file
@@ -93,6 +59,40 @@ has-props
 
 
 2057
+
+asm.S
+file
+
+
+
+
+2010-08-19T01:41:38.108132Z
+487b23bb244388bf3d5e8a2c5963306d
+2010-07-04T18:33:40.588988Z
+24042
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2260
 
 int_altivec.c
 file
@@ -264,40 +264,6 @@ has-props
 
 4717
 
-types_altivec.h
-file
-
-
-
-
-2010-08-19T01:41:38.110134Z
-15a4604fab1e5d0bd7aa7da63be79fe0
-2010-07-01T23:21:39.052155Z
-23956
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1777
-
 mathops.h
 file
 
@@ -331,6 +297,40 @@ diego
 
 
 2486
+
+types_altivec.h
+file
+
+
+
+
+2010-08-19T01:41:38.110134Z
+15a4604fab1e5d0bd7aa7da63be79fe0
+2010-07-01T23:21:39.052155Z
+23956
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1777
 
 h264_template_altivec.c
 file
@@ -366,51 +366,17 @@ has-props
 
 27187
 
-vp3dsp_altivec.c
+fft_altivec.c
 file
 
 
 
 
 2010-08-19T01:41:38.114135Z
-6b218056fd57aa0284fbd42d905a5604
-2010-03-06T22:37:14.090636Z
-22267
+bc552e4820f9ccbc87df7ad039be1f05
+2010-07-04T18:33:47.170622Z
+24044
 mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-5324
-
-mpegvideo_altivec.c
-file
-
-
-
-
-2010-09-10T13:25:28.890618Z
-3626c8b4973b3fd867899d82f368b920
-2010-09-08T15:07:14.444724Z
-25076
-stefano
 has-props
 
 
@@ -432,7 +398,7 @@ has-props
 
 
 
-25161
+4916
 
 dsputil_ppc.c
 file
@@ -468,17 +434,17 @@ has-props
 
 6455
 
-fft_altivec.c
+mpegvideo_altivec.c
 file
 
 
 
 
-2010-08-19T01:41:38.114135Z
-bc552e4820f9ccbc87df7ad039be1f05
-2010-07-04T18:33:47.170622Z
-24044
-mru
+2010-09-10T13:25:28.890618Z
+3626c8b4973b3fd867899d82f368b920
+2010-09-08T15:07:14.444724Z
+25076
+stefano
 has-props
 
 
@@ -500,7 +466,41 @@ has-props
 
 
 
-4916
+25161
+
+vp3dsp_altivec.c
+file
+
+
+
+
+2010-08-19T01:41:38.114135Z
+6b218056fd57aa0284fbd42d905a5604
+2010-03-06T22:37:14.090636Z
+22267
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5324
 
 fdct_altivec.c
 file

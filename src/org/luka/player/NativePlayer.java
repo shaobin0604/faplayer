@@ -12,7 +12,7 @@ interface NativePlayer {
 
 	public abstract void close();
 
-	public abstract int play(int start, int ast, int vst, int sst);
+	public abstract int play(double start, int ast, int sst);
 
 	public abstract void pause();
 
@@ -27,6 +27,8 @@ interface NativePlayer {
 	public abstract int getVideoHeight();
 
 	public abstract int getDuration();
+	
+	public abstract double getCurrentTime();
 
 	public abstract boolean isPlaying();
 

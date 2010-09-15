@@ -12,9 +12,10 @@ PlayerCtx* gCtx = 0;
 
 int player_open(const char* file);
 void player_close();
-int player_play(int start, int ast, int vst, int sst);
+int player_play(double start, int ast, int sst);
 
 int player_get_duration();
+double player_get_current_time();
 
 int player_set_video_mode(int mode);
 
@@ -110,7 +111,8 @@ void player_close() {
     }
 }
 
-int player_play(int start, int audio, int video, int subtitle) {
+int player_play(double start, int audio, int subtitle) {
+    int video = 0;
     int i, audio_st, video_st, subtitle_st;
 
     if (!gCtx)
@@ -204,10 +206,10 @@ int player_play(int start, int audio, int video, int subtitle) {
         debug("no component can be opened/played\n");
         return -1;
     }
-    if (start != AV_NOPTS_VALUE) {
+    if ((int64_t)(start / gCtx->audio_time_base) != AV_NOPTS_VALUE) {
         int64_t timestamp;
 
-        timestamp = start;
+        timestamp = (int64_t)(start / gCtx->audio_time_base);
         if (gCtx->av_ctx->start_time != AV_NOPTS_VALUE)
             timestamp += gCtx->av_ctx->start_time;
         if (avformat_seek_file(gCtx->av_ctx, -1, INT64_MIN, timestamp, INT64_MAX, 0) < 0)
@@ -263,6 +265,10 @@ int player_get_duration() {
     return gCtx ? gCtx->duration : 0;
 }
 
+double player_get_current_time() {
+    return gCtx ? gCtx->audio_last_pts * gCtx->audio_time_base : 0;
+}
+
 int player_set_video_mode(int mode) {
     if (!gCtx || mode < 0 || mode > 2)
         return -1;
@@ -288,35 +294,4 @@ int player_get_video_count() {
 int player_get_subtitle_count() {
     return gCtx ? gCtx->subtitle : 0;
 }
-
-#ifdef MAIN
-int main(int argc, char** argv) {
-    int i, noa, nov, nos;
-
-    noa = 0;
-    nov = 0;
-    nos = 0;
-    if (argc > 2) {
-        for (i = 2; i < argc; i++) {
-            if (!strcmp(argv[i], "noaudio"))
-                noa = -1;
-            if (!strcmp(argv[i], "novideo"))
-                nov = -1;
-            if (!strcmp(argv[i], "nosubtitle"))
-                nos = -1;
-        }
-    }
-    if (argc >= 2) {
-        player_open(argv[1]);
-        debug("%s is opened\n", argv[1]);
-        if (!player_play(0, noa, nov, nos)) {
-            debug("%s is playing\n", argv[1]);
-            usleep(600*1000*1000);
-        }
-        player_close();
-        debug("%s closed\n", argv[1]);
-    }
-    return 0;
-}
-#endif
 

@@ -6,7 +6,7 @@ includedir=/home/luka/Workspace/!/DemoPlayer/jni/ffmpeg
 Name: libswscale
 Description: FFmpeg image rescaling library
 Version: 0.11.0
-Requires: libavutil = 50.26.0
+Requires: libavutil = 50.27.0
 Conflicts:
 Libs: ${libdir}/libswscale.a 
 Cflags: -I${includedir}

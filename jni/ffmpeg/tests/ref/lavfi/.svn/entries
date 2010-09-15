@@ -1,7 +1,7 @@
 10
 
 dir
-25117
+25124
 svn://svn.ffmpeg.org/ffmpeg/trunk/tests/ref/lavfi
 svn://svn.ffmpeg.org/ffmpeg
 
@@ -60,40 +60,6 @@ stefano
 
 5579
 
-vflip_vflip
-file
-
-
-
-
-2010-08-19T01:41:43.262145Z
-1d4f108241eb515e0e4631fb07530530
-2010-03-17T23:23:44.227503Z
-22586
-stefano
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-112
-
 vflip
 file
 
@@ -127,6 +93,40 @@ stefano
 
 
 100
+
+vflip_vflip
+file
+
+
+
+
+2010-08-19T01:41:43.262145Z
+1d4f108241eb515e0e4631fb07530530
+2010-03-17T23:23:44.227503Z
+22586
+stefano
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+112
 
 pixfmts_scale_le
 file
@@ -264,14 +264,14 @@ stefano
 
 2273
 
-vflip_crop
+crop_vflip
 file
 
 
 
 
 2010-08-19T01:41:43.262145Z
-e458a63c962812c66bff46c5a0ff00ce
+e257a12a48d66a8a428c4f33513951ac
 2010-03-17T23:23:44.227503Z
 22586
 stefano
@@ -332,14 +332,14 @@ stefano
 
 98
 
-crop_vflip
+vflip_crop
 file
 
 
 
 
 2010-08-19T01:41:43.262145Z
-e257a12a48d66a8a428c4f33513951ac
+e458a63c962812c66bff46c5a0ff00ce
 2010-03-17T23:23:44.227503Z
 22586
 stefano
@@ -468,40 +468,6 @@ stefano
 
 106
 
-crop_scale_vflip
-file
-
-
-
-
-2010-08-19T01:41:43.262145Z
-eef382d65e1c4b410082dea72abb236f
-2010-07-05T22:32:56.149561Z
-24065
-stefano
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-121
-
 null
 file
 
@@ -535,6 +501,40 @@ stefano
 
 
 98
+
+crop_scale_vflip
+file
+
+
+
+
+2010-08-19T01:41:43.262145Z
+eef382d65e1c4b410082dea72abb236f
+2010-07-05T22:32:56.149561Z
+24065
+stefano
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+121
 
 pixfmts_vflip_le
 file

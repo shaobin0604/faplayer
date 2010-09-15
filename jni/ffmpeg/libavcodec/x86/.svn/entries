@@ -1,15 +1,15 @@
 10
 
 dir
-25117
+25124
 svn://svn.ffmpeg.org/ffmpeg/trunk/libavcodec/x86
 svn://svn.ffmpeg.org/ffmpeg
 
 
 
-2010-09-10T02:25:12.374926Z
-25092
-darkshikari
+2010-09-14T13:36:26.344636Z
+25119
+rbultje
 has-props
 
 
@@ -468,40 +468,6 @@ stefano
 
 1879
 
-h264_idct_sse2.asm
-file
-
-
-
-
-2010-09-10T13:25:28.421621Z
-947302f49bb2c4f984a03e99989de288
-2010-09-10T02:25:12.374926Z
-25092
-darkshikari
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1873
-
 vc1dsp_mmx.c
 file
 
@@ -604,40 +570,6 @@ has-props
 
 898
 
-cavsdsp_mmx.c
-file
-
-
-
-
-2010-09-10T13:25:28.425619Z
-8b669c32a768f51de33ef094d8edc583
-2010-09-08T15:07:14.444724Z
-25076
-stefano
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-19692
-
 fft.h
 file
 
@@ -672,18 +604,51 @@ vitor
 
 1623
 
-h264_qpel_mmx.c
+cavsdsp_mmx.c
 file
 
 
 
 
-2010-09-02T07:47:00.726024Z
-5790ad28f67e9f402a02be2b75a2f979
-2010-09-01T20:48:59.264932Z
-25018
+2010-09-10T13:25:28.425619Z
+8b669c32a768f51de33ef094d8edc583
+2010-09-08T15:07:14.444724Z
+25076
+stefano
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+19692
+
+h264_idct.asm
+file
+
+
+
+
+2010-09-15T06:31:49.423224Z
+c2d903a6b584fcd259297e3256c8463a
+2010-09-14T13:36:26.344636Z
+25119
 rbultje
-has-props
 
 
 
@@ -704,7 +669,8 @@ has-props
 
 
 
-53854
+
+22104
 
 vp8dsp-init.c
 file
@@ -739,6 +705,40 @@ stefano
 
 
 19420
+
+h264_qpel_mmx.c
+file
+
+
+
+
+2010-09-02T07:47:00.726024Z
+5790ad28f67e9f402a02be2b75a2f979
+2010-09-01T20:48:59.264932Z
+25018
+rbultje
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+53854
 
 dnxhd_mmx.c
 file
@@ -842,40 +842,6 @@ vitor
 
 11700
 
-vp56dsp_init.c
-file
-
-
-
-
-2010-09-10T13:25:28.425619Z
-5d74a02e8c18ce028d22f5b5ff24baab
-2010-09-08T15:07:14.444724Z
-25076
-stefano
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1768
-
 h264_chromamc.asm
 file
 
@@ -909,6 +875,40 @@ rbultje
 
 
 17836
+
+vp56dsp_init.c
+file
+
+
+
+
+2010-09-10T13:25:28.425619Z
+5d74a02e8c18ce028d22f5b5ff24baab
+2010-09-08T15:07:14.444724Z
+25076
+stefano
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1768
 
 mpegvideo_mmx_template.c
 file
@@ -944,6 +944,40 @@ has-props
 
 17466
 
+Makefile
+file
+
+
+
+
+2010-09-15T06:31:49.423224Z
+babababbc20916f4c614972e526e2433
+2010-09-14T13:36:26.344636Z
+25119
+rbultje
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3037
+
 vp56_arith.h
 file
 
@@ -977,40 +1011,6 @@ darkshikari
 
 
 1750
-
-Makefile
-file
-
-
-
-
-2010-09-10T13:25:28.425619Z
-34e1d05de816f6563e36dd5dfb8e1e57
-2010-09-10T02:25:12.374926Z
-25092
-darkshikari
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3037
 
 dsputil_mmx_avg_template.c
 file
@@ -1324,11 +1324,11 @@ file
 
 
 
-2010-09-10T13:25:28.433619Z
-f1c8069c9f4844880650a9409730223b
-2010-09-10T02:25:12.374926Z
-25092
-darkshikari
+2010-09-15T06:31:49.427025Z
+fb4561659a3bd47e294f5506ce74306c
+2010-09-14T13:36:26.344636Z
+25119
+rbultje
 has-props
 
 
@@ -1350,7 +1350,7 @@ has-props
 
 
 
-31505
+15855
 
 dsputil_yasm.asm
 file
