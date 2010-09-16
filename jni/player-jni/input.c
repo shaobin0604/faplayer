@@ -32,7 +32,7 @@ static void* input_thread(void* para) {
         aq = gCtx->audio_enabled ? audio_packet_queue_size() : 0;
         vq = gCtx->video_enabled ? video_packet_queue_size() : 0;
         sq = gCtx->subtitle_enabled ? subtitle_packet_queue_size() : 0;
-        if ((vq && ((aq + vq + sq) >= MAX_PACKET_QUEUE_SIZE) && (100 * vq / (aq + vq + sq) < 80)) ||
+        if ((vq && ((aq + vq + sq) >= MAX_PACKET_QUEUE_SIZE) && (100 * vq / (aq + vq + sq) < 95)) ||
             (!vq && (aq + sq >= MAX_PACKET_QUEUE_SIZE)) ||
             (aq && aq >= MAX_PACKET_QUEUE_SIZE / 2 && vq && vq >= MAX_PACKET_QUEUE_SIZE)) {
             usleep(25 * 1000);
@@ -69,9 +69,6 @@ static void* input_thread(void* para) {
 }
 
 int input_init() {
-
-    debug("reached %s\n", __func__);
-
     if (!gCtx || intid)
         return -1;
 
@@ -85,9 +82,6 @@ int input_init() {
 }
 
 void input_free() {
-
-    debug("reached %s\n", __func__);
-
     stop = -1;
     if (intid) {
         pthread_join(intid, 0);

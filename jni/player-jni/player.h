@@ -67,7 +67,7 @@ typedef struct {
     int64_t video_last_pts;
     int64_t subtitle_last_pts;
 
-    // 0 = normal
+    // 0 = centeral surface if possible
     // 1 = fit surface
     // 2 = full surface
     int mode;

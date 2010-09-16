@@ -19,8 +19,6 @@ static pthread_t votid = 0;
 static void* audio_output_thread(void* para) {
     Samples* sam;
 
-    debug("reached %s\n", __func__);
-
     for (;;) {
         if (stop) {
             pthread_exit(0);
@@ -43,10 +41,8 @@ static void* audio_output_thread(void* para) {
 
 static void* video_output_thread(void* para) {
     Picture* pic;
-    int64_t bgn, end, left, bgn1, end1;
+    int64_t bgn, end, left;
     double diff;
-
-    debug("reached %s\n", __func__);
 
     for (;;) {
         if (stop) {
@@ -60,16 +56,13 @@ static void* video_output_thread(void* para) {
         pic = picture_queue_pop_tail();
         if (pic) {
             if (vo && vo->display) {
-                bgn1 = av_gettime();
                 vo->display(pic);
-                end1 = av_gettime();
             }
             gCtx->video_last_pts = pic->pts;
             free_Picture(pic);
         }
         end = av_gettime();
         left = (int64_t)(1000 * 1000 / gCtx->fps) - end + bgn;
-        debug("vo->display() takes %lld us\n", end1 - bgn1);
         if (gCtx->audio_enabled) {
             diff = gCtx->audio_last_pts * gCtx->audio_time_base - gCtx->video_last_pts * gCtx->video_time_base;
             debug("a/v/d %.3f/%.3f/%.3f\n", gCtx->audio_last_pts * gCtx->audio_time_base, gCtx->video_last_pts * gCtx->video_time_base, diff);
@@ -101,8 +94,6 @@ static void* video_output_thread(void* para) {
 
 int output_init() {
     char *audio, *video;
-
-    debug("reached %s\n", __func__);
 
     if (ao || vo || aotid || votid)
         return -1;
@@ -137,7 +128,6 @@ int output_init() {
 }
 
 void output_free() {
-    debug("reached %s\n", __func__);
     stop = -1;
     if (aotid) {
         samples_queue_wake();

@@ -214,8 +214,6 @@ IMPLEMENT_QUEUE(samples_queue, Samples)
 int queue_init() {
     int err;
 
-    debug("reached %s\n", __func__);
-
     if (audio_packet_queue || video_packet_queue || subtitle_packet_queue || picture_queue || samples_queue)
         return -1;
     if (gCtx->audio_enabled) {
@@ -246,9 +244,6 @@ fail:
 }
 
 void queue_free() {
-
-    debug("reached %s\n", __func__);
-
     if (audio_packet_queue)
         audio_packet_queue_free();
     if (video_packet_queue)

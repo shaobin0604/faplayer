@@ -58,4 +58,8 @@ public class NativePlayerSurface extends SurfaceView implements
 	public double getCurrentTime() {
 		return mPlayer.getCurrentTime();
 	}
+
+	public int setVideoMode(int mode) {
+		return mPlayer.setVideoMode(mode);
+	}
 }

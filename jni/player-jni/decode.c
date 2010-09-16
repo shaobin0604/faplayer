@@ -22,8 +22,6 @@ static void* audio_decode_thread(void* para) {
     int size, err;
     Samples* sam;
 
-    debug("reached %s\n", __func__);
-
     for (;;) {
         if (stop) {
             pthread_exit(0);
@@ -63,8 +61,6 @@ static void* video_decode_thread(void* para) {
     AVPacket* pkt;
     Picture *pic;
     int64_t bgn, end;
-
-    debug("reached %s\n", __func__);
 
     pkt = 0;
     pic = 0;
@@ -114,8 +110,6 @@ next:
 static void* subtitle_decode_thread(void* para) {
     AVPacket* pkt;
 
-    debug("reached %s\n", __func__);
-
     for (;;) {
         if (stop) {
             pthread_exit(0);
@@ -131,9 +125,6 @@ static void* subtitle_decode_thread(void* para) {
 }
 
 int decode_init() {
-
-    debug("reached %s\n", __func__);
-
     if (!gCtx || adtid || vdtid || sdtid)
         return -1;
 
@@ -154,9 +145,6 @@ int decode_init() {
 }
 
 void decode_free() {
-
-    debug("reached %s\n", __func__);
-
     stop = -1;
     if (adtid) {
         audio_packet_queue_wake();
