@@ -13,13 +13,13 @@ class NativePlayer4 implements NativePlayer {
 
 	public native void close();
 
-	public native int play(double start, int ast, int sst);
+	public native int play(double start, int ast);
 
 	public native void pause();
 
 	public native void resume();
 
-	public native void reset();
+	public native int seek(double time);
 	
 	public native int setVideoMode(int mode);
 

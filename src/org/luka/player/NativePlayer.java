@@ -12,13 +12,13 @@ interface NativePlayer {
 
 	public abstract void close();
 
-	public abstract int play(double start, int ast, int sst);
+	public abstract int play(double start, int ast);
 
 	public abstract void pause();
 
 	public abstract void resume();
 
-	public abstract void reset();
+	public abstract int seek(double time);
 	
 	public abstract int setVideoMode(int mode);
 

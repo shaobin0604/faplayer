@@ -1,5 +1,5 @@
 /*
- * copyright Stefano Sabatini 2010
+ * copyright (c) 2010 Stefano Sabatini
  *
  * This file is part of FFmpeg.
  *
@@ -23,8 +23,8 @@
  * libopencv wrapper functions
  */
 
-#include "opencv/cv.h"
-#include "opencv/cxtypes.h"
+#include <opencv/cv.h>
+#include <opencv/cxtypes.h>
 #include "avfilter.h"
 
 static void fill_iplimage_from_picref(IplImage *img, const AVFilterBufferRef *picref, enum PixelFormat pixfmt)
@@ -116,7 +116,7 @@ static av_cold int smooth_init(AVFilterContext *ctx, const char *args, void *opa
 static void smooth_end_frame(AVFilterLink *inlink)
 {
     SmoothContext *smooth = inlink->dst->priv;
-    AVFilterLink *outlink= inlink->dst->outputs[0];
+    AVFilterLink *outlink = inlink->dst->outputs[0];
     AVFilterBufferRef *inpicref  = inlink ->cur_buf;
     AVFilterBufferRef *outpicref = outlink->out_buf;
     IplImage inimg, outimg;

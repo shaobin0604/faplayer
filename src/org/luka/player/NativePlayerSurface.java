@@ -51,8 +51,20 @@ public class NativePlayerSurface extends SurfaceView implements
 		mPlayer.close();
 	}
 
-	public int play(double start, int ast, int sst) {
-		return mPlayer.play(start, ast, sst);
+	public int play(double start, int ast) {
+		return mPlayer.play(start, ast);
+	}
+
+	public void pause() {
+		mPlayer.pause();
+	}
+
+	public void resume() {
+		mPlayer.resume();
+	}
+
+	public int seek(double time) {
+		return mPlayer.seek(time);
 	}
 
 	public double getCurrentTime() {
@@ -61,5 +73,9 @@ public class NativePlayerSurface extends SurfaceView implements
 
 	public int setVideoMode(int mode) {
 		return mPlayer.setVideoMode(mode);
+	}
+
+	public boolean isPlaying() {
+		return mPlayer.isPlaying();
 	}
 }

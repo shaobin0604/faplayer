@@ -194,7 +194,7 @@ static int doTest(uint8_t *ref[4], int refStride[4], int w, int h,
                 goto end;
             }
         }
-        outContext= sws_getContext(dstW, dstH, dstFormat, w, h, PIX_FMT_YUVA420P, flags, NULL, NULL, NULL);
+        outContext= sws_getContext(dstW, dstH, dstFormat, w, h, PIX_FMT_YUVA420P, SWS_BILINEAR, NULL, NULL, NULL);
         if (!outContext) {
             fprintf(stderr, "Failed to get %s ---> %s\n",
                     av_pix_fmt_descriptors[dstFormat].name,
@@ -290,8 +290,8 @@ static void selfTest(uint8_t *ref[4], int refStride[4], int w, int h,
 }
 
 static int fileTest(uint8_t *ref[4], int refStride[4], int w, int h, FILE *fp,
-                     enum PixelFormat srcFormat_in,
-                     enum PixelFormat dstFormat_in)
+                    enum PixelFormat srcFormat_in,
+                    enum PixelFormat dstFormat_in)
 {
     char buf[256];
 

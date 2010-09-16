@@ -1,7 +1,7 @@
 10
 
 dir
-25124
+25134
 svn://svn.ffmpeg.org/ffmpeg/trunk/libavcodec/x86
 svn://svn.ffmpeg.org/ffmpeg
 
@@ -570,17 +570,17 @@ has-props
 
 898
 
-fft.h
+h264_idct.asm
 file
 
 
 
 
-2010-08-19T01:41:31.622134Z
-acc9b6abb4dd4b011197ff9927fdc2c2
-2010-07-06T16:58:54.733253Z
-24077
-vitor
+2010-09-15T06:31:49.423224Z
+c2d903a6b584fcd259297e3256c8463a
+2010-09-14T13:36:26.344636Z
+25119
+rbultje
 
 
 
@@ -602,7 +602,7 @@ vitor
 
 
 
-1623
+22104
 
 cavsdsp_mmx.c
 file
@@ -638,17 +638,17 @@ stefano
 
 19692
 
-h264_idct.asm
+fft.h
 file
 
 
 
 
-2010-09-15T06:31:49.423224Z
-c2d903a6b584fcd259297e3256c8463a
-2010-09-14T13:36:26.344636Z
-25119
-rbultje
+2010-08-19T01:41:31.622134Z
+acc9b6abb4dd4b011197ff9927fdc2c2
+2010-07-06T16:58:54.733253Z
+24077
+vitor
 
 
 
@@ -670,41 +670,7 @@ rbultje
 
 
 
-22104
-
-vp8dsp-init.c
-file
-
-
-
-
-2010-09-10T13:25:28.425619Z
-5572de8b3c462646bdef963da29e0cbc
-2010-09-08T15:07:14.444724Z
-25076
-stefano
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-19420
+1623
 
 h264_qpel_mmx.c
 file
@@ -739,6 +705,40 @@ has-props
 
 
 53854
+
+vp8dsp-init.c
+file
+
+
+
+
+2010-09-10T13:25:28.425619Z
+5572de8b3c462646bdef963da29e0cbc
+2010-09-08T15:07:14.444724Z
+25076
+stefano
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+19420
 
 dnxhd_mmx.c
 file
@@ -842,40 +842,6 @@ vitor
 
 11700
 
-h264_chromamc.asm
-file
-
-
-
-
-2010-08-31T10:51:26.736792Z
-82e3c34f06677ab2f9d3c3ee094051c5
-2010-08-30T16:31:04.776555Z
-24989
-rbultje
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-17836
-
 vp56dsp_init.c
 file
 
@@ -909,6 +875,40 @@ stefano
 
 
 1768
+
+h264_chromamc.asm
+file
+
+
+
+
+2010-08-31T10:51:26.736792Z
+82e3c34f06677ab2f9d3c3ee094051c5
+2010-08-30T16:31:04.776555Z
+24989
+rbultje
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+17836
 
 mpegvideo_mmx_template.c
 file
@@ -944,40 +944,6 @@ has-props
 
 17466
 
-Makefile
-file
-
-
-
-
-2010-09-15T06:31:49.423224Z
-babababbc20916f4c614972e526e2433
-2010-09-14T13:36:26.344636Z
-25119
-rbultje
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3037
-
 vp56_arith.h
 file
 
@@ -1011,6 +977,40 @@ darkshikari
 
 
 1750
+
+Makefile
+file
+
+
+
+
+2010-09-15T06:31:49.423224Z
+babababbc20916f4c614972e526e2433
+2010-09-14T13:36:26.344636Z
+25119
+rbultje
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3037
 
 dsputil_mmx_avg_template.c
 file

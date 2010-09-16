@@ -71,9 +71,7 @@ typedef struct {
     // 1 = fit surface
     // 2 = full surface
     int mode;
-    int exit;
     int pause;
-    int step;
 }PlayerCtx;
 
 extern PlayerCtx* gCtx;

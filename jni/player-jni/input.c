@@ -17,8 +17,6 @@ static void* input_thread(void* para) {
     int err, aq, vq, sq;
     AVPacket* pkt;
 
-    debug("reached %s\n", __func__);
-
     err = 0;
     for (;;) {
         if (stop) {

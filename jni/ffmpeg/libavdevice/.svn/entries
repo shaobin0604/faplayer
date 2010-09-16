@@ -1,7 +1,7 @@
 10
 
 dir
-25124
+25134
 svn://svn.ffmpeg.org/ffmpeg/trunk/libavdevice
 svn://svn.ffmpeg.org/ffmpeg
 
@@ -162,18 +162,17 @@ has-props
 
 8871
 
-v4l.c
+x11grab.c
 file
 
 
 
 
-2010-09-08T11:03:43.618318Z
-b690dedcc39a1e00dfc5c49857c72300
-2010-09-07T19:15:29.474380Z
-25058
-stefano
-has-props
+2010-08-19T01:41:44.447134Z
+ea6c373f44a2ef981c2362a7c7e063d9
+2010-07-02T11:19:29.967370Z
+23976
+diego
 
 
 
@@ -194,7 +193,8 @@ has-props
 
 
 
-11084
+
+13977
 
 alsa-audio-common.c
 file
@@ -230,17 +230,18 @@ diego
 
 5876
 
-x11grab.c
+v4l.c
 file
 
 
 
 
-2010-08-19T01:41:44.447134Z
-ea6c373f44a2ef981c2362a7c7e063d9
-2010-07-02T11:19:29.967370Z
-23976
-diego
+2010-09-08T11:03:43.618318Z
+b690dedcc39a1e00dfc5c49857c72300
+2010-09-07T19:15:29.474380Z
+25058
+stefano
+has-props
 
 
 
@@ -261,8 +262,7 @@ diego
 
 
 
-
-13977
+11084
 
 alsa-audio-dec.c
 file
@@ -434,40 +434,6 @@ has-props
 
 8011
 
-avdevice.c
-file
-
-
-
-
-2010-08-19T01:41:44.455153Z
-8ee20fd2fa139bfeec372a91e97a300f
-2009-11-18T17:15:17.266461Z
-20547
-diego
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1098
-
 vfwcap.c
 file
 
@@ -501,6 +467,40 @@ ramiro
 
 
 13108
+
+avdevice.c
+file
+
+
+
+
+2010-08-19T01:41:44.455153Z
+8ee20fd2fa139bfeec372a91e97a300f
+2009-11-18T17:15:17.266461Z
+20547
+diego
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1098
 
 v4l2.c
 file

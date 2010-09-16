@@ -12,7 +12,10 @@ PlayerCtx* gCtx = 0;
 
 int player_open(const char* file);
 void player_close();
-int player_play(double start, int ast, int sst);
+int player_play(double start, int ast);
+int player_seek(double time);
+void player_pause();
+void player_resume();
 
 int player_get_duration();
 double player_get_current_time();
@@ -22,6 +25,7 @@ int player_set_video_mode(int mode);
 int player_get_video_width();
 int player_get_video_height();
 
+int player_is_playing();
 
 static void init_default_codec_ctx(AVCodecContext* ctx) {
     if (!ctx)
@@ -111,8 +115,9 @@ void player_close() {
     }
 }
 
-int player_play(double start, int audio, int subtitle) {
+int player_play(double start, int audio) {
     int video = 0;
+    int subtitle = 0;
     int i, audio_st, video_st, subtitle_st;
 
     if (!gCtx)
@@ -203,51 +208,56 @@ int player_play(double start, int audio, int subtitle) {
     }
     if (gCtx->audio_enabled + gCtx->video_enabled + gCtx->subtitle_enabled == 0) {
         player_close();
-        debug("no component can be opened/played\n");
         return -1;
     }
-    if ((int64_t)(start / gCtx->audio_time_base) != AV_NOPTS_VALUE) {
-        int64_t timestamp;
-
-        timestamp = (int64_t)(start / gCtx->audio_time_base);
-        if (gCtx->av_ctx->start_time != AV_NOPTS_VALUE)
-            timestamp += gCtx->av_ctx->start_time;
-        if (avformat_seek_file(gCtx->av_ctx, -1, INT64_MIN, timestamp, INT64_MAX, 0) < 0)
-            debug("avformat_seek_file failed\n");
-    }
+    player_seek(start);
     gCtx->frame = avcodec_alloc_frame();
     if (!gCtx->frame) {
         player_close();
-        debug("avcodec_alloc_frame fail\n");
         return -1;
     }
     gCtx->samples = av_malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE);
     if (!gCtx->samples) {
         player_close();
-        debug("allocate samples for %d fail\n", AVCODEC_MAX_AUDIO_FRAME_SIZE);
         return -1;
     }
     if (queue_init() < 0) {
-        debug("queue_init fail\n");
         player_close();
         return -1;
     }
     if (input_init() < 0) {
-        debug("input_init fail\n");
         player_close();
         return -1;
     }
     if (decode_init() < 0) {
-        debug("decode_init fail\n");
         player_close();
         return -1;
     }
     if (output_init() < 0) {
-        debug("output_init fail\n");
         player_close();
         return -1;
     }
 
+    return 0;
+}
+
+int player_seek(double time) {
+    int err;
+    int64_t timestamp;
+
+    if (!gCtx)
+        return -1;
+    if ((int64_t)(time / gCtx->audio_time_base) != AV_NOPTS_VALUE) {
+        timestamp = (int64_t)(time / gCtx->audio_time_base);
+        if (gCtx->av_ctx->start_time != AV_NOPTS_VALUE)
+            timestamp += gCtx->av_ctx->start_time;
+        err = avformat_seek_file(gCtx->av_ctx, -1, INT64_MIN, timestamp, INT64_MAX, 0);
+        if (err < 0) {
+            debug("avformat_seek_file failed\n");
+            return -1;
+        }
+        return 0;
+    }
     return 0;
 }
 
@@ -281,6 +291,10 @@ int player_get_video_width() {
 
 int player_get_video_height() {
     return gCtx ? gCtx->height : 0;
+}
+
+int player_is_playing() {
+    return gCtx ? (gCtx->pause ? 0 : -1) : 0;
 }
 
 int player_get_audio_count() {

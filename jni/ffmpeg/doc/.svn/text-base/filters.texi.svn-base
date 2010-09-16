@@ -70,8 +70,8 @@ Convert the input video to one of the specified pixel formats.
 Libavfilter will try to pick one that is supported for the input to
 the next filter.
 
-The filter accepts a list of pixel format names, separated by ``:'',
-for example ``yuv420p:monow:rgb24''.
+The filter accepts a list of pixel format names, separated by ":",
+for example "yuv420p:monow:rgb24".
 
 The following command:
 
@@ -79,7 +79,7 @@ The following command:
 ./ffmpeg -i in.avi -vf "format=yuv420p" out.avi
 @end example
 
-will convert the input video to the format ``yuv420p''.
+will convert the input video to the format "yuv420p".
 
 @section hflip
 
@@ -96,8 +96,8 @@ ffmpeg -i in.avi -vf "hflip" out.avi
 Force libavfilter not to use any of the specified pixel formats for the
 input to the next filter.
 
-The filter accepts a list of pixel format names, separated by ``:'',
-for example ``yuv420p:monow:rgb24''.
+The filter accepts a list of pixel format names, separated by ":",
+for example "yuv420p:monow:rgb24".
 
 The following command:
 
@@ -105,7 +105,7 @@ The following command:
 ./ffmpeg -i in.avi -vf "noformat=yuv420p, vflip" out.avi
 @end example
 
-will make libavfilter use a format different from ``yuv420p'' for the
+will make libavfilter use a format different from "yuv420p" for the
 input to the vflip filter.
 
 @section null
@@ -119,11 +119,11 @@ Apply smooth transform using libopencv.
 To enable this filter install libopencv library and headers and
 configure FFmpeg with --enable-libopencv.
 
-It accepts the following parameters:
+The filter accepts the following parameters:
 @var{type}:@var{param1}:@var{param2}:@var{param3}:@var{param4}.
 
 @var{type} is the type of smooth filter to apply, and can be one of
-the following value: "blur", "blur_no_scale", "median", "gaussian",
+the following values: "blur", "blur_no_scale", "median", "gaussian",
 "bilateral". The default value is "gaussian".
 
 @var{param1}, @var{param2}, @var{param3}, and @var{param4} are
@@ -134,8 +134,8 @@ parameters whose meanings depend on smooth type. @var{param1} and
 The default value for @var{param1} is 3, the default value for the
 other parameters is 0.
 
-These parameters corresponds to the parameters assigned to the
-libopencv function @code{cvSmooth}. Refer the official libopencv
+These parameters correspond to the parameters assigned to the
+libopencv function @code{cvSmooth}. Refer to the official libopencv
 documentation for the exact meaning of the parameters:
 @url{http://opencv.willowgarage.com/documentation/c/image_filtering.html}
 
@@ -170,7 +170,7 @@ The default value of @var{x} and @var{y} is 0.
 Specify the color of the padded area, it can be the name of a color
 (case insensitive match) or a 0xRRGGBB[AA] sequence.
 
-The default value of @var{color} is ``black''.
+The default value of @var{color} is "black".
 
 @end table
 

@@ -1,7 +1,7 @@
 10
 
 dir
-25124
+25134
 svn://svn.ffmpeg.org/ffmpeg/trunk/libavcodec/ppc
 svn://svn.ffmpeg.org/ffmpeg
 
@@ -25,40 +25,6 @@ has-props
 
 
 9553f0bf-9b14-0410-a0b8-cfaf0461ba5b
-
-dsputil_altivec.h
-file
-
-
-
-
-2010-09-08T11:03:42.894116Z
-2f26e1a59ff973f713546b34b3573f7a
-2010-09-08T10:02:40.664512Z
-25074
-stefano
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2057
 
 asm.S
 file
@@ -93,6 +59,40 @@ mru
 
 
 2260
+
+dsputil_altivec.h
+file
+
+
+
+
+2010-09-08T11:03:42.894116Z
+2f26e1a59ff973f713546b34b3573f7a
+2010-09-08T10:02:40.664512Z
+25074
+stefano
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2057
 
 int_altivec.c
 file
@@ -264,40 +264,6 @@ has-props
 
 4717
 
-mathops.h
-file
-
-
-
-
-2010-08-19T01:41:38.110134Z
-1e97d9036ca959ad244acd9a9a6352d0
-2009-08-24T10:59:14.676171Z
-19692
-diego
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2486
-
 types_altivec.h
 file
 
@@ -331,6 +297,40 @@ mru
 
 
 1777
+
+mathops.h
+file
+
+
+
+
+2010-08-19T01:41:38.110134Z
+1e97d9036ca959ad244acd9a9a6352d0
+2009-08-24T10:59:14.676171Z
+19692
+diego
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2486
 
 h264_template_altivec.c
 file
@@ -366,18 +366,17 @@ has-props
 
 27187
 
-fft_altivec.c
+vp3dsp_altivec.c
 file
 
 
 
 
 2010-08-19T01:41:38.114135Z
-bc552e4820f9ccbc87df7ad039be1f05
-2010-07-04T18:33:47.170622Z
-24044
+6b218056fd57aa0284fbd42d905a5604
+2010-03-06T22:37:14.090636Z
+22267
 mru
-has-props
 
 
 
@@ -398,41 +397,8 @@ has-props
 
 
 
-4916
-
-dsputil_ppc.c
-file
 
-
-
-
-2010-09-10T13:25:28.890618Z
-9e877a770cc77e7c0905572805790c93
-2010-09-08T15:07:14.444724Z
-25076
-stefano
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-6455
+5324
 
 mpegvideo_altivec.c
 file
@@ -468,17 +434,52 @@ has-props
 
 25161
 
-vp3dsp_altivec.c
+dsputil_ppc.c
+file
+
+
+
+
+2010-09-10T13:25:28.890618Z
+9e877a770cc77e7c0905572805790c93
+2010-09-08T15:07:14.444724Z
+25076
+stefano
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6455
+
+fft_altivec.c
 file
 
 
 
 
 2010-08-19T01:41:38.114135Z
-6b218056fd57aa0284fbd42d905a5604
-2010-03-06T22:37:14.090636Z
-22267
+bc552e4820f9ccbc87df7ad039be1f05
+2010-07-04T18:33:47.170622Z
+24044
 mru
+has-props
 
 
 
@@ -499,8 +500,7 @@ mru
 
 
 
-
-5324
+4916
 
 fdct_altivec.c
 file
