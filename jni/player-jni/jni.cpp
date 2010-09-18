@@ -37,12 +37,12 @@ void detach(JNIEnv *env, jobject thiz);
 
 JNIEXPORT jint JNICALL NAME(open)(JNIEnv *env, jobject thiz, jstring file) {
     jint result;
-    const char* fn;
+    const char *f;
     jboolean copy;
 
-    fn = env->GetStringUTFChars(file, &copy);
-    result = player_open(fn);
-    env->ReleaseStringUTFChars(file, fn);
+    f = env->GetStringUTFChars(file, &copy);
+    result = player_open(f);
+    env->ReleaseStringUTFChars(file, f);
 
     return result;
 }

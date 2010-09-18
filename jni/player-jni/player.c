@@ -27,18 +27,18 @@ int player_get_video_height();
 
 int player_is_playing();
 
-static void init_default_codec_ctx(AVCodecContext* ctx) {
+static void init_video_codec_ctx(AVCodecContext* ctx) {
     if (!ctx)
         return;
-	ctx->workaround_bugs = FF_BUG_AUTODETECT;
-	ctx->skip_frame = AVDISCARD_DEFAULT;
-	ctx->skip_idct = AVDISCARD_DEFAULT;
-	ctx->skip_loop_filter= AVDISCARD_DEFAULT;
-	ctx->error_concealment= 3;
-	ctx->thread_count = 1;
-    ctx->dct_algo = FF_DCT_AUTO;
-	ctx->idct_algo = FF_IDCT_AUTO;
+    ctx->flags = 0;
     ctx->flags2 |= CODEC_FLAG2_FAST;
+	ctx->thread_count = 2;
+	ctx->workaround_bugs = FF_BUG_AUTODETECT;
+    ctx->error_recognition = FF_ER_CAREFUL;
+    ctx->error_concealment = FF_EC_GUESS_MVS | FF_EC_DEBLOCK;
+    ctx->debug = 0;
+    ctx->debug_mv = 0;
+	ctx->skip_frame = AVDISCARD_DEFAULT;
 }
 
 int player_open(const char* file) {
@@ -171,7 +171,6 @@ int player_play(double start, int audio) {
         }
     }
     if (gCtx->audio && gCtx->audio_enabled) {
-        init_default_codec_ctx(gCtx->audio_ctx);
         gCtx->audio_codec = avcodec_find_decoder(gCtx->audio_ctx->codec_id);
         if (!gCtx->audio_codec || avcodec_open(gCtx->audio_ctx, gCtx->audio_codec) < 0) {
             gCtx->audio_enabled = 0;
@@ -182,7 +181,7 @@ int player_play(double start, int audio) {
         gCtx->audio_time_base = av_q2d(gCtx->audio_st->time_base);
     }
     if (gCtx->video && gCtx->video_enabled) {
-        init_default_codec_ctx(gCtx->video_ctx);
+        init_video_codec_ctx(gCtx->video_ctx);
         gCtx->video_codec = avcodec_find_decoder(gCtx->video_ctx->codec_id);
         if (!gCtx->video_codec || avcodec_open(gCtx->video_ctx, gCtx->video_codec) < 0) {
             gCtx->video_enabled = 0;
@@ -197,7 +196,6 @@ int player_play(double start, int audio) {
         }
     }
     if (gCtx->subtitle && gCtx->subtitle_enabled) {
-        init_default_codec_ctx(gCtx->subtitle_ctx);
         gCtx->subtitle_codec = avcodec_find_decoder(gCtx->subtitle_ctx->codec_id);
         if (!gCtx->subtitle_codec || avcodec_open(gCtx->subtitle_ctx, gCtx->subtitle_codec) < 0) {
             gCtx->subtitle_enabled = 0;
@@ -248,14 +246,22 @@ int player_seek(double time) {
     if (!gCtx)
         return -1;
     if ((int64_t)(time / gCtx->audio_time_base) != AV_NOPTS_VALUE) {
+        gCtx->pause = -1;
         timestamp = (int64_t)(time / gCtx->audio_time_base);
         if (gCtx->av_ctx->start_time != AV_NOPTS_VALUE)
             timestamp += gCtx->av_ctx->start_time;
         err = avformat_seek_file(gCtx->av_ctx, -1, INT64_MIN, timestamp, INT64_MAX, 0);
         if (err < 0) {
             debug("avformat_seek_file failed\n");
+            gCtx->pause = 0;
             return -1;
         }
+        audio_packet_queue_abort();
+        video_packet_queue_abort();
+        subtitle_packet_queue_abort();
+        samples_queue_abort();
+        picture_queue_abort();
+        gCtx->pause = 0;
         return 0;
     }
     return 0;

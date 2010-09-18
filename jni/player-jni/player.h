@@ -49,6 +49,7 @@ typedef struct {
     int channel;
 
     // runtime parameters
+
     AVFormatContext* av_ctx;
     AVCodecContext* audio_ctx;
     AVCodec* audio_codec;
@@ -66,6 +67,15 @@ typedef struct {
     int64_t audio_last_pts;
     int64_t video_last_pts;
     int64_t subtitle_last_pts;
+
+    int64_t audio_decode_pts;
+    int64_t video_decode_pts;
+    int64_t subtitle_decode_pts;
+
+    // try to drop some frame
+    // to handle higher bit rate
+    int skip_level;
+    int skip_count;
 
     // 0 = centeral surface if possible
     // 1 = fit surface

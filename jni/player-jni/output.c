@@ -43,6 +43,7 @@ static void* video_output_thread(void* para) {
     Picture* pic;
     int64_t bgn, end, left;
     double diff;
+    int aq, vq, ad, vd;
 
     for (;;) {
         if (stop) {
@@ -66,26 +67,41 @@ static void* video_output_thread(void* para) {
         if (gCtx->audio_enabled) {
             diff = gCtx->audio_last_pts * gCtx->audio_time_base - gCtx->video_last_pts * gCtx->video_time_base;
             debug("a/v/d %.3f/%.3f/%.3f\n", gCtx->audio_last_pts * gCtx->audio_time_base, gCtx->video_last_pts * gCtx->video_time_base, diff);
-            if (diff > 0) {
+            if (diff >= 0) {
                 left = 0;
-                if (diff >= 0.1) {
-                    int aq, vq, ad, vd;
-                    aq = audio_packet_queue_size();
-                    vq = video_packet_queue_size();
-                    ad = samples_queue_size();
-                    vd = picture_queue_size();
-                    debug("warning: vo is %.3f later than vo! audio packet %d video packet %d, samples %d picture %d\n", diff, aq, vq, ad, vd);
+                if (diff < 0.25) {
+                    gCtx->skip_count += 2;
+                    gCtx->skip_level = AVDISCARD_NONREF;
+                }
+                else if (diff < 0.5) {
+                    gCtx->skip_count += 4;
+                    gCtx->skip_level = AVDISCARD_NONREF;
+                }
+                else if (diff < 1.0) {
+                    if (gCtx->skip_count < 2)
+                        gCtx->skip_count = 2;
+                    gCtx->skip_level = AVDISCARD_NONKEY;
+                }
+                else {
+                    if (gCtx->skip_count < 4)
+                        gCtx->skip_count = 4;
+                    gCtx->skip_level = AVDISCARD_NONKEY;
                 }
             }
-            else if(diff > -0.25) {
-                left += (left / 4);
-            }
-            else if(diff > -0.5) {
-                left += (left / 2);
+            else {
+                if (diff < -0.25) {
+                    left += left >> 2;
+                }
+                if (diff < -0.5)
+                    left += left >> 1;
+                if (diff < -1.0)
+                    left += left;
+                else
+                    left += left << 1;
             }
         }
         if (left > 0) {
-            usleep(left);
+            usleep(left >> 1);
         }
     }
 

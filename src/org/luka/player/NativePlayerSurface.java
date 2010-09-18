@@ -43,9 +43,9 @@ public class NativePlayerSurface extends SurfaceView implements
 
 	// ----------------
 
-	public int open(String file) {
-		return mPlayer.open(file);
-	}
+    public int open(String file) {
+        return mPlayer.open(file);
+    }
 
 	public void close() {
 		mPlayer.close();

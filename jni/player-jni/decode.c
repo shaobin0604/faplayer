@@ -7,6 +7,7 @@
 #include <pthread.h>
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+#include <math.h>
 
 #define MAX_PICTURE 30
 #define MAX_SAMPLES 30
@@ -60,7 +61,7 @@ static void* video_decode_thread(void* para) {
     int err, got, has;
     AVPacket* pkt;
     Picture *pic;
-    int64_t bgn, end;
+    static int index = 0;
 
     pkt = 0;
     pic = 0;
@@ -74,21 +75,28 @@ static void* video_decode_thread(void* para) {
         }
         pkt = video_packet_queue_pop_tail();
         if (pkt) {
-            bgn = av_gettime();
+            // TODO: some frames can't be dropped!!!
+            if (!gCtx->skip_count) {
+                gCtx->video_ctx->flags &= (~CODEC_FLAG_LOW_DELAY);
+                gCtx->video_ctx->skip_frame = AVDISCARD_DEFAULT;
+            }
+            if (gCtx->skip_count > 0) {
+                gCtx->skip_count--;
+                gCtx->video_ctx->flags |= CODEC_FLAG_LOW_DELAY;
+                gCtx->video_ctx->skip_frame = gCtx->skip_level;
+            }
             err = avcodec_decode_video2(gCtx->video_ctx, gCtx->frame, &got, pkt);
-            end = av_gettime();
             if (err < 0) {
                 debug("avcodec_decode_video2 fail: %d\n", err);
                 goto next;
             }
             if (got) {
-                //debug("avcodec_decode_video2 time: %lld", end - bgn);
+                index++;
                 pic = av_malloc(sizeof(Picture));
                 if (!pic)
                     goto next;
                 err = avpicture_alloc(&pic->picture, gCtx->video_ctx->pix_fmt, gCtx->video_ctx->width, gCtx->video_ctx->height);
                 if (err < 0) {
-                    debug("drop frame due to avpicture_alloc fail\n");
                     av_free(pic);
                     goto next;
                 }
@@ -125,6 +133,10 @@ static void* subtitle_decode_thread(void* para) {
 }
 
 int decode_init() {
+    int policy, priority;
+    pthread_attr_t attr;
+    struct sched_param para;
+
     if (!gCtx || adtid || vdtid || sdtid)
         return -1;
 
@@ -134,12 +146,36 @@ int decode_init() {
     vdtid = 0;
     sdtid = 0;
 
-    if (gCtx->video_enabled)
-        pthread_create(&vdtid, 0, video_decode_thread, 0);
+    if (gCtx->audio_enabled) {
+        pthread_attr_init(&attr);
+        pthread_attr_getschedpolicy(&attr, &policy);
+        if (policy != SCHED_RR) {
+            policy = SCHED_RR;
+            pthread_attr_setschedpolicy(&attr, policy);
+        }
+        priority = sched_get_priority_max(policy);
+        priority = priority ? 60 : 0;
+        para.sched_priority = priority;
+        pthread_attr_setschedparam(&attr, &para);
+        pthread_create(&adtid, 0, audio_decode_thread, 0);
+        pthread_attr_destroy(&attr);
+    }
+    if (gCtx->video_enabled) {
+        pthread_attr_init(&attr);
+        pthread_attr_getschedpolicy(&attr, &policy);
+        if (policy != SCHED_RR) {
+            policy = SCHED_RR;
+            pthread_attr_setschedpolicy(&attr, policy);
+        }
+        priority = sched_get_priority_max(policy);
+        priority = priority ? 90 : 0;
+        para.sched_priority = priority;
+        pthread_attr_setschedparam(&attr, &para);
+        pthread_create(&vdtid, &attr, video_decode_thread, 0);
+        pthread_attr_destroy(&attr);
+    }
     if (gCtx->subtitle_enabled)
         pthread_create(&sdtid, 0, subtitle_decode_thread, 0);
-    if (gCtx->audio_enabled)
-        pthread_create(&adtid, 0, audio_decode_thread, 0);
 
 	return 0;
 }

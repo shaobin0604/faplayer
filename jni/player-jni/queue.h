@@ -65,7 +65,7 @@ void free_Samples(void* data);
     TYPE* NAME##_pop_head(); \
     TYPE* NAME##_pop_tail(); \
     int NAME##_size(); \
-    void NAME##_abort(void (*func)(void*)); \
+    void NAME##_abort(); \
     void NAME##_wake();
 
 #define IMPLEMENT_QUEUE(NAME, TYPE) \
@@ -105,10 +105,10 @@ void free_Samples(void* data);
             return -1; \
         return q_size(NAME); \
     } \
-    void NAME##_abort(void (*func)(void*)) { \
+    void NAME##_abort() { \
         if (!NAME) \
             return; \
-        q_abort(NAME, func); \
+        q_abort(NAME, free_##TYPE); \
     } \
     void NAME##_wake() { \
         if (!NAME) \
