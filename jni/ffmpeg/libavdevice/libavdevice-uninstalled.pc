@@ -8,5 +8,5 @@ Description: FFmpeg device handling library
 Version: 52.2.2
 Requires: libavformat = 52.78.5
 Conflicts:
-Libs: ${libdir}/libavdevice.a -ldl -lm -pthread -lz 
+Libs: ${libdir}/libavdevice.a -lm -pthread -lz 
 Cflags: -I${includedir}

@@ -1,4 +1,4 @@
-# ./configure --enable-cross-compile --cross-prefix=arm-none-linux-gnueabi- --sysinclude=/opt/android-ndk-r4b/build/platforms/android-4/arch-arm/usr/include --arch=armv6j --cpu=arm1136jf-s --target-os=linux --enable-pic
+# ./configure --disable-encoders --disable-muxers --enable-cross-compile --cross-prefix=arm-none-linux-gnueabi- --arch=armv6j --cpu=arm1136j-s --target-os=linux --enable-pic
 ACODEC_TESTS='ac3_test
 adpcm_ima_qt_test
 adpcm_ima_wav_test
@@ -321,7 +321,7 @@ CONFIG_LIST='
     x11grab
     zlib
 '
-DBUS_SESSION_BUS_ADDRESS='unix:abstract=/tmp/dbus-pcK0TQDzPK,guid=0918140ab372d2006c3de25b4c9017bf'
+DBUS_SESSION_BUS_ADDRESS='unix:abstract=/tmp/dbus-CGpk6wKFCm,guid=993abca0f1de30e90f344b924c957aa5'
 DECODER_LIST='aasc_decoder
 amv_decoder
 anm_decoder
@@ -846,7 +846,7 @@ libvpx_encoder
 libx264_encoder
 libxavs_encoder
 libxvid_encoder'
-FFMPEG_CONFIGURATION='--enable-cross-compile --cross-prefix=arm-none-linux-gnueabi- --sysinclude=/opt/android-ndk-r4b/build/platforms/android-4/arch-arm/usr/include --arch=armv6j --cpu=arm1136jf-s --target-os=linux --enable-pic'
+FFMPEG_CONFIGURATION='--disable-encoders --disable-muxers --enable-cross-compile --cross-prefix=arm-none-linux-gnueabi- --arch=armv6j --cpu=arm1136j-s --target-os=linux --enable-pic'
 FFSERVERLDFLAGS='-Wl,-E'
 FILTER_LIST='anull_filter
 aspect_filter
@@ -873,8 +873,8 @@ GDMSESSION='gnome'
 GDM_KEYBOARD_LAYOUT='us'
 GDM_LANG='zh_TW.utf8'
 GNOME_DESKTOP_SESSION_ID='this-is-deprecated'
-GNOME_KEYRING_CONTROL='/tmp/keyring-7KvDGE'
-GNOME_KEYRING_PID='1827'
+GNOME_KEYRING_CONTROL='/tmp/keyring-jKWqJn'
+GNOME_KEYRING_PID='3894'
 GTK_IM_MODULE='ibus'
 GTK_MODULES='canberra-gtk-module'
 HAVE_LIST='
@@ -1222,7 +1222,7 @@ PATHS_LIST='
     prefix
     shlibdir
 '
-PPID='14527'
+PPID='18711'
 PROTOCOL_LIST='concat_protocol
 file_protocol
 gopher_protocol
@@ -1357,7 +1357,7 @@ seek_wmav2_asf_test
 seek_wmv1_avi_test
 seek_wmv2_avi_test
 seek_yuv_avi_test'
-SESSION_MANAGER='local/luka-laptop:@/tmp/.ICE-unix/1845,unix/luka-laptop:/tmp/.ICE-unix/1845'
+SESSION_MANAGER='local/luka-laptop:@/tmp/.ICE-unix/3912,unix/luka-laptop:/tmp/.ICE-unix/3912'
 SHELL='/bin/bash'
 SHFLAGS='-shared -Wl,-soname,$$(@F)'
 SHLVL='2'
@@ -1367,8 +1367,8 @@ SLIBNAME_WITH_VERSION='$(SLIBNAME).$(LIBVERSION)'
 SLIBPREF='lib'
 SLIBSUF='.so'
 SPEECHD_PORT='7560'
-SSH_AGENT_PID='1885'
-SSH_AUTH_SOCK='/tmp/ssh-iMaTws1845/agent.1845'
+SSH_AGENT_PID='3947'
+SSH_AUTH_SOCK='/tmp/ssh-zjUAkR3912/agent.3912'
 TERM='xterm'
 THREADS_LIST='
     pthreads
@@ -1416,21 +1416,17 @@ svq1_test
 wmv1_test
 wmv2_test
 yuv_test'
-WINDOWID='29360132'
-XAUTHORITY='/var/run/gdm/auth-for-luka-yhzbyR/database'
+WINDOWID='81804086'
+XAUTHORITY='/var/run/gdm/auth-for-luka-QrK6Qf/database'
 XDG_CONFIG_DIRS='/etc/xdg/xdg-gnome:/etc/xdg'
 XDG_DATA_DIRS='/usr/share/gnome:/usr/local/share/:/usr/share/'
-XDG_SESSION_COOKIE='316636d62ab18f4e7d07d25d4c515bef-1284511679.4086-173258268'
+XDG_SESSION_COOKIE='316636d62ab18f4e7d07d25d4c515bef-1284864677.245537-974224535'
 XMODIFIERS='@im=ibus'
 _='./configure'
-a64_muxer='yes'
-a64multi5_encoder='yes'
-a64multi_encoder='yes'
 aac_adtstoasc_bsf='yes'
 aac_decoder='yes'
 aac_decoder_select='mdct rdft'
 aac_demuxer='yes'
-aac_encoder='yes'
 aac_encoder_select='mdct'
 aac_parser='yes'
 aasc_decoder='yes'
@@ -1438,15 +1434,12 @@ ac3_decoder='yes'
 ac3_decoder_select='mdct ac3_parser'
 ac3_demuxer='yes'
 ac3_demuxer_deps='ac3_parser'
-ac3_encoder='yes'
-ac3_muxer='yes'
 ac3_parser='yes'
 ac3_test='yes'
 ac3_test_deps='ac3_encoder ac3_decoder'
 action='enable'
 adpcm_4xm_decoder='yes'
 adpcm_adx_decoder='yes'
-adpcm_adx_encoder='yes'
 adpcm_ct_decoder='yes'
 adpcm_ea_decoder='yes'
 adpcm_ea_maxis_xa_decoder='yes'
@@ -1456,7 +1449,6 @@ adpcm_ea_r3_decoder='yes'
 adpcm_ea_xas_decoder='yes'
 adpcm_g722_decoder='yes'
 adpcm_g726_decoder='yes'
-adpcm_g726_encoder='yes'
 adpcm_ima_amv_decoder='yes'
 adpcm_ima_dk3_decoder='yes'
 adpcm_ima_dk4_decoder='yes'
@@ -1464,24 +1456,20 @@ adpcm_ima_ea_eacs_decoder='yes'
 adpcm_ima_ea_sead_decoder='yes'
 adpcm_ima_iss_decoder='yes'
 adpcm_ima_qt_decoder='yes'
-adpcm_ima_qt_encoder='yes'
 adpcm_ima_qt_test='yes'
 adpcm_ima_qt_test_deps='adpcm_ima_qt_encoder adpcm_ima_qt_decoder'
 adpcm_ima_smjpeg_decoder='yes'
 adpcm_ima_wav_decoder='yes'
-adpcm_ima_wav_encoder='yes'
 adpcm_ima_wav_test='yes'
 adpcm_ima_wav_test_deps='adpcm_ima_wav_encoder adpcm_ima_wav_decoder'
 adpcm_ima_ws_decoder='yes'
 adpcm_ms_decoder='yes'
-adpcm_ms_encoder='yes'
 adpcm_ms_test='yes'
 adpcm_ms_test_deps='adpcm_ms_encoder adpcm_ms_decoder'
 adpcm_sbpro_2_decoder='yes'
 adpcm_sbpro_3_decoder='yes'
 adpcm_sbpro_4_decoder='yes'
 adpcm_swf_decoder='yes'
-adpcm_swf_encoder='yes'
 adpcm_swf_test='yes'
 adpcm_swf_test_deps='adpcm_swf_encoder adpcm_swf_decoder'
 adpcm_thp_decoder='yes'
@@ -1489,15 +1477,11 @@ adpcm_xa_decoder='yes'
 adpcm_yam_test='yes'
 adpcm_yam_test_deps='adpcm_yamaha_encoder adpcm_yamaha_decoder'
 adpcm_yamaha_decoder='yes'
-adpcm_yamaha_encoder='yes'
-adts_muxer='yes'
 aea_demuxer='yes'
 aiff_demuxer='yes'
-aiff_muxer='yes'
 aiff_test='yes'
 aiff_test_deps='aiff_muxer aiff_demuxer'
 alac_decoder='yes'
-alac_encoder='yes'
 alac_encoder_select='lpc'
 alac_test='yes'
 alac_test_deps='alac_encoder alac_decoder'
@@ -1515,7 +1499,6 @@ amd3dnow_deps='mmx'
 amd3dnowext='yes'
 amd3dnowext_deps='amd3dnow'
 amr_demuxer='yes'
-amr_muxer='yes'
 amrnb_decoder='yes'
 amrnb_decoder_select='lsp'
 amv_decoder='yes'
@@ -1539,21 +1522,16 @@ armv6t2_deps='arm'
 armvfp='yes'
 armvfp_deps='arm'
 asf_demuxer='yes'
-asf_muxer='yes'
-asf_stream_muxer='yes'
 asf_stream_muxer_select='asf_muxer'
 asf_test='yes'
 asf_test_deps='asf_muxer asf_demuxer'
 asm='yes'
 aspect_filter='yes'
 ass_demuxer='yes'
-ass_muxer='yes'
 asv1_decoder='yes'
-asv1_encoder='yes'
 asv1_test='yes'
 asv1_test_deps='asv1_encoder asv1_decoder'
 asv2_decoder='yes'
-asv2_encoder='yes'
 asv2_test='yes'
 asv2_test_deps='asv2_encoder asv2_decoder'
 atrac1_decoder='yes'
@@ -1561,7 +1539,6 @@ atrac1_decoder_select='mdct'
 atrac3_decoder='yes'
 atrac3_decoder_select='mdct'
 au_demuxer='yes'
-au_muxer='yes'
 au_test='yes'
 au_test_deps='au_muxer au_demuxer'
 aura2_decoder='yes'
@@ -1574,12 +1551,10 @@ avfilter='yes'
 avformat='yes'
 avformat_deps='avcodec'
 avi_demuxer='yes'
-avi_muxer='yes'
 avi_test='yes'
 avi_test_deps='avi_muxer avi_demuxer'
 avisynth_demuxer='yes'
 avisynth_demuxer_deps='avisynth'
-avm2_muxer='yes'
 avs_decoder='yes'
 avs_demuxer='yes'
 avutil='yes'
@@ -1597,7 +1572,6 @@ binkaudio_rdft_decoder_select='mdct rdft'
 bktr_indev='yes'
 bktr_indev_deps_any='dev_bktr_ioctl_bt848_h machine_ioctl_bt848_h dev_video_bktr_ioctl_bt848_h dev_ic_bt8xx_h'
 bmp_decoder='yes'
-bmp_encoder='yes'
 bmp_test='yes'
 bmp_test_deps='bmp_encoder bmp_decoder'
 bsfs_if_any='aac_adtstoasc_bsf
@@ -1619,7 +1593,6 @@ caf_demuxer='yes'
 cavs_decoder='yes'
 cavs_decoder_select='golomb'
 cavsvideo_demuxer='yes'
-cavsvideo_muxer='yes'
 cavsvideo_parser='yes'
 cc_default='gcc'
 cc_version='"unknown"'
@@ -1632,8 +1605,7 @@ color_filter='yes'
 concat_protocol='yes'
 cook_decoder='yes'
 cook_decoder_select='mdct'
-cpu='arm1136jf-s'
-crc_muxer='yes'
+cpu='arm1136j-s'
 crop_filter='yes'
 crop_scale_test='yes'
 crop_scale_vflip_test='yes'
@@ -1646,7 +1618,6 @@ cscd_decoder_suggest='zlib'
 cyuv_decoder='yes'
 datadir_default='${prefix}/share/ffmpeg'
 daud_demuxer='yes'
-daud_muxer='yes'
 dca_decoder='yes'
 dca_decoder_select='mdct'
 dca_parser='yes'
@@ -2067,7 +2038,6 @@ libnut_demuxer'
 dep='yuv4mpegpipe'
 dirac_demuxer='yes'
 dirac_demuxer_deps='dirac_parser'
-dirac_muxer='yes'
 dirac_parser='yes'
 dnxhd_1080i_test='yes'
 dnxhd_1080i_test_deps='dnxhd_encoder dnxhd_decoder'
@@ -2077,9 +2047,7 @@ dnxhd_720p_test='yes'
 dnxhd_720p_test_deps='dnxhd_encoder dnxhd_decoder'
 dnxhd_decoder='yes'
 dnxhd_demuxer='yes'
-dnxhd_encoder='yes'
 dnxhd_encoder_select='aandct'
-dnxhd_muxer='yes'
 dnxhd_parser='yes'
 doc='yes'
 doc_deps='texi2html'
@@ -2088,7 +2056,6 @@ dsicin_demuxer='yes'
 dsicinaudio_decoder='yes'
 dsicinvideo_decoder='yes'
 dts_demuxer='yes'
-dts_muxer='yes'
 dump_extradata_bsf='yes'
 dv1394_indev='yes'
 dv1394_indev_deps='dv1394 dv_demuxer'
@@ -2097,17 +2064,13 @@ dv50_test_deps='dvvideo_encoder dvvideo_decoder'
 dv_demuxer='yes'
 dv_fmt_test='yes'
 dv_fmt_test_deps='dv_muxer dv_demuxer'
-dv_muxer='yes'
 dv_test='yes'
 dv_test_deps='dvvideo_encoder dvvideo_decoder'
 dvbsub_decoder='yes'
-dvbsub_encoder='yes'
 dvbsub_parser='yes'
 dvdsub_decoder='yes'
-dvdsub_encoder='yes'
 dvdsub_parser='yes'
 dvvideo_decoder='yes'
-dvvideo_encoder='yes'
 dxa_decoder='yes'
 dxa_decoder_select='zlib'
 dxa_demuxer='yes'
@@ -2117,7 +2080,6 @@ eac3_decoder='yes'
 eac3_decoder_select='ac3_decoder'
 eac3_demuxer='yes'
 eac3_demuxer_select='ac3_parser'
-eac3_muxer='yes'
 eacmv_decoder='yes'
 eamad_decoder='yes'
 eamad_decoder_select='aandct'
@@ -2242,7 +2204,6 @@ fast_clz_if_any='alpha armv5te avr32 mips ppc x86'
 fast_unaligned_if_any='armv6 ppc x86'
 fastdiv='yes'
 ffm_demuxer='yes'
-ffm_muxer='yes'
 ffm_test='yes'
 ffm_test_deps='ffm_muxer ffm_demuxer'
 ffmpeg='yes'
@@ -2258,15 +2219,12 @@ ffserver_deps='avformat ffm_muxer rtp_protocol rtsp_demuxer'
 ffserver_extralibs='$ldl'
 ffv1_decoder='yes'
 ffv1_decoder_select='golomb'
-ffv1_encoder='yes'
 ffv1_test='yes'
 ffv1_test_deps='ffv1_encoder ffv1_decoder'
 ffvhuff_decoder='yes'
-ffvhuff_encoder='yes'
 fifo_filter='yes'
 file_protocol='yes'
 filmstrip_demuxer='yes'
-filmstrip_muxer='yes'
 filters_if_any='anull_filter
 aspect_filter
 crop_filter
@@ -2290,14 +2248,11 @@ nullsink_filter'
 flac_decoder='yes'
 flac_decoder_select='golomb'
 flac_demuxer='yes'
-flac_encoder='yes'
 flac_encoder_select='golomb lpc'
-flac_muxer='yes'
 flac_test='yes'
 flac_test_deps='flac_encoder flac_decoder'
 flashsv_decoder='yes'
 flashsv_decoder_select='zlib'
-flashsv_encoder='yes'
 flashsv_encoder_select='zlib'
 flashsv_test='yes'
 flashsv_test_deps='flashsv_encoder flashsv_decoder'
@@ -2306,28 +2261,21 @@ flic_demuxer='yes'
 flv_decoder='yes'
 flv_decoder_select='h263_decoder'
 flv_demuxer='yes'
-flv_encoder='yes'
 flv_encoder_select='h263_encoder'
 flv_fmt_test='yes'
 flv_fmt_test_deps='flv_muxer flv_demuxer'
-flv_muxer='yes'
 flv_test='yes'
 flv_test_deps='flv_encoder flv_decoder'
 format_filter='yes'
 fourxm_decoder='yes'
 fourxm_demuxer='yes'
-framecrc_muxer='yes'
-framemd5_muxer='yes'
 fraps_decoder='yes'
 fraps_decoder_select='huffman'
 frwu_decoder='yes'
 g722_demuxer='yes'
-g722_muxer='yes'
 g726_test='yes'
 g726_test_deps='adpcm_g726_encoder adpcm_g726_decoder'
 gif_decoder='yes'
-gif_encoder='yes'
-gif_muxer='yes'
 gif_test='yes'
 gif_test_deps='gif_encoder gif_decoder'
 gopher_protocol='yes'
@@ -2336,23 +2284,18 @@ gsm_decoder='yes'
 gsm_demuxer='yes'
 gsm_ms_decoder='yes'
 gxf_demuxer='yes'
-gxf_muxer='yes'
 gxf_test='yes'
 gxf_test_deps='gxf_muxer gxf_demuxer'
 h261_decoder='yes'
 h261_demuxer='yes'
-h261_encoder='yes'
 h261_encoder_select='aandct'
-h261_muxer='yes'
 h261_parser='yes'
 h261_test='yes'
 h261_test_deps='h261_encoder h261_decoder'
 h263_decoder='yes'
 h263_decoder_select='h263_parser'
 h263_demuxer='yes'
-h263_encoder='yes'
 h263_encoder_select='aandct'
-h263_muxer='yes'
 h263_parser='yes'
 h263_test='yes'
 h263_test_deps='h263_encoder h263_decoder'
@@ -2360,7 +2303,6 @@ h263_vaapi_hwaccel='yes'
 h263_vaapi_hwaccel_select='vaapi h263_decoder'
 h263i_decoder='yes'
 h263i_decoder_select='h263_decoder'
-h263p_encoder='yes'
 h263p_encoder_select='h263_encoder'
 h263p_test='yes'
 h263p_test_deps='h263_encoder h263_decoder'
@@ -2371,7 +2313,6 @@ h264_dxva2_hwaccel='yes'
 h264_dxva2_hwaccel_deps='dxva2api_h'
 h264_dxva2_hwaccel_select='dxva2 h264_decoder'
 h264_mp4toannexb_bsf='yes'
-h264_muxer='yes'
 h264_parser='yes'
 h264_parser_select='golomb h264dsp h264pred'
 h264_vaapi_hwaccel='yes'
@@ -2387,7 +2328,6 @@ http_protocol='yes'
 http_protocol_deps='network'
 http_protocol_select='tcp_protocol'
 huffyuv_decoder='yes'
-huffyuv_encoder='yes'
 huffyuv_test='yes'
 huffyuv_test_deps='huffyuv_encoder huffyuv_decoder'
 hwaccels_if_any='h263_vaapi_hwaccel
@@ -2406,9 +2346,7 @@ iff_byterun1_decoder='yes'
 iff_demuxer='yes'
 iff_ilbm_decoder='yes'
 image2_demuxer='yes'
-image2_muxer='yes'
 image2pipe_demuxer='yes'
-image2pipe_muxer='yes'
 imc_decoder='yes'
 imc_decoder_select='fft mdct'
 imx_dump_header_bsf='yes'
@@ -2431,7 +2369,6 @@ inline_asm_deps='!tms470'
 interplay_dpcm_decoder='yes'
 interplay_video_decoder='yes'
 ipmovie_demuxer='yes'
-ipod_muxer='yes'
 ipod_muxer_select='mov_muxer'
 iss_demuxer='yes'
 iv8_demuxer='yes'
@@ -2442,7 +2379,6 @@ jack_indev='yes'
 jack_indev_deps='jack_jack_h'
 jpegls_decoder='yes'
 jpegls_decoder_select='golomb'
-jpegls_encoder='yes'
 jpegls_encoder_select='golomb'
 jpegls_test='yes'
 jpegls_test_deps='jpegls_encoder jpegls_decoder'
@@ -2456,27 +2392,20 @@ libdc1394_indev_deps='libdc1394'
 libdir_default='${prefix}/lib'
 libdirac_decoder='yes'
 libdirac_decoder_deps='libdirac !libschroedinger'
-libdirac_encoder='yes'
 libdirac_encoder_deps='libdirac'
-libfaac_encoder='yes'
 libfaac_encoder_deps='libfaac'
 libgsm_decoder='yes'
 libgsm_decoder_deps='libgsm'
-libgsm_encoder='yes'
 libgsm_encoder_deps='libgsm'
 libgsm_ms_decoder='yes'
 libgsm_ms_decoder_deps='libgsm'
-libgsm_ms_encoder='yes'
 libgsm_ms_encoder_deps='libgsm'
-libmp3lame_encoder='yes'
 libmp3lame_encoder_deps='libmp3lame'
 libnut_demuxer='yes'
 libnut_demuxer_deps='libnut'
-libnut_muxer='yes'
 libnut_muxer_deps='libnut'
 libopencore_amrnb_decoder='yes'
 libopencore_amrnb_decoder_deps='libopencore_amrnb'
-libopencore_amrnb_encoder='yes'
 libopencore_amrnb_encoder_deps='libopencore_amrnb'
 libopencore_amrwb_decoder='yes'
 libopencore_amrwb_decoder_deps='libopencore_amrwb'
@@ -2484,25 +2413,17 @@ libopenjpeg_decoder='yes'
 libopenjpeg_decoder_deps='libopenjpeg'
 libschroedinger_decoder='yes'
 libschroedinger_decoder_deps='libschroedinger'
-libschroedinger_encoder='yes'
 libschroedinger_encoder_deps='libschroedinger'
 libspeex_decoder='yes'
 libspeex_decoder_deps='libspeex'
-libtheora_encoder='yes'
 libtheora_encoder_deps='libtheora'
-libvorbis_encoder='yes'
 libvorbis_encoder_deps='libvorbis'
 libvpx_decoder='yes'
 libvpx_decoder_deps='libvpx'
-libvpx_encoder='yes'
 libvpx_encoder_deps='libvpx'
-libx264_encoder='yes'
 libx264_encoder_deps='libx264'
-libxavs_encoder='yes'
 libxavs_encoder_deps='libxavs'
-libxvid_encoder='yes'
 libxvid_encoder_deps='libxvid'
-ljpeg_encoder='yes'
 ljpeg_encoder_select='aandct'
 ljpeg_test='yes'
 ljpeg_test_deps='mjpeg_encoder mjpeg_decoder'
@@ -2512,25 +2433,19 @@ loco_decoder='yes'
 loco_decoder_select='golomb'
 logfile='config.log'
 m4v_demuxer='yes'
-m4v_muxer='yes'
 mace3_decoder='yes'
 mace6_decoder='yes'
 mandir_default='${prefix}/share/man'
-matroska_audio_muxer='yes'
 matroska_audio_muxer_select='matroska_muxer'
 matroska_demuxer='yes'
 matroska_demuxer_suggest='zlib bzlib'
-matroska_muxer='yes'
-md5_muxer='yes'
 md5_protocol='yes'
 mdct_select='fft'
 mdec_decoder='yes'
 mimic_decoder='yes'
 mjpeg_decoder='yes'
 mjpeg_demuxer='yes'
-mjpeg_encoder='yes'
 mjpeg_encoder_select='aandct'
-mjpeg_muxer='yes'
 mjpeg_parser='yes'
 mjpeg_test='yes'
 mjpeg_test_deps='mjpeg_encoder mjpeg_decoder'
@@ -2541,11 +2456,9 @@ mkv_test_deps='matroska_muxer matroska_demuxer'
 mlp_decoder='yes'
 mlp_decoder_select='mlp_parser'
 mlp_demuxer='yes'
-mlp_muxer='yes'
 mlp_parser='yes'
 mm_demuxer='yes'
 mmf_demuxer='yes'
-mmf_muxer='yes'
 mmf_test='yes'
 mmf_test_deps='mmf_muxer mmf_demuxer'
 mmi='yes'
@@ -2563,15 +2476,12 @@ motionpixels_decoder='yes'
 mov2textsub_bsf='yes'
 mov_demuxer='yes'
 mov_demuxer_suggest='zlib'
-mov_muxer='yes'
 mov_test='yes'
 mov_test_deps='mov_muxer mov_demuxer'
 mp1_decoder='yes'
 mp1float_decoder='yes'
 mp1float_decoder_select='dct'
 mp2_decoder='yes'
-mp2_encoder='yes'
-mp2_muxer='yes'
 mp2_test='yes'
 mp2_test_deps='mp2_encoder mp2_decoder'
 mp2float_decoder='yes'
@@ -2581,7 +2491,6 @@ mp3_demuxer='yes'
 mp3_demuxer_deps='mpegaudio_parser'
 mp3_header_compress_bsf='yes'
 mp3_header_decompress_bsf='yes'
-mp3_muxer='yes'
 mp3adu_decoder='yes'
 mp3adufloat_decoder='yes'
 mp3adufloat_decoder_select='dct'
@@ -2590,7 +2499,6 @@ mp3float_decoder_select='dct'
 mp3on4_decoder='yes'
 mp3on4float_decoder='yes'
 mp3on4float_decoder_select='dct'
-mp4_muxer='yes'
 mp4_muxer_select='mov_muxer'
 mpc7_decoder='yes'
 mpc8_decoder='yes'
@@ -2600,12 +2508,8 @@ mpeg1_vdpau_decoder='yes'
 mpeg1_vdpau_decoder_select='vdpau mpeg1video_decoder'
 mpeg1b_test='yes'
 mpeg1b_test_deps='mpeg1video_encoder mpeg1video_decoder'
-mpeg1system_muxer='yes'
-mpeg1vcd_muxer='yes'
 mpeg1video_decoder='yes'
-mpeg1video_encoder='yes'
 mpeg1video_encoder_select='aandct'
-mpeg1video_muxer='yes'
 mpeg2_dxva2_hwaccel='yes'
 mpeg2_dxva2_hwaccel_deps='dxva2api_h'
 mpeg2_dxva2_hwaccel_select='dxva2 mpeg2video_decoder'
@@ -2613,18 +2517,12 @@ mpeg2_test='yes'
 mpeg2_test_deps='mpeg2video_encoder mpeg2video_decoder'
 mpeg2_vaapi_hwaccel='yes'
 mpeg2_vaapi_hwaccel_select='vaapi mpeg2video_decoder'
-mpeg2dvd_muxer='yes'
-mpeg2svcd_muxer='yes'
 mpeg2thread_test='yes'
 mpeg2thread_test_deps='mpeg2video_encoder mpeg2video_decoder'
 mpeg2video_decoder='yes'
-mpeg2video_encoder='yes'
 mpeg2video_encoder_select='aandct'
-mpeg2video_muxer='yes'
-mpeg2vob_muxer='yes'
 mpeg4_decoder='yes'
 mpeg4_decoder_select='h263_decoder mpeg4video_parser'
-mpeg4_encoder='yes'
 mpeg4_encoder_select='h263_encoder'
 mpeg4_test='yes'
 mpeg4_test_deps='mpeg4_encoder mpeg4_decoder'
@@ -2650,7 +2548,6 @@ mpegaudio_hp='yes'
 mpegaudio_parser='yes'
 mpegps_demuxer='yes'
 mpegts_demuxer='yes'
-mpegts_muxer='yes'
 mpegtsraw_demuxer='yes'
 mpegtsraw_demuxer_select='mpegts_demuxer'
 mpegvideo_decoder='yes'
@@ -2658,22 +2555,18 @@ mpegvideo_demuxer='yes'
 mpegvideo_parser='yes'
 mpg_test='yes'
 mpg_test_deps='mpeg1system_muxer mpegps_demuxer'
-mpjpeg_muxer='yes'
 msmpeg4_test='yes'
 msmpeg4_test_deps='msmpeg4v3_encoder msmpeg4v3_decoder'
 msmpeg4v1_decoder='yes'
 msmpeg4v1_decoder_select='h263_decoder'
-msmpeg4v1_encoder='yes'
 msmpeg4v1_encoder_select='h263_encoder'
 msmpeg4v2_decoder='yes'
 msmpeg4v2_decoder_select='h263_decoder'
-msmpeg4v2_encoder='yes'
 msmpeg4v2_encoder_select='h263_encoder'
 msmpeg4v2_test='yes'
 msmpeg4v2_test_deps='msmpeg4v2_encoder msmpeg4v2_decoder'
 msmpeg4v3_decoder='yes'
 msmpeg4v3_decoder_select='h263_decoder'
-msmpeg4v3_encoder='yes'
 msmpeg4v3_encoder_select='h263_encoder'
 msnwc_tcp_demuxer='yes'
 msrle_decoder='yes'
@@ -2782,10 +2675,8 @@ webm_muxer
 yuv4mpegpipe_muxer
 libnut_muxer'
 mvi_demuxer='yes'
-mxf_d10_muxer='yes'
 mxf_d10_muxer_select='mxf_muxer'
 mxf_demuxer='yes'
-mxf_muxer='yes'
 mxf_test='yes'
 mxf_test_deps='mxf_muxer mxf_demuxer'
 n='protocols'
@@ -2794,7 +2685,6 @@ nc_demuxer='yes'
 need_memalign='altivec neon sse'
 nellymoser_decoder='yes'
 nellymoser_decoder_select='mdct'
-nellymoser_encoder='yes'
 nellymoser_encoder_select='mdct'
 neon='yes'
 neon_deps='arm'
@@ -2806,12 +2696,10 @@ nogas=':'
 noise_bsf='yes'
 nsv_demuxer='yes'
 null_filter='yes'
-null_muxer='yes'
 null_test='yes'
 nullsink_filter='yes'
 nullsrc_filter='yes'
 nut_demuxer='yes'
-nut_muxer='yes'
 nut_test='yes'
 nut_test_deps='nut_muxer nut_demuxer'
 nuv_decoder='yes'
@@ -2821,7 +2709,6 @@ ocv_smooth_filter='yes'
 ocv_smooth_filter_deps='libopencv'
 ogg_demuxer='yes'
 ogg_demuxer_select='golomb'
-ogg_muxer='yes'
 ogg_test='yes'
 ogg_test_deps='ogg_muxer ogg_demuxer'
 oma_demuxer='yes'
@@ -2839,7 +2726,6 @@ outdevs_if_any='alsa_outdev
 oss_outdev'
 pad_filter='yes'
 pam_decoder='yes'
-pam_encoder='yes'
 parsers_if_any='aac_parser
 ac3_parser
 cavsvideo_parser
@@ -2861,66 +2747,38 @@ vc1_parser
 vp3_parser
 vp8_parser'
 pbm_decoder='yes'
-pbm_encoder='yes'
 pbmpipe_test='yes'
 pbmpipe_test_deps='pbm_encoder pbm_decoder'
 pcm_alaw_decoder='yes'
 pcm_alaw_demuxer='yes'
-pcm_alaw_encoder='yes'
-pcm_alaw_muxer='yes'
 pcm_bluray_decoder='yes'
 pcm_dvd_decoder='yes'
 pcm_f32be_decoder='yes'
 pcm_f32be_demuxer='yes'
-pcm_f32be_encoder='yes'
-pcm_f32be_muxer='yes'
 pcm_f32le_decoder='yes'
 pcm_f32le_demuxer='yes'
-pcm_f32le_encoder='yes'
-pcm_f32le_muxer='yes'
 pcm_f64be_decoder='yes'
 pcm_f64be_demuxer='yes'
-pcm_f64be_encoder='yes'
-pcm_f64be_muxer='yes'
 pcm_f64le_decoder='yes'
 pcm_f64le_demuxer='yes'
-pcm_f64le_encoder='yes'
-pcm_f64le_muxer='yes'
 pcm_mulaw_decoder='yes'
 pcm_mulaw_demuxer='yes'
-pcm_mulaw_encoder='yes'
-pcm_mulaw_muxer='yes'
 pcm_s16be_decoder='yes'
 pcm_s16be_demuxer='yes'
-pcm_s16be_encoder='yes'
-pcm_s16be_muxer='yes'
 pcm_s16le_decoder='yes'
 pcm_s16le_demuxer='yes'
-pcm_s16le_encoder='yes'
-pcm_s16le_muxer='yes'
 pcm_s16le_planar_decoder='yes'
 pcm_s24be_decoder='yes'
 pcm_s24be_demuxer='yes'
-pcm_s24be_encoder='yes'
-pcm_s24be_muxer='yes'
 pcm_s24daud_decoder='yes'
-pcm_s24daud_encoder='yes'
 pcm_s24le_decoder='yes'
 pcm_s24le_demuxer='yes'
-pcm_s24le_encoder='yes'
-pcm_s24le_muxer='yes'
 pcm_s32be_decoder='yes'
 pcm_s32be_demuxer='yes'
-pcm_s32be_encoder='yes'
-pcm_s32be_muxer='yes'
 pcm_s32le_decoder='yes'
 pcm_s32le_demuxer='yes'
-pcm_s32le_encoder='yes'
-pcm_s32le_muxer='yes'
 pcm_s8_decoder='yes'
 pcm_s8_demuxer='yes'
-pcm_s8_encoder='yes'
-pcm_s8_muxer='yes'
 pcm_test='yes'
 pcm_test_deps='pcm_alaw_decoder pcm_alaw_encoder
 pcm_f32be_decoder pcm_f32be_encoder
@@ -2946,46 +2804,28 @@ pcm_u32le_decoder pcm_u32le_encoder
 pcm_zork_decoder pcm_zork_encoder'
 pcm_u16be_decoder='yes'
 pcm_u16be_demuxer='yes'
-pcm_u16be_encoder='yes'
-pcm_u16be_muxer='yes'
 pcm_u16le_decoder='yes'
 pcm_u16le_demuxer='yes'
-pcm_u16le_encoder='yes'
-pcm_u16le_muxer='yes'
 pcm_u24be_decoder='yes'
 pcm_u24be_demuxer='yes'
-pcm_u24be_encoder='yes'
-pcm_u24be_muxer='yes'
 pcm_u24le_decoder='yes'
 pcm_u24le_demuxer='yes'
-pcm_u24le_encoder='yes'
-pcm_u24le_muxer='yes'
 pcm_u32be_decoder='yes'
 pcm_u32be_demuxer='yes'
-pcm_u32be_encoder='yes'
-pcm_u32be_muxer='yes'
 pcm_u32le_decoder='yes'
 pcm_u32le_demuxer='yes'
-pcm_u32le_encoder='yes'
-pcm_u32le_muxer='yes'
 pcm_u8_decoder='yes'
 pcm_u8_demuxer='yes'
-pcm_u8_encoder='yes'
-pcm_u8_muxer='yes'
 pcm_zork_decoder='yes'
-pcm_zork_encoder='yes'
 pcx_decoder='yes'
-pcx_encoder='yes'
 pcx_test='yes'
 pcx_test_deps='pcx_encoder pcx_decoder'
 pgm_decoder='yes'
-pgm_encoder='yes'
 pgm_test='yes'
 pgm_test_deps='pgm_encoder pgm_decoder'
 pgmpipe_test='yes'
 pgmpipe_test_deps='pgm_encoder pgm_decoder'
 pgmyuv_decoder='yes'
-pgmyuv_encoder='yes'
 pgssub_decoder='yes'
 pic='yes'
 pictor_decoder='yes'
@@ -3018,14 +2858,12 @@ pixfmts_vflip_le_test='yes'
 pixfmts_vflip_le_test_deps='!bigendian'
 png_decoder='yes'
 png_decoder_select='zlib'
-png_encoder='yes'
 png_encoder_select='zlib'
 png_test='yes'
 pnm_parser='yes'
 ppc4xx='yes'
 ppc4xx_deps='ppc'
 ppm_decoder='yes'
-ppm_encoder='yes'
 ppm_test='yes'
 ppm_test_deps='ppm_encoder ppm_decoder'
 ppmpipe_test='yes'
@@ -3048,7 +2886,6 @@ rtmps_protocol
 rtp_protocol
 tcp_protocol
 udp_protocol'
-psp_muxer='yes'
 psp_muxer_select='mov_muxer'
 ptx_decoder='yes'
 pva_demuxer='yes'
@@ -3060,7 +2897,6 @@ qdm2_decoder_select='mdct rdft'
 qdraw_decoder='yes'
 qpeg_decoder='yes'
 qtrle_decoder='yes'
-qtrle_encoder='yes'
 qtrle_test='yes'
 quotes='""'
 r='--enable-pic'
@@ -3068,14 +2904,11 @@ r10k_decoder='yes'
 r210_decoder='yes'
 r3d_demuxer='yes'
 ra_144_decoder='yes'
-ra_144_encoder='yes'
 ra_144_encoder_select='lpc'
 ra_288_decoder='yes'
 ranlib='ranlib'
 rawvideo_decoder='yes'
 rawvideo_demuxer='yes'
-rawvideo_encoder='yes'
-rawvideo_muxer='yes'
 rc_test='yes'
 rc_test_deps='mpeg4_encoder mpeg4_decoder'
 rdft_select='fft'
@@ -3085,44 +2918,35 @@ rgb_test_deps='rawvideo_encoder rawvideo_decoder'
 rl2_decoder='yes'
 rl2_demuxer='yes'
 rm_demuxer='yes'
-rm_muxer='yes'
 rm_test='yes'
 rm_test_deps='rm_muxer rm_demuxer'
 roq_decoder='yes'
 roq_demuxer='yes'
 roq_dpcm_decoder='yes'
-roq_dpcm_encoder='yes'
-roq_encoder='yes'
-roq_muxer='yes'
 roq_test='yes'
 roq_test_deps='roq_encoder roq_decoder'
 rpl_demuxer='yes'
 rpza_decoder='yes'
 rso_demuxer='yes'
-rso_muxer='yes'
 rtmp_protocol='yes'
 rtmp_protocol_select='tcp_protocol'
 rtmpe_protocol='yes'
 rtmps_protocol='yes'
 rtmpt_protocol='yes'
 rtmpte_protocol='yes'
-rtp_muxer='yes'
 rtp_protocol='yes'
 rtp_protocol_select='udp_protocol'
 rtsp_demuxer='yes'
 rtsp_demuxer_deps='sdp_demuxer'
-rtsp_muxer='yes'
 rtsp_muxer_deps='sdp_demuxer'
 rtsp_muxer_select='rtp_muxer'
 rv10_decoder='yes'
 rv10_decoder_select='h263_decoder'
-rv10_encoder='yes'
 rv10_encoder_select='h263_encoder'
 rv10_test='yes'
 rv10_test_deps='rv10_encoder rv10_decoder'
 rv20_decoder='yes'
 rv20_decoder_select='h263_decoder'
-rv20_encoder='yes'
 rv20_encoder_select='h263_encoder'
 rv20_test='yes'
 rv20_test_deps='rv20_encoder rv20_decoder'
@@ -3251,7 +3075,6 @@ seek_wmv2_avi_test='yes'
 seek_yuv_avi_test='yes'
 segafilm_demuxer='yes'
 sgi_decoder='yes'
-sgi_encoder='yes'
 sgi_test='yes'
 sgi_test_deps='sgi_encoder sgi_decoder'
 shlibdir_default='${prefix}/lib'
@@ -3268,7 +3091,6 @@ smacker_demuxer='yes'
 smc_decoder='yes'
 snow_decoder='yes'
 snow_decoder_select='dwt'
-snow_encoder='yes'
 snow_encoder_select='aandct dwt'
 snow_test='yes'
 snow_test_deps='snow_encoder snow_decoder'
@@ -3278,19 +3100,14 @@ sol_demuxer='yes'
 sol_dpcm_decoder='yes'
 sonic_decoder='yes'
 sonic_decoder_select='golomb'
-sonic_encoder='yes'
 sonic_encoder_select='golomb'
-sonic_ls_encoder='yes'
 sonic_ls_encoder_select='golomb'
 source_path='/home/luka/Workspace/!/DemoPlayer/jni/ffmpeg'
 source_path_used='no'
 sox_demuxer='yes'
-sox_muxer='yes'
 sp5x_decoder='yes'
-spdif_muxer='yes'
 spdif_muxer_select='aac_parser'
 srt_demuxer='yes'
-srt_muxer='yes'
 sse='yes'
 sse_deps='mmx'
 ssse3='yes'
@@ -3303,7 +3120,6 @@ suf1='_muxer'
 suf2='_demuxer'
 sunrast_decoder='yes'
 svq1_decoder='yes'
-svq1_encoder='yes'
 svq1_encoder_select='aandct'
 svq1_test='yes'
 svq1_test_deps='svq1_encoder svq1_decoder'
@@ -3311,15 +3127,12 @@ svq3_decoder='yes'
 svq3_decoder_select='golomb h264dsp h264pred'
 svq3_decoder_suggest='zlib'
 swf_demuxer='yes'
-swf_muxer='yes'
 swf_test='yes'
 swf_test_deps='swf_muxer swf_demuxer'
 swscale='yes'
 swscale_alpha='yes'
 symver_if_any='symver_asm_label symver_gnu_asm'
-sysinclude='/opt/android-ndk-r4b/build/platforms/android-4/arch-arm/usr/include'
 targa_decoder='yes'
-targa_encoder='yes'
 target_os='linux'
 target_os_default='linux'
 target_path='$(CURDIR)'
@@ -3327,11 +3140,9 @@ tcp_protocol='yes'
 tcp_protocol_deps='network'
 tests='yuv4mpeg'
 text2movsub_bsf='yes'
-tg2_muxer='yes'
 tg2_muxer_select='mov_muxer'
 tga_test='yes'
 tga_test_deps='targa_encoder targa_decoder'
-tgp_muxer='yes'
 tgp_muxer_select='mov_muxer'
 theora_decoder='yes'
 theora_decoder_select='vp3_decoder'
@@ -3341,7 +3152,6 @@ tiertexseq_demuxer='yes'
 tiertexseqvideo_decoder='yes'
 tiff_decoder='yes'
 tiff_decoder_suggest='zlib'
-tiff_encoder='yes'
 tiff_encoder_suggest='zlib'
 tiff_test='yes'
 tiff_test_deps='tiff_encoder tiff_decoder'
@@ -3350,7 +3160,6 @@ tmv_demuxer='yes'
 truehd_decoder='yes'
 truehd_decoder_select='mlp_decoder'
 truehd_demuxer='yes'
-truehd_muxer='yes'
 truemotion1_decoder='yes'
 truemotion2_decoder='yes'
 truespeech_decoder='yes'
@@ -3371,7 +3180,6 @@ ulti_decoder='yes'
 unsharp_filter='yes'
 v='PROTOCOL_LIST'
 v210_decoder='yes'
-v210_encoder='yes'
 v210x_decoder='yes'
 v4l2_indev='yes'
 v4l2_indev_deps_any='linux_videodev2_h sys_videoio_h'
@@ -3393,7 +3201,6 @@ vc1_vaapi_hwaccel_select='vaapi vc1_decoder'
 vc1_vdpau_decoder='yes'
 vc1_vdpau_decoder_select='vdpau vc1_decoder'
 vc1t_demuxer='yes'
-vc1t_muxer='yes'
 vcr1_decoder='yes'
 vdpau_deps='vdpau_vdpau_h vdpau_vdpau_x11_h'
 vflip_crop_test='yes'
@@ -3410,12 +3217,10 @@ vmdaudio_decoder='yes'
 vmdvideo_decoder='yes'
 vmnc_decoder='yes'
 voc_demuxer='yes'
-voc_muxer='yes'
 voc_test='yes'
 voc_test_deps='voc_muxer voc_demuxer'
 vorbis_decoder='yes'
 vorbis_decoder_select='mdct'
-vorbis_encoder='yes'
 vorbis_encoder_select='mdct'
 vp3_decoder='yes'
 vp3_parser='yes'
@@ -3434,23 +3239,19 @@ vqf_demuxer='yes'
 w64_demuxer='yes'
 w64_demuxer_deps='wav_demuxer'
 wav_demuxer='yes'
-wav_muxer='yes'
 wav_test='yes'
 wav_test_deps='wav_muxer wav_demuxer'
 wavpack_decoder='yes'
 wc3_demuxer='yes'
-webm_muxer='yes'
 wmapro_decoder='yes'
 wmapro_decoder_select='mdct'
 wmav1_decoder='yes'
 wmav1_decoder_select='mdct'
-wmav1_encoder='yes'
 wmav1_encoder_select='mdct'
 wmav1_test='yes'
 wmav1_test_deps='wmav1_encoder wmav1_decoder'
 wmav2_decoder='yes'
 wmav2_decoder_select='mdct'
-wmav2_encoder='yes'
 wmav2_encoder_select='mdct'
 wmav2_test='yes'
 wmav2_test_deps='wmav2_encoder wmav2_decoder'
@@ -3458,13 +3259,11 @@ wmavoice_decoder='yes'
 wmavoice_decoder_select='lsp rdft dct mdct'
 wmv1_decoder='yes'
 wmv1_decoder_select='h263_decoder'
-wmv1_encoder='yes'
 wmv1_encoder_select='h263_encoder'
 wmv1_test='yes'
 wmv1_test_deps='wmv1_encoder wmv1_decoder'
 wmv2_decoder='yes'
 wmv2_decoder_select='h263_decoder'
-wmv2_encoder='yes'
 wmv2_encoder_select='h263_encoder'
 wmv2_test='yes'
 wmv2_test_deps='wmv2_encoder wmv2_decoder'
@@ -3490,1053 +3289,1049 @@ xan_dpcm_decoder='yes'
 xan_wc3_decoder='yes'
 xl_decoder='yes'
 xsub_decoder='yes'
-xsub_encoder='yes'
 yasmexe='yasm'
 yop_decoder='yes'
 yop_demuxer='yes'
 yuv4mpeg_test='yes'
 yuv4mpeg_test_deps='yuv4mpegpipe_muxer yuv4mpegpipe_demuxer'
 yuv4mpegpipe_demuxer='yes'
-yuv4mpegpipe_muxer='yes'
 yuv_test='yes'
 yuv_test_deps='rawvideo_encoder rawvideo_decoder'
 zlib_decoder='yes'
 zlib_decoder_select='zlib'
-zlib_encoder='yes'
 zlib_encoder_select='zlib'
 zmbv_decoder='yes'
 zmbv_decoder_select='zlib'
-zmbv_encoder='yes'
 zmbv_encoder_select='zlib'
 type mktemp
 mktemp is /bin/mktemp
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -mcpu=arm1136jf-s -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -mcpu=arm1136j-s -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
 check_cflags -std=c99
 check_cc -std=c99
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -mcpu=arm1136jf-s -std=c99 -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -mcpu=arm1136j-s -std=c99 -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cc -D_FILE_OFFSET_BITS=64
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <stdlib.h>
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -mcpu=arm1136jf-s -std=c99 -D_FILE_OFFSET_BITS=64 -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -mcpu=arm1136j-s -std=c99 -D_FILE_OFFSET_BITS=64 -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cc -D_LARGEFILE_SOURCE
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <stdlib.h>
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -mcpu=arm1136jf-s -std=c99 -D_LARGEFILE_SOURCE -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -mcpu=arm1136j-s -std=c99 -D_LARGEFILE_SOURCE -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_host_cflags -std=c99
 check_host_cc -std=c99
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -O3 -g -Wall -std=c99 -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -O3 -g -Wall -std=c99 -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cpp_condition stdlib.h defined(__PIC__) || defined(__pic__) || defined(PIC)
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <stdlib.h>
     2	#if !(defined(__PIC__) || defined(__pic__) || defined(PIC))
     3	#error "unsatisfied condition: defined(__PIC__) || defined(__pic__) || defined(PIC)"
     4	#endif
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -mcpu=arm1136jf-s -std=c99 -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:3: error: #error "unsatisfied condition: defined(__PIC__) || defined(__pic__) || defined(PIC)"
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -mcpu=arm1136j-s -std=c99 -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:3: error: #error "unsatisfied condition: defined(__PIC__) || defined(__pic__) || defined(PIC)"
 check_cflags -fomit-frame-pointer
 check_cc -fomit-frame-pointer
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int ff_extern;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	void foo(void) { __asm__ volatile ("" ::); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	void foo(char * restrict p);
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	struct { int x; } __attribute__((packed)) x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	union { int x; } __attribute__((may_alias)) x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	unsigned int endian = 'B' << 24 | 'I' << 16 | 'G' << 8 | 'E';
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -marm
 check_cc -marm
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	__asm__ (".eabi_attribute 28, 1");
     2	int main(void) { return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
-/opt/codesourcery/arm-2010q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.4.1/../../../../arm-none-linux-gnueabi/bin/ld: error: /tmp/ffconf.GGPg9Jg1.o uses VFP register arguments, /tmp/ffconf.tpQu6tKR does not
-/opt/codesourcery/arm-2010q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.4.1/../../../../arm-none-linux-gnueabi/bin/ld: failed to merge target specific data of file /tmp/ffconf.GGPg9Jg1.o
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
+/opt/codesourcery/arm-2010q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.4.1/../../../../arm-none-linux-gnueabi/bin/ld: error: /tmp/ffconf.UkWCqrc6.o uses VFP register arguments, /tmp/ffconf.SqWUotE1 does not
+/opt/codesourcery/arm-2010q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.4.1/../../../../arm-none-linux-gnueabi/bin/ld: failed to merge target specific data of file /tmp/ffconf.UkWCqrc6.o
 collect2: ld returned 1 exit status
 check_asm pld "pld [r0]"
 check_as
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	void foo(void){ __asm__ volatile("pld [r0]"); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -fPIC -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -fPIC -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_asm armv5te "qadd r0, r0, r0"
 check_as
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	void foo(void){ __asm__ volatile("qadd r0, r0, r0"); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -fPIC -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -fPIC -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_asm armv6 "sadd16 r0, r0, r0"
 check_as
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	void foo(void){ __asm__ volatile("sadd16 r0, r0, r0"); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -fPIC -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -fPIC -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_asm armv6t2 "movt r0, #0"
 check_as
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	void foo(void){ __asm__ volatile("movt r0, #0"); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -fPIC -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ccUR7KMb.s: Assembler messages:
-/tmp/ccUR7KMb.s:28: Error: selected processor does not support ARM mode `movt r0,#0'
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -fPIC -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ccaxzGJq.s: Assembler messages:
+/tmp/ccaxzGJq.s:28: Error: selected processor does not support ARM mode `movt r0,#0'
 check_asm armvfp "fadds s0, s0, s0"
 check_as
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	void foo(void){ __asm__ volatile("fadds s0, s0, s0"); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -fPIC -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/cchftgua.s: Assembler messages:
-/tmp/cchftgua.s:28: Error: selected processor does not support ARM mode `fadds s0,s0,s0'
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -fPIC -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/cc9qwBbu.s: Assembler messages:
+/tmp/cc9qwBbu.s:28: Error: selected processor does not support ARM mode `fadds s0,s0,s0'
 check_asm iwmmxt "wunpckelub wr6, wr4"
 check_as
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	void foo(void){ __asm__ volatile("wunpckelub wr6, wr4"); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -fPIC -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/cckqgoKc.s: Assembler messages:
-/tmp/cckqgoKc.s:28: Error: selected processor does not support ARM mode `wunpckelub wr6,wr4'
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -fPIC -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ccoRkdqt.s: Assembler messages:
+/tmp/ccoRkdqt.s:28: Error: selected processor does not support ARM mode `wunpckelub wr6,wr4'
 check_asm neon "vadd.i16 q0, q0, q0"
 check_as
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	void foo(void){ __asm__ volatile("vadd.i16 q0, q0, q0"); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -fPIC -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ccb5KZjg.s: Assembler messages:
-/tmp/ccb5KZjg.s:28: Error: selected processor does not support ARM mode `vadd.i16 q0,q0,q0'
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -fPIC -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/cc9hQ6Jw.s: Assembler messages:
+/tmp/cc9hQ6Jw.s:28: Error: selected processor does not support ARM mode `vadd.i16 q0,q0,q0'
 check_asm gnu_as ".macro m n
 \n:.int 0
 .endm
 m x"
 check_as
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	void foo(void){ __asm__ volatile(".macro m n\n\\n:.int 0\n.endm\nm x"); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -fPIC -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -fPIC -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_func dlopen
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int dlopen();
     2	int main(void){ dlopen(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
-/tmp/ffconf.GGPg9Jg1.o: In function `main':
-ffconf.2KMkUlvg.c:(.text+0x4): undefined reference to `dlopen'
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
+/tmp/ffconf.UkWCqrc6.o: In function `main':
+ffconf.SWClPaTU.c:(.text+0x4): undefined reference to `dlopen'
 collect2: ld returned 1 exit status
 check_func dlopen -ldl
 check_ld -ldl
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int dlopen();
     2	int main(void){ dlopen(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -ldl
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -ldl
 check_func nanosleep
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int nanosleep();
     2	int main(void){ nanosleep(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
 check_func fcntl
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int fcntl();
     2	int main(void){ fcntl(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
 check_func fork
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int fork();
     2	int main(void){ fork(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
 check_func getaddrinfo
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int getaddrinfo();
     2	int main(void){ getaddrinfo(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
 check_func gethrtime
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int gethrtime();
     2	int main(void){ gethrtime(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
-/tmp/ffconf.GGPg9Jg1.o: In function `main':
-ffconf.2KMkUlvg.c:(.text+0x4): undefined reference to `gethrtime'
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
+/tmp/ffconf.UkWCqrc6.o: In function `main':
+ffconf.SWClPaTU.c:(.text+0x4): undefined reference to `gethrtime'
 collect2: ld returned 1 exit status
 check_func getrusage
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int getrusage();
     2	int main(void){ getrusage(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
 check_type sys/time.h sys/resource.h struct rusage ru_maxrss
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <sys/time.h>
     3	#include <sys/resource.h>
     4	const void *p = &((struct rusage *)0)->ru_maxrss;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_func inet_aton
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int inet_aton();
     2	int main(void){ inet_aton(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
 check_func isatty
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int isatty();
     2	int main(void){ isatty(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
 check_func memalign
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int memalign();
     2	int main(void){ memalign(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
 check_func mkstemp
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int mkstemp();
     2	int main(void){ mkstemp(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
 check_func posix_memalign
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int posix_memalign();
     2	int main(void){ posix_memalign(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
 check_func setrlimit
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int setrlimit();
     2	int main(void){ setrlimit(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
 check_func strerror_r
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int strerror_r();
     2	int main(void){ strerror_r(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o
 check_func_headers io.h setmode
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <io.h>
     3	int main(int argc, char **argv){
     4	    return (long) setmode;
     5	}
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:2: fatal error: io.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:2: fatal error: io.h: No such file or directory
 compilation terminated.
 check_func_headers lzo/lzo1x.h lzo1x_999_compress
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <lzo/lzo1x.h>
     3	int main(int argc, char **argv){
     4	    return (long) lzo1x_999_compress;
     5	}
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:2: fatal error: lzo/lzo1x.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:2: fatal error: lzo/lzo1x.h: No such file or directory
 compilation terminated.
 check_lib2 windows.h psapi.h GetProcessMemoryInfo -lpsapi
 check_func_headers windows.h psapi.h GetProcessMemoryInfo -lpsapi
 check_ld -lpsapi
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <windows.h>
     3	#include <psapi.h>
     4	int main(int argc, char **argv){
     5	    return (long) GetProcessMemoryInfo;
     6	}
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:2: fatal error: windows.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:2: fatal error: windows.h: No such file or directory
 compilation terminated.
 check_func_headers windows.h GetProcessTimes
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <windows.h>
     3	int main(int argc, char **argv){
     4	    return (long) GetProcessTimes;
     5	}
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:2: fatal error: windows.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:2: fatal error: windows.h: No such file or directory
 compilation terminated.
 check_func_headers windows.h VirtualAlloc
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <windows.h>
     3	int main(int argc, char **argv){
     4	    return (long) VirtualAlloc;
     5	}
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:2: fatal error: windows.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:2: fatal error: windows.h: No such file or directory
 compilation terminated.
 check_header conio.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <conio.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:1: fatal error: conio.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:1: fatal error: conio.h: No such file or directory
 compilation terminated.
 check_header dlfcn.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <dlfcn.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_header dxva2api.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <dxva2api.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:1: fatal error: dxva2api.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:1: fatal error: dxva2api.h: No such file or directory
 compilation terminated.
 check_header malloc.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <malloc.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_header poll.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <poll.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_header sys/mman.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <sys/mman.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_header sys/resource.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <sys/resource.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_header sys/select.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <sys/select.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_header termios.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <termios.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_header vdpau/vdpau.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <vdpau/vdpau.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:1: fatal error: vdpau/vdpau.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:1: fatal error: vdpau/vdpau.h: No such file or directory
 compilation terminated.
 check_header vdpau/vdpau_x11.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <vdpau/vdpau_x11.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:1: fatal error: vdpau/vdpau_x11.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:1: fatal error: vdpau/vdpau_x11.h: No such file or directory
 compilation terminated.
 check_header X11/extensions/XvMClib.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <X11/extensions/XvMClib.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:1: fatal error: X11/extensions/XvMClib.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:1: fatal error: X11/extensions/XvMClib.h: No such file or directory
 compilation terminated.
 check_type dxva2api.h DXVA_PictureParameters wDecodedPictureIndex
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <dxva2api.h>
     3	const void *p = &((DXVA_PictureParameters *)0)->wDecodedPictureIndex;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:2: fatal error: dxva2api.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:2: fatal error: dxva2api.h: No such file or directory
 compilation terminated.
 check_lib zlib.h zlibVersion -lz
 check_header zlib.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <zlib.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_func zlibVersion -lz
 check_ld -lz
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int zlibVersion();
     2	int main(void){ zlibVersion(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lz
 check_lib2 bzlib.h BZ2_bzlibVersion -lbz2
 check_func_headers bzlib.h BZ2_bzlibVersion -lbz2
 check_ld -lbz2
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <bzlib.h>
     3	int main(int argc, char **argv){
     4	    return (long) BZ2_bzlibVersion;
     5	}
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:2: fatal error: bzlib.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:2: fatal error: bzlib.h: No such file or directory
 compilation terminated.
 check_func pthread_create
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int pthread_create();
     2	int main(void){ pthread_create(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lz
-/tmp/ffconf.GGPg9Jg1.o: In function `main':
-ffconf.2KMkUlvg.c:(.text+0x4): undefined reference to `pthread_create'
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lz
+/tmp/ffconf.UkWCqrc6.o: In function `main':
+ffconf.SWClPaTU.c:(.text+0x4): undefined reference to `pthread_create'
 collect2: ld returned 1 exit status
 check_func pthread_create -pthread
 check_ld -pthread
 check_cc -pthread
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int pthread_create();
     2	int main(void){ pthread_create(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -pthread -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -pthread -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lz
 check_lib math.h sin -lm
 check_header math.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <math.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_func sin -lm
 check_ld -lm
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int sin();
     2	int main(void){ sin(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:1: warning: conflicting types for built-in function 'sin'
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -pthread -lz -lm
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:1: warning: conflicting types for built-in function 'sin'
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -pthread -lz -lm
 check_lib va/va.h vaInitialize -lva
 check_header va/va.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <va/va.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:1: fatal error: va/va.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:1: fatal error: va/va.h: No such file or directory
 compilation terminated.
 check_mathfunc exp2
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <math.h>
     2	float foo(float f) { return exp2(f); }
     3	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
 check_mathfunc exp2f
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <math.h>
     2	float foo(float f) { return exp2f(f); }
     3	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
 check_mathfunc llrint
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <math.h>
     2	float foo(float f) { return llrint(f); }
     3	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
 check_mathfunc llrintf
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <math.h>
     2	float foo(float f) { return llrintf(f); }
     3	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
 check_mathfunc log2
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <math.h>
     2	float foo(float f) { return log2(f); }
     3	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
 check_mathfunc log2f
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <math.h>
     2	float foo(float f) { return log2f(f); }
     3	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
 check_mathfunc lrint
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <math.h>
     2	float foo(float f) { return lrint(f); }
     3	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
 check_mathfunc lrintf
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <math.h>
     2	float foo(float f) { return lrintf(f); }
     3	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
 check_mathfunc round
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <math.h>
     2	float foo(float f) { return round(f); }
     3	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
 check_mathfunc roundf
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <math.h>
     2	float foo(float f) { return roundf(f); }
     3	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
 check_mathfunc truncf
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <math.h>
     2	float foo(float f) { return truncf(f); }
     3	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
 check_type sys/types.h sys/socket.h socklen_t
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <sys/types.h>
     3	#include <sys/socket.h>
     4	socklen_t v;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_type netdb.h struct addrinfo
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <netdb.h>
     3	struct addrinfo v;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_type netinet/in.h struct ipv6_mreq
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <netinet/in.h>
     3	struct ipv6_mreq v;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_type netinet/in.h struct sockaddr_in6
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <netinet/in.h>
     3	struct sockaddr_in6 v;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_type sys/types.h sys/socket.h struct sockaddr_storage
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <sys/types.h>
     3	#include <sys/socket.h>
     4	struct sockaddr_storage v;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_type sys/types.h sys/socket.h struct sockaddr sa_len
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <sys/types.h>
     3	#include <sys/socket.h>
     4	const void *p = &((struct sockaddr *)0)->sa_len;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:4: error: 'struct sockaddr' has no member named 'sa_len'
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:4: error: 'struct sockaddr' has no member named 'sa_len'
 check_header arpa/inet.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <arpa/inet.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_func closesocket
 check_ld
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	extern int closesocket();
     2	int main(void){ closesocket(); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
-/tmp/ffconf.GGPg9Jg1.o: In function `main':
-ffconf.2KMkUlvg.c:(.text+0x4): undefined reference to `closesocket'
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
+/tmp/ffconf.UkWCqrc6.o: In function `main':
+ffconf.SWClPaTU.c:(.text+0x4): undefined reference to `closesocket'
 collect2: ld returned 1 exit status
 check_header linux/videodev.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <linux/videodev.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_header linux/videodev2.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <linux/videodev2.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_header sys/videoio.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <sys/videoio.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:1: fatal error: sys/videoio.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:1: fatal error: sys/videoio.h: No such file or directory
 compilation terminated.
 check_func_headers windows.h vfw.h capCreateCaptureWindow -lavicap32
 check_ld -lavicap32
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <windows.h>
     3	#include <vfw.h>
     4	int main(int argc, char **argv){
     5	    return (long) capCreateCaptureWindow;
     6	}
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:2: fatal error: windows.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:2: fatal error: windows.h: No such file or directory
 compilation terminated.
 check_cpp_condition vfw.h WM_CAP_DRIVER_CONNECT > WM_USER
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <vfw.h>
     2	#if !(WM_CAP_DRIVER_CONNECT > WM_USER)
     3	#error "unsatisfied condition: WM_CAP_DRIVER_CONNECT > WM_USER"
     4	#endif
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:1: fatal error: vfw.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:1: fatal error: vfw.h: No such file or directory
 compilation terminated.
 check_header dev/bktr/ioctl_meteor.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <dev/bktr/ioctl_meteor.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:1: fatal error: dev/bktr/ioctl_meteor.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:1: fatal error: dev/bktr/ioctl_meteor.h: No such file or directory
 compilation terminated.
 check_header machine/ioctl_meteor.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <machine/ioctl_meteor.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:1: fatal error: machine/ioctl_meteor.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:1: fatal error: machine/ioctl_meteor.h: No such file or directory
 compilation terminated.
 check_header dev/video/meteor/ioctl_meteor.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <dev/video/meteor/ioctl_meteor.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:1: fatal error: dev/video/meteor/ioctl_meteor.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:1: fatal error: dev/video/meteor/ioctl_meteor.h: No such file or directory
 compilation terminated.
 check_header dev/ic/bt8xx.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <dev/ic/bt8xx.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:1: fatal error: dev/ic/bt8xx.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:1: fatal error: dev/ic/bt8xx.h: No such file or directory
 compilation terminated.
 check_header sys/soundcard.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <sys/soundcard.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_header soundcard.h
 check_cpp
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	#include <soundcard.h>
     2	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:1: fatal error: soundcard.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -E -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:1: fatal error: soundcard.h: No such file or directory
 compilation terminated.
 check_lib2 alsa/asoundlib.h snd_pcm_htimestamp -lasound
 check_func_headers alsa/asoundlib.h snd_pcm_htimestamp -lasound
 check_ld -lasound
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <alsa/asoundlib.h>
     3	int main(int argc, char **argv){
     4	    return (long) snd_pcm_htimestamp;
     5	}
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:2: fatal error: alsa/asoundlib.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:2: fatal error: alsa/asoundlib.h: No such file or directory
 compilation terminated.
 check_lib2 jack/jack.h jack_client_open -ljack
 check_func_headers jack/jack.h jack_client_open -ljack
 check_ld -ljack
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	
     2	#include <jack/jack.h>
     3	int main(int argc, char **argv){
     4	    return (long) jack_client_open;
     5	}
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:2: fatal error: jack/jack.h: No such file or directory
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:2: fatal error: jack/jack.h: No such file or directory
 compilation terminated.
 check_cflags -Wdeclaration-after-statement
 check_cc -Wdeclaration-after-statement
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -Wall
 check_cc -Wall
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -Wno-parentheses
 check_cc -Wno-parentheses
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -Wno-switch
 check_cc -Wno-switch
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -Wdisabled-optimization
 check_cc -Wdisabled-optimization
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -Wpointer-arith
 check_cc -Wpointer-arith
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -Wredundant-decls
 check_cc -Wredundant-decls
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -Wno-pointer-sign
 check_cc -Wno-pointer-sign
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -Wcast-qual
 check_cc -Wcast-qual
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -Wwrite-strings
 check_cc -Wwrite-strings
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -Wtype-limits
 check_cc -Wtype-limits
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -Wundef
 check_cc -Wundef
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -Wmissing-prototypes
 check_cc -Wmissing-prototypes
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_ldflags -Wl,--warn-common
 test_ldflags -Wl,--warn-common
 check_ld -Wl,--warn-common
 check_cc -Wl,--warn-common
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wl,--warn-common -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -Wl,--warn-common -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wl,--warn-common -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -Wl,--warn-common -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
 check_ldflags -Wl,--as-needed
 test_ldflags -Wl,--as-needed
 check_ld -Wl,--as-needed
 check_cc -Wl,--as-needed
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wl,--as-needed -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -Wl,--warn-common -Wl,--as-needed -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wl,--as-needed -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -Wl,--warn-common -Wl,--as-needed -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
 check_ldflags -Wl,-rpath-link,\$(BUILD_ROOT)/libpostproc -Wl,-rpath-link,\$(BUILD_ROOT)/libswscale -Wl,-rpath-link,\$(BUILD_ROOT)/libavfilter -Wl,-rpath-link,\$(BUILD_ROOT)/libavdevice -Wl,-rpath-link,\$(BUILD_ROOT)/libavformat -Wl,-rpath-link,\$(BUILD_ROOT)/libavcodec -Wl,-rpath-link,\$(BUILD_ROOT)/libavcore -Wl,-rpath-link,\$(BUILD_ROOT)/libavutil
 test_ldflags -Wl,-rpath-link,\$(BUILD_ROOT)/libpostproc -Wl,-rpath-link,\$(BUILD_ROOT)/libswscale -Wl,-rpath-link,\$(BUILD_ROOT)/libavfilter -Wl,-rpath-link,\$(BUILD_ROOT)/libavdevice -Wl,-rpath-link,\$(BUILD_ROOT)/libavformat -Wl,-rpath-link,\$(BUILD_ROOT)/libavcodec -Wl,-rpath-link,\$(BUILD_ROOT)/libavcore -Wl,-rpath-link,\$(BUILD_ROOT)/libavutil
 check_ld -Wl,-rpath-link,\$(BUILD_ROOT)/libpostproc -Wl,-rpath-link,\$(BUILD_ROOT)/libswscale -Wl,-rpath-link,\$(BUILD_ROOT)/libavfilter -Wl,-rpath-link,\$(BUILD_ROOT)/libavdevice -Wl,-rpath-link,\$(BUILD_ROOT)/libavformat -Wl,-rpath-link,\$(BUILD_ROOT)/libavcodec -Wl,-rpath-link,\$(BUILD_ROOT)/libavcore -Wl,-rpath-link,\$(BUILD_ROOT)/libavutil
 check_cc -Wl,-rpath-link,\$(BUILD_ROOT)/libpostproc -Wl,-rpath-link,\$(BUILD_ROOT)/libswscale -Wl,-rpath-link,\$(BUILD_ROOT)/libavfilter -Wl,-rpath-link,\$(BUILD_ROOT)/libavdevice -Wl,-rpath-link,\$(BUILD_ROOT)/libavformat -Wl,-rpath-link,\$(BUILD_ROOT)/libavcodec -Wl,-rpath-link,\$(BUILD_ROOT)/libavcore -Wl,-rpath-link,\$(BUILD_ROOT)/libavutil
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wl,-rpath-link,\$(BUILD_ROOT)/libpostproc -Wl,-rpath-link,\$(BUILD_ROOT)/libswscale -Wl,-rpath-link,\$(BUILD_ROOT)/libavfilter -Wl,-rpath-link,\$(BUILD_ROOT)/libavdevice -Wl,-rpath-link,\$(BUILD_ROOT)/libavformat -Wl,-rpath-link,\$(BUILD_ROOT)/libavcodec -Wl,-rpath-link,\$(BUILD_ROOT)/libavcore -Wl,-rpath-link,\$(BUILD_ROOT)/libavutil -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -Wl,--warn-common -Wl,--as-needed -Wl,-rpath-link,\$(BUILD_ROOT)/libpostproc -Wl,-rpath-link,\$(BUILD_ROOT)/libswscale -Wl,-rpath-link,\$(BUILD_ROOT)/libavfilter -Wl,-rpath-link,\$(BUILD_ROOT)/libavdevice -Wl,-rpath-link,\$(BUILD_ROOT)/libavformat -Wl,-rpath-link,\$(BUILD_ROOT)/libavcodec -Wl,-rpath-link,\$(BUILD_ROOT)/libavcore -Wl,-rpath-link,\$(BUILD_ROOT)/libavutil -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wl,-rpath-link,\$(BUILD_ROOT)/libpostproc -Wl,-rpath-link,\$(BUILD_ROOT)/libswscale -Wl,-rpath-link,\$(BUILD_ROOT)/libavfilter -Wl,-rpath-link,\$(BUILD_ROOT)/libavdevice -Wl,-rpath-link,\$(BUILD_ROOT)/libavformat -Wl,-rpath-link,\$(BUILD_ROOT)/libavcodec -Wl,-rpath-link,\$(BUILD_ROOT)/libavcore -Wl,-rpath-link,\$(BUILD_ROOT)/libavutil -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -Wl,--warn-common -Wl,--as-needed -Wl,-rpath-link,\$(BUILD_ROOT)/libpostproc -Wl,-rpath-link,\$(BUILD_ROOT)/libswscale -Wl,-rpath-link,\$(BUILD_ROOT)/libavfilter -Wl,-rpath-link,\$(BUILD_ROOT)/libavdevice -Wl,-rpath-link,\$(BUILD_ROOT)/libavformat -Wl,-rpath-link,\$(BUILD_ROOT)/libavcodec -Wl,-rpath-link,\$(BUILD_ROOT)/libavcore -Wl,-rpath-link,\$(BUILD_ROOT)/libavutil -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
 check_ldflags -Wl,-Bsymbolic
 test_ldflags -Wl,-Bsymbolic
 check_ld -Wl,-Bsymbolic
 check_cc -Wl,-Bsymbolic
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wl,-Bsymbolic -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -Wl,--warn-common -Wl,--as-needed -Wl,-rpath-link,$(BUILD_ROOT)/libpostproc -Wl,-rpath-link,$(BUILD_ROOT)/libswscale -Wl,-rpath-link,$(BUILD_ROOT)/libavfilter -Wl,-rpath-link,$(BUILD_ROOT)/libavdevice -Wl,-rpath-link,$(BUILD_ROOT)/libavformat -Wl,-rpath-link,$(BUILD_ROOT)/libavcodec -Wl,-rpath-link,$(BUILD_ROOT)/libavcore -Wl,-rpath-link,$(BUILD_ROOT)/libavutil -Wl,-Bsymbolic -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
-test_ldflags -Wl,--version-script,/tmp/ffconf.WVqpUW9Y.ver
-check_ld -Wl,--version-script,/tmp/ffconf.WVqpUW9Y.ver
-check_cc -Wl,--version-script,/tmp/ffconf.WVqpUW9Y.ver
-BEGIN /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wl,-Bsymbolic -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -Wl,--warn-common -Wl,--as-needed -Wl,-rpath-link,$(BUILD_ROOT)/libpostproc -Wl,-rpath-link,$(BUILD_ROOT)/libswscale -Wl,-rpath-link,$(BUILD_ROOT)/libavfilter -Wl,-rpath-link,$(BUILD_ROOT)/libavdevice -Wl,-rpath-link,$(BUILD_ROOT)/libavformat -Wl,-rpath-link,$(BUILD_ROOT)/libavcodec -Wl,-rpath-link,$(BUILD_ROOT)/libavcore -Wl,-rpath-link,$(BUILD_ROOT)/libavutil -Wl,-Bsymbolic -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
+test_ldflags -Wl,--version-script,/tmp/ffconf.EWwZpJAr.ver
+check_ld -Wl,--version-script,/tmp/ffconf.EWwZpJAr.ver
+check_cc -Wl,--version-script,/tmp/ffconf.EWwZpJAr.ver
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int main(void){ return 0; }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wl,--version-script,/tmp/ffconf.WVqpUW9Y.ver -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -Wl,--warn-common -Wl,--as-needed -Wl,-rpath-link,$(BUILD_ROOT)/libpostproc -Wl,-rpath-link,$(BUILD_ROOT)/libswscale -Wl,-rpath-link,$(BUILD_ROOT)/libavfilter -Wl,-rpath-link,$(BUILD_ROOT)/libavdevice -Wl,-rpath-link,$(BUILD_ROOT)/libavformat -Wl,-rpath-link,$(BUILD_ROOT)/libavcodec -Wl,-rpath-link,$(BUILD_ROOT)/libavcore -Wl,-rpath-link,$(BUILD_ROOT)/libavutil -Wl,-Bsymbolic -Wl,--version-script,/tmp/ffconf.WVqpUW9Y.ver -o /tmp/ffconf.tpQu6tKR /tmp/ffconf.GGPg9Jg1.o -lm -pthread -lz
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wl,--version-script,/tmp/ffconf.EWwZpJAr.ver -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -Wl,--warn-common -Wl,--as-needed -Wl,-rpath-link,$(BUILD_ROOT)/libpostproc -Wl,-rpath-link,$(BUILD_ROOT)/libswscale -Wl,-rpath-link,$(BUILD_ROOT)/libavfilter -Wl,-rpath-link,$(BUILD_ROOT)/libavdevice -Wl,-rpath-link,$(BUILD_ROOT)/libavformat -Wl,-rpath-link,$(BUILD_ROOT)/libavcodec -Wl,-rpath-link,$(BUILD_ROOT)/libavcore -Wl,-rpath-link,$(BUILD_ROOT)/libavutil -Wl,-Bsymbolic -Wl,--version-script,/tmp/ffconf.EWwZpJAr.ver -o /tmp/ffconf.SqWUotE1 /tmp/ffconf.UkWCqrc6.o -lm -pthread -lz
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	void ff_foo(void) __asm__ ("av_foo@VERSION");
     2	void ff_foo(void) { __asm__(""); }
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/cc6LCnqL.s: Assembler messages:
-/tmp/cc6LCnqL.s:23: Error: unrecognized symbol type ""
-/tmp/cc6LCnqL.s:24: Error: bad instruction `av_foo'
-/tmp/cc6LCnqL.s:38: Error: expected comma after name `av_foo' in .size directive
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ccStbX0l.s: Assembler messages:
+/tmp/ccStbX0l.s:23: Error: unrecognized symbol type ""
+/tmp/ccStbX0l.s:24: Error: bad instruction `av_foo'
+/tmp/ccStbX0l.s:38: Error: expected comma after name `av_foo' in .size directive
 check_cc
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	__asm__(".symver ff_foo,av_foo@VERSION");
     2	void ff_foo(void) {}
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
-/tmp/ffconf.2KMkUlvg.c:2: warning: no previous prototype for 'ff_foo'
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
+/tmp/ffconf.SWClPaTU.c:2: warning: no previous prototype for 'ff_foo'
 check_cflags -fno-math-errno
 check_cc -fno-math-errno
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -O3 -fno-math-errno -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -O3 -fno-math-errno -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -fno-signed-zeros
 check_cc -fno-signed-zeros
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -O3 -fno-math-errno -fno-signed-zeros -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -O3 -fno-math-errno -fno-signed-zeros -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -fno-tree-vectorize
 check_cc -fno-tree-vectorize
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -O3 -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -O3 -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -Werror=implicit-function-declaration
 check_cc -Werror=implicit-function-declaration
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -O3 -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Werror=implicit-function-declaration -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -O3 -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Werror=implicit-function-declaration -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c
 check_cflags -Werror=missing-prototypes
 check_cc -Werror=missing-prototypes
-BEGIN /tmp/ffconf.2KMkUlvg.c
+BEGIN /tmp/ffconf.SWClPaTU.c
     1	int x;
-END /tmp/ffconf.2KMkUlvg.c
-arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136jf-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -O3 -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Werror=implicit-function-declaration -Werror=missing-prototypes -c -o /tmp/ffconf.GGPg9Jg1.o /tmp/ffconf.2KMkUlvg.c
+END /tmp/ffconf.SWClPaTU.c
+arm-none-linux-gnueabi-gcc -D_ISOC99_SOURCE -D_POSIX_C_SOURCE=200112 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPIC -mcpu=arm1136j-s -std=c99 -fomit-frame-pointer -fPIC -marm -pthread -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -O3 -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Werror=implicit-function-declaration -Werror=missing-prototypes -c -o /tmp/ffconf.UkWCqrc6.o /tmp/ffconf.SWClPaTU.c

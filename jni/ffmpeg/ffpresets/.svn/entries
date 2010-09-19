@@ -1,14 +1,14 @@
 10
 
 dir
-25134
+25146
 svn://svn.ffmpeg.org/ffmpeg/trunk/ffpresets
 svn://svn.ffmpeg.org/ffmpeg
 
 
 
-2010-06-29T03:17:11.015796Z
-23879
+2010-09-17T20:14:24.815886Z
+25142
 darkshikari
 
 
@@ -162,40 +162,6 @@ bcoudurier
 
 15
 
-libx264-default.ffpreset
-file
-
-
-
-
-2010-08-19T01:41:45.090135Z
-0a78e1b328204ed9dac7bcbb07c52268
-2010-03-25T19:39:06.487319Z
-22671
-bcoudurier
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-297
-
 libx264-lossless_fast.ffpreset
 file
 
@@ -263,40 +229,6 @@ bcoudurier
 
 
 93
-
-libx264-normal.ffpreset
-file
-
-
-
-
-2010-08-19T01:41:45.090135Z
-ab410efb23303ef265273335e12eb7aa
-2010-03-25T19:39:06.487319Z
-22671
-bcoudurier
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-286
 
 libx264-fast_firstpass.ffpreset
 file
@@ -638,40 +570,6 @@ bcoudurier
 
 306
 
-libx264-ipod320.ffpreset
-file
-
-
-
-
-2010-08-19T01:41:45.094144Z
-c9c0610729742db0ee9cea9cc6a2c054
-2010-03-25T19:39:06.487319Z
-22671
-bcoudurier
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-83
-
 libx264-medium.ffpreset
 file
 
@@ -706,17 +604,17 @@ bcoudurier
 
 306
 
-libx264-faster_firstpass.ffpreset
+libx264-ipod320.ffpreset
 file
 
 
 
 
-2010-08-19T01:41:45.098154Z
-0af2fe8a5ff85fa506d2eb9b1cabcb5b
-2010-03-29T01:34:33.554603Z
-22714
-darkshikari
+2010-08-19T01:41:45.094144Z
+c9c0610729742db0ee9cea9cc6a2c054
+2010-03-25T19:39:06.487319Z
+22671
+bcoudurier
 
 
 
@@ -738,7 +636,7 @@ darkshikari
 
 
 
-322
+83
 
 libx264-slow_firstpass.ffpreset
 file
@@ -774,48 +672,14 @@ darkshikari
 
 322
 
-libx264-slowfirstpass.ffpreset
+libx264-faster_firstpass.ffpreset
 file
 
 
 
 
 2010-08-19T01:41:45.098154Z
-197be6326354c3110797a8d02f206880
-2010-03-25T19:39:06.487319Z
-22671
-bcoudurier
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-286
-
-libx264-faster.ffpreset
-file
-
-
-
-
-2010-08-19T01:41:45.098154Z
-b9ec59f2e8e679e1a95159019252d10d
+0af2fe8a5ff85fa506d2eb9b1cabcb5b
 2010-03-29T01:34:33.554603Z
 22714
 darkshikari
@@ -876,17 +740,17 @@ darkshikari
 
 322
 
-libx264-max.ffpreset
+libx264-faster.ffpreset
 file
 
 
 
 
 2010-08-19T01:41:45.098154Z
-8ee15a21ab05e9a6fdc1fed83310e5f1
-2010-03-25T19:39:06.487319Z
-22671
-bcoudurier
+b9ec59f2e8e679e1a95159019252d10d
+2010-03-29T01:34:33.554603Z
+22714
+darkshikari
 
 
 
@@ -908,7 +772,7 @@ bcoudurier
 
 
 
-309
+322
 
 libx264-veryslow_firstpass.ffpreset
 file
@@ -977,40 +841,6 @@ darkshikari
 
 
 333
-
-libx264-fastfirstpass.ffpreset
-file
-
-
-
-
-2010-08-19T01:41:45.098154Z
-2157c1ace8c6c770e7998d9836ed1de4
-2010-03-25T19:39:06.487319Z
-22671
-bcoudurier
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-315
 
 libx264-lossless_slower.ffpreset
 file
@@ -1181,40 +1011,6 @@ darkshikari
 
 
 335
-
-libx264-hq.ffpreset
-file
-
-
-
-
-2010-08-19T01:41:45.102135Z
-48baa7aba2a1b7679e7d1a2d37ba888c
-2010-03-25T19:39:06.487319Z
-22671
-bcoudurier
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-297
 
 libx264-slower_firstpass.ffpreset
 file

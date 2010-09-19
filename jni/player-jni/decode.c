@@ -61,7 +61,6 @@ static void* video_decode_thread(void* para) {
     int err, got, has;
     AVPacket* pkt;
     Picture *pic;
-    static int index = 0;
 
     pkt = 0;
     pic = 0;
@@ -75,23 +74,25 @@ static void* video_decode_thread(void* para) {
         }
         pkt = video_packet_queue_pop_tail();
         if (pkt) {
-            // TODO: some frames can't be dropped!!!
+            pthread_mutex_lock(&gCtx->skip_mutex);
             if (!gCtx->skip_count) {
                 gCtx->video_ctx->flags &= (~CODEC_FLAG_LOW_DELAY);
+                gCtx->video_ctx->skip_idct = AVDISCARD_DEFAULT;
                 gCtx->video_ctx->skip_frame = AVDISCARD_DEFAULT;
             }
             if (gCtx->skip_count > 0) {
                 gCtx->skip_count--;
                 gCtx->video_ctx->flags |= CODEC_FLAG_LOW_DELAY;
+                gCtx->video_ctx->skip_idct = gCtx->skip_level;
                 gCtx->video_ctx->skip_frame = gCtx->skip_level;
             }
+            pthread_mutex_unlock(&gCtx->skip_mutex);
             err = avcodec_decode_video2(gCtx->video_ctx, gCtx->frame, &got, pkt);
             if (err < 0) {
                 debug("avcodec_decode_video2 fail: %d\n", err);
                 goto next;
             }
             if (got) {
-                index++;
                 pic = av_malloc(sizeof(Picture));
                 if (!pic)
                     goto next;

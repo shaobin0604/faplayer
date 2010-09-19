@@ -30,14 +30,15 @@ int player_is_playing();
 static void init_video_codec_ctx(AVCodecContext* ctx) {
     if (!ctx)
         return;
-    ctx->flags = 0;
-    ctx->flags2 |= CODEC_FLAG2_FAST;
+    // ctx->flags = 0;
+    ctx->flags2 |= (CODEC_FLAG2_FAST | CODEC_FLAG2_FASTPSKIP | CODEC_FLAG2_BPYRAMID | CODEC_FLAG2_MIXED_REFS | CODEC_FLAG2_BRDO);
 	ctx->thread_count = 2;
 	ctx->workaround_bugs = FF_BUG_AUTODETECT;
     ctx->error_recognition = FF_ER_CAREFUL;
     ctx->error_concealment = FF_EC_GUESS_MVS | FF_EC_DEBLOCK;
     ctx->debug = 0;
     ctx->debug_mv = 0;
+    ctx->skip_idct = AVDISCARD_DEFAULT;
 	ctx->skip_frame = AVDISCARD_DEFAULT;
 }
 
@@ -110,6 +111,7 @@ void player_close() {
             av_free(gCtx->samples);
         if (gCtx->av_ctx)
         	av_close_input_file(gCtx->av_ctx);
+        pthread_mutex_destroy(&gCtx->skip_mutex);
         av_free(gCtx);
         gCtx = 0;
     }
@@ -208,6 +210,7 @@ int player_play(double start, int audio) {
         player_close();
         return -1;
     }
+    pthread_mutex_init(&gCtx->skip_mutex, 0);
     player_seek(start);
     gCtx->frame = avcodec_alloc_frame();
     if (!gCtx->frame) {

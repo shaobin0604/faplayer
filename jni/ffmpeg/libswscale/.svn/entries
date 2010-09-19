@@ -1,7 +1,7 @@
 10
 
 dir
-32265
+32310
 svn://svn.ffmpeg.org/mplayer/trunk/libswscale
 svn://svn.ffmpeg.org/mplayer
 
@@ -25,40 +25,6 @@ has-props
 
 
 b3059339-0415-0410-9bf9-f77b7e298cf2
-
-utils.c
-file
-
-
-
-
-2010-09-08T11:03:57.355116Z
-4b71ab0a95ec4c8e0e20dd0decafd8ed
-2010-09-06T14:42:25.034633Z
-32052
-ramiro
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-56439
 
 yuv2rgb.c
 file
@@ -94,6 +60,43 @@ benoit
 
 26024
 
+utils.c
+file
+
+
+
+
+2010-09-08T11:03:57.355116Z
+4b71ab0a95ec4c8e0e20dd0decafd8ed
+2010-09-06T14:42:25.034633Z
+32052
+ramiro
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+56439
+
+ppc
+dir
+
 swscale.c
 file
 
@@ -128,7 +131,7 @@ has-props
 
 72442
 
-ppc
+mlib
 dir
 
 swscale_internal.h
@@ -164,9 +167,6 @@ has-props
 
 
 20800
-
-mlib
-dir
 
 x86
 dir
@@ -341,6 +341,9 @@ has-props
 
 115570
 
+sparc
+dir
+
 rgb2rgb.c
 file
 
@@ -374,9 +377,6 @@ has-props
 
 
 16299
-
-sparc
-dir
 
 options.c
 file

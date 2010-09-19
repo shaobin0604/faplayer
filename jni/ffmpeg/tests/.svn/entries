@@ -1,7 +1,7 @@
 10
 
 dir
-25134
+25146
 svn://svn.ffmpeg.org/ffmpeg/trunk/tests
 svn://svn.ffmpeg.org/ffmpeg
 
@@ -25,9 +25,6 @@ has-props
 
 
 9553f0bf-9b14-0410-a0b8-cfaf0461ba5b
-
-fate
-dir
 
 lavf-regression.sh
 file
@@ -63,6 +60,9 @@ has-props
 
 4944
 
+fate
+dir
+
 videogen.c
 file
 
@@ -96,40 +96,6 @@ has-props
 
 
 7483
-
-copycooker.sh
-file
-
-
-
-
-2010-08-19T01:41:43.882142Z
-881f5001d7fdce301a01576d1c2b2d71
-2010-03-02T17:16:25.854447Z
-22150
-michael
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-688
 
 fate.mak
 file
@@ -165,17 +131,17 @@ reimar
 
 20371
 
-fate.sh
+copycooker.sh
 file
 
 
 
 
-2010-09-03T01:56:41.624977Z
-fa9903598c4d34f772d6f128db2cc1f0
-2010-09-02T15:39:44.344636Z
-25025
-mru
+2010-08-19T01:41:43.882142Z
+881f5001d7fdce301a01576d1c2b2d71
+2010-03-02T17:16:25.854447Z
+22150
+michael
 has-props
 
 
@@ -197,7 +163,7 @@ has-props
 
 
 
-3082
+688
 
 lavfi-regression.sh
 file
@@ -232,6 +198,40 @@ has-props
 
 
 2643
+
+fate.sh
+file
+
+
+
+
+2010-09-03T01:56:41.624977Z
+fa9903598c4d34f772d6f128db2cc1f0
+2010-09-02T15:39:44.344636Z
+25025
+mru
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3082
 
 fate-run.sh
 file
@@ -301,40 +301,6 @@ mru
 
 380
 
-codec-regression.sh
-file
-
-
-
-
-2010-09-02T07:47:00.878018Z
-3ce12b817ef996022a24d49d60518102
-2010-09-01T12:38:36.424713Z
-25017
-vitor
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-10979
-
 copy.regression.ref
 file
 
@@ -369,17 +335,17 @@ michael
 
 14744
 
-regression-funcs.sh
+codec-regression.sh
 file
 
 
 
 
-2010-08-19T01:41:43.882142Z
-8d8d483820cfe619ec9d0fc408a96f84
-2010-07-21T20:49:41.026252Z
-24396
-mru
+2010-09-02T07:47:00.878018Z
+3ce12b817ef996022a24d49d60518102
+2010-09-01T12:38:36.424713Z
+25017
+vitor
 has-props
 
 
@@ -401,7 +367,7 @@ has-props
 
 
 
-2941
+10979
 
 base64.c
 file
@@ -437,17 +403,17 @@ mru
 
 1554
 
-ffserver.conf
+regression-funcs.sh
 file
 
 
 
 
-2010-08-19T01:41:43.886149Z
-4bbf0e8b052e17f6a24f835f64dbf93d
-2009-03-29T20:17:23.405698Z
-18226
-diego
+2010-08-19T01:41:43.882142Z
+8d8d483820cfe619ec9d0fc408a96f84
+2010-07-21T20:49:41.026252Z
+24396
+mru
 has-props
 
 
@@ -469,7 +435,7 @@ has-props
 
 
 
-4705
+2941
 
 tiny_psnr.c
 file
@@ -504,6 +470,40 @@ has-props
 
 
 4652
+
+ffserver.conf
+file
+
+
+
+
+2010-08-19T01:41:43.886149Z
+4bbf0e8b052e17f6a24f835f64dbf93d
+2009-03-29T20:17:23.405698Z
+18226
+diego
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4705
 
 seek_test.c
 file

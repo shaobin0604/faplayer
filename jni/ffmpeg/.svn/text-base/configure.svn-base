@@ -1975,6 +1975,14 @@ elif $cc -v 2>&1 | grep -q 'PathScale\|Path64'; then
     AS_DEPFLAGS='-MMD -MF $(@:.o=.d) -MT $@'
     speed_cflags='-O2'
     size_cflags='-Os'
+elif $cc -v 2>&1 | grep -q Open64; then
+    cc_type=open64
+    cc_version=__OPEN64__
+    cc_ident=$($cc -v 2>&1 | head -n1 | tr -d :)
+    CC_DEPFLAGS='-MMD -MF $(@:.o=.d) -MT $@'
+    AS_DEPFLAGS='-MMD -MF $(@:.o=.d) -MT $@'
+    speed_cflags='-O2'
+    size_cflags='-Os'
 fi
 
 test -n "$cc_type" && enable $cc_type ||
@@ -2714,7 +2722,7 @@ enabled libdirac   && add_cflags $(pkg-config --cflags dirac) &&
                       require  libdirac libdirac_encoder/dirac_encoder.h dirac_encoder_init $(pkg-config --libs dirac)
 enabled libfaac    && require2 libfaac "stdint.h faac.h" faacEncGetVersion -lfaac
 enabled libgsm     && require  libgsm gsm/gsm.h gsm_create -lgsm
-enabled libmp3lame && require  libmp3lame lame/lame.h hip_decode_init -lmp3lame
+enabled libmp3lame && require  "libmp3lame >= 3.98.3" lame/lame.h hip_decode_init -lmp3lame
 enabled libnut     && require  libnut libnut.h nut_demuxer_init -lnut
 enabled libopencore_amrnb  && require libopencore_amrnb opencore-amrnb/interf_dec.h Decoder_Interface_init -lopencore-amrnb
 enabled libopencore_amrwb  && require libopencore_amrwb opencore-amrwb/dec_if.h D_IF_init -lopencore-amrwb
@@ -2890,6 +2898,7 @@ if enabled icc; then
     check_ldflags -march=$cpu
     # icc 11.0 and 11.1 work with ebp_available, but don't pass the test
     enable ebp_available
+    enabled x86_32 && check_cflags -falign-stack=maintain-16-byte
 elif enabled ccc; then
     # disable some annoying warnings
     add_cflags -msg_disable cvtu32to64

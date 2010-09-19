@@ -6,6 +6,8 @@
 extern "C" {
 #endif
 
+#include <pthread.h>
+
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 
@@ -76,6 +78,7 @@ typedef struct {
     // to handle higher bit rate
     int skip_level;
     int skip_count;
+    pthread_mutex_t skip_mutex;
 
     // 0 = centeral surface if possible
     // 1 = fit surface

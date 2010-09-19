@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, Player!</string>
     <string name="app_name">DemoPlayer</string>
+    <string name="go">go</string>
 </resources>
