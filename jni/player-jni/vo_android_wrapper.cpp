@@ -22,6 +22,7 @@ extern "C" {
 
 void createSurfaceLock() {
     pthread_mutex_init(&mutex, 0);
+    locked = 0;
 }
 
 void destroySurfaceLock() {

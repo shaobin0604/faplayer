@@ -17,7 +17,7 @@ public class FileListActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.filelist);
-		mFileAdapter = new FileListAdapter(this, "/sdcard");
+		mFileAdapter = new FileListAdapter(this, FileListAdapter.getExternalStoragePath());
 		mFileList = (ListView) findViewById(R.id.filelist);
 		mFileList.setAdapter(mFileAdapter);
 		mFileList.setOnItemClickListener(mFileAdapter);

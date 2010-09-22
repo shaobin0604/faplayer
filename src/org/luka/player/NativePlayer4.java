@@ -8,19 +8,25 @@ class NativePlayer4 implements NativePlayer {
 		System.loadLibrary("ffmpeg");
 		System.loadLibrary("player-4");
 	}
-	
+
 	public native int open(String file);
 
 	public native void close();
 
-	public native int play(double start, int ast);
+	public native int play(double start, int ast, int vst, int sst);
 
 	public native void pause();
 
 	public native void resume();
 
 	public native int seek(double time);
-	
+
+	public native int getAudioStreamCount();
+
+	public native int getVideoStreamCount();
+
+	public native int getSubtitleStreamCount();
+
 	public native int setVideoMode(int mode);
 
 	public native int getVideoWidth();
@@ -28,7 +34,7 @@ class NativePlayer4 implements NativePlayer {
 	public native int getVideoHeight();
 
 	public native int getDuration();
-	
+
 	public native double getCurrentTime();
 
 	public native boolean isPlaying();

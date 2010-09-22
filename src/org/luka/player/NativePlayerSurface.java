@@ -51,8 +51,8 @@ public class NativePlayerSurface extends SurfaceView implements
 		mPlayer.close();
 	}
 
-	public int play(double start, int ast) {
-		return mPlayer.play(start, ast);
+	public int play(double start, int ast, int vst, int sst) {
+		return mPlayer.play(start, ast, vst, sst);
 	}
 
 	public void pause() {

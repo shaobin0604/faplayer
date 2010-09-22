@@ -12,7 +12,7 @@ PlayerCtx* gCtx = 0;
 
 int player_open(const char* file);
 void player_close();
-int player_play(double start, int ast);
+int player_play(double start, int ast, int vst, int sst);
 int player_seek(double time);
 void player_pause();
 void player_resume();
@@ -25,12 +25,16 @@ int player_set_video_mode(int mode);
 int player_get_video_width();
 int player_get_video_height();
 
+int player_get_audio_stream_count();
+int player_get_video_stream_count();
+int player_get_subtitle_stream_count();
+
 int player_is_playing();
 
 static void init_video_codec_ctx(AVCodecContext* ctx) {
     if (!ctx)
         return;
-    // ctx->flags = 0;
+    ctx->flags = CODEC_FLAG_BITEXACT;
     ctx->flags2 |= (CODEC_FLAG2_FAST | CODEC_FLAG2_FASTPSKIP | CODEC_FLAG2_BPYRAMID | CODEC_FLAG2_MIXED_REFS | CODEC_FLAG2_BRDO);
 	ctx->thread_count = 2;
 	ctx->workaround_bugs = FF_BUG_AUTODETECT;
@@ -111,15 +115,12 @@ void player_close() {
             av_free(gCtx->samples);
         if (gCtx->av_ctx)
         	av_close_input_file(gCtx->av_ctx);
-        pthread_mutex_destroy(&gCtx->skip_mutex);
         av_free(gCtx);
         gCtx = 0;
     }
 }
 
-int player_play(double start, int audio) {
-    int video = 0;
-    int subtitle = 0;
+int player_play(double start, int audio, int video, int subtitle) {
     int i, audio_st, video_st, subtitle_st;
 
     if (!gCtx)
@@ -210,7 +211,6 @@ int player_play(double start, int audio) {
         player_close();
         return -1;
     }
-    pthread_mutex_init(&gCtx->skip_mutex, 0);
     player_seek(start);
     gCtx->frame = avcodec_alloc_frame();
     if (!gCtx->frame) {
@@ -302,19 +302,19 @@ int player_get_video_height() {
     return gCtx ? gCtx->height : 0;
 }
 
-int player_is_playing() {
-    return gCtx ? (gCtx->pause ? 0 : -1) : 0;
-}
-
-int player_get_audio_count() {
+int player_get_audio_stream_count() {
     return gCtx ? gCtx->audio : 0;
 }
 
-int player_get_video_count() {
+int player_get_video_stream_count() {
     return gCtx ? gCtx->video : 0;
 }
 
-int player_get_subtitle_count() {
+int player_get_subtitle_stream_count() {
     return gCtx ? gCtx->subtitle : 0;
+}
+
+int player_is_playing() {
+    return gCtx ? (gCtx->pause ? 0 : -1) : 0;
 }
 

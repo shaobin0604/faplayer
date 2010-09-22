@@ -7,7 +7,7 @@
 #include <pthread.h>
 #include <libavcodec/avcodec.h>
 
-#define MAX_PACKET_QUEUE_SIZE 2048
+#define MAX_PACKET_QUEUE_SIZE 256
 
 static int stop = 0;
 

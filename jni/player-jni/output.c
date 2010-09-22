@@ -52,16 +52,19 @@ static void* audio_output_thread(void* para) {
 static void* video_output_thread(void* para) {
     Picture* pic;
     int64_t bgn, end, left;
+    double temp[16];
     double diff, total, avg, factor;
-    int idx, fps;
-    int64_t inc;
-    int aq, vq, ad, vd;
+    int idx, fps, step, count;
+    int64_t inc, vb, ve, vt;
 
     idx = 0;
     inc = 0;
+    vt = 0;
+    count = 0;
     fps = (int)(gCtx->fps);
+    step = (fps >> 2);
     total = 0;
-    factor = 1;
+    factor = 1.0;
     for (;;) {
         if (stop) {
             pthread_exit(0);
@@ -75,65 +78,42 @@ static void* video_output_thread(void* para) {
         if (pic) {
             idx++;
             if (vo && vo->display) {
+                count++;
+                vb = av_gettime();
                 vo->display(pic);
+                ve = av_gettime();
+                vt += (ve - vb);
+                gCtx->avg_video_display_time = vt / count;
             }
             if (pic->pts >= 0) {
                 gCtx->video_last_pts = pic->pts;
                 inc = pic->pts / idx;
             }
             else
-                gCtx->video_last_pts += inc;
+                gCtx->video_last_pts += (int64_t)(1.0 / gCtx->fps / gCtx->video_time_base);
             free_Picture(pic);
         }
         end = av_gettime();
         left = (int64_t)(1000 * 1000 / gCtx->fps) - end + bgn;
         if (gCtx->audio_enabled) {
-            diff = gCtx->audio_last_pts * gCtx->audio_time_base - gCtx->video_last_pts * gCtx->video_time_base;
-            debug("a/v/d %.3f/%.3f/%.3f\n", gCtx->audio_last_pts * gCtx->audio_time_base, gCtx->video_last_pts * gCtx->video_time_base, diff);
-            total += diff;
-            if (idx % (fps >> 2) == 0) {
-                avg = total / (fps >> 2);
-                total = 0;
-                debug("avg diff %.3f in %d\n", avg, (fps >> 2));
-                pthread_mutex_lock(&gCtx->skip_mutex);
-                if (avg > 0 && (idx > (fps >> 1))) {
+            if (idx >= fps) {
+                avg = total / step;
+                total -= temp[(idx - 1) % step];
+                debug("avg a/v diff %.3f since last %d output\n", avg, step);
+                if (avg > 0.2)
                     factor = 0;
-                    if (avg < 0.25) {
-                        gCtx->skip_count = 0;
-                        gCtx->skip_level = AVDISCARD_DEFAULT;
-                    }
-                    else if (avg < 0.5) {
-                        gCtx->skip_count = (fps >> 1);
-                        gCtx->skip_level = AVDISCARD_NONREF;
-                    }
-                    else if (avg < 1.0) {
-                        gCtx->skip_count = fps;
-                        gCtx->skip_level = AVDISCARD_NONREF;
-                    }
-                    else if (avg < 2.0) {
-                        gCtx->skip_count = (fps << 1);
-                        gCtx->skip_level = AVDISCARD_NONREF;
-                        debug("a/v out of sync! avg diff %.3f in %d\n", avg, (fps >> 2));
-                    }
-                    else {
-                        gCtx->skip_count = (fps << 2);
-                        gCtx->skip_level = AVDISCARD_NONREF;
-                        debug("a/v out of sync! avg diff %.3f in %d\n", avg, (fps >> 2));
-                    }
-                }
-                else {
+                else if (avg > -0.2)
                     factor = 1.0;
-                    gCtx->skip_count = 0;
-                    gCtx->skip_level = AVDISCARD_DEFAULT;
-                    if (avg < -0.5)
-                        factor = 1.5;
-                    if (avg < -1.0)
-                        factor = 3.0;
-                }
-                pthread_mutex_unlock(&gCtx->skip_mutex);
+                else
+                    factor = 1.0 - avg / 2;
             }
+            diff = gCtx->audio_last_pts * gCtx->audio_time_base - gCtx->video_last_pts * gCtx->video_time_base;
+            if (idx >= (fps - step))
+                total += diff;
+            temp[(idx - 1) % step] = diff;
+            debug("cur a/v/d %.3f/%.3f/%.3f\n", gCtx->audio_last_pts * gCtx->audio_time_base, gCtx->video_last_pts * gCtx->video_time_base, diff);
             if (left > 0) {
-                usleep((int)(left * factor));
+                usleep((int64_t)(left * factor));
             }
         }
     }

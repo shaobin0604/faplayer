@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public class PlayerActivity extends Activity {
 
@@ -19,9 +20,11 @@ public class PlayerActivity extends Activity {
 		setContentView(mPlayer);
 		Bundle bundle = getIntent().getExtras();
 		String file = bundle.getString("file");
-		mPlayer.open(file);
+		if (mPlayer.open(file) != 0)
+			Toast.makeText(this, "Failed to open file!", Toast.LENGTH_SHORT);
 		mPlayer.setVideoMode(NativePlayer.VIDEO_MODE_FIT);
-		mPlayer.play(0, 0);
+		if (mPlayer.play(0, 0, 0, -1) != 0)
+			Toast.makeText(this, "Failed to play file!", Toast.LENGTH_SHORT);
 	}
 
 	@Override

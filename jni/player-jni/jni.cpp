@@ -1,12 +1,16 @@
 
 #include <jni.h>
 
+#include "debug.h"
+
+static JavaVM* jvm = 0;
+
 extern "C" {
 
 // definations from player.c
 int player_open(const char* file);
 void player_close();
-int player_play(double start, int ast);
+int player_play(double start, int ast, int vst, int sst);
 void player_pause();
 void player_resume();
 int player_seek(double time);
@@ -19,11 +23,62 @@ int player_set_video_mode(int mode);
 int player_get_video_width();
 int player_get_video_height();
 
+int player_get_audio_stream_count();
+int player_get_video_stream_count();
+int player_get_subtitle_stream_count();
+
 int player_is_playing();
 
 // defination from ao_android_wrapper.cpp
 jint attach(JNIEnv *env, jobject thiz, jobject surf);
 void detach(JNIEnv *env, jobject thiz);
+
+// 
+
+int SetThreadPriority(int p) {
+    int err = 0;
+    JNIEnv* env;
+    jclass clz;
+    jmethodID mid;
+    jobject thread;
+
+    if (!jvm)
+        return -1;
+    err = jvm->AttachCurrentThread(&env, 0);
+    if (err < 0) {
+        err = -1;
+        goto fail;
+    }
+    clz = env->FindClass("java/lang/Thread");
+    if (!clz) {
+        err = -1;
+        goto fail;
+    }
+    mid = env->GetStaticMethodID(clz, "currentThread", "()Ljava/lang/Thread;");
+    if (!mid) {
+        err = -1;
+        goto fail;
+    }
+    thread = env->CallStaticObjectMethod(clz, mid);
+    if (!thread) {
+        err = -1;
+        goto fail;
+    }
+    mid = env->GetMethodID(clz, "setPriority", "(I)V");
+    if (!mid) {
+        err = -1;
+        goto fail;
+    }
+    env->CallVoidMethod(thread, mid, p);
+    /*mid = env->GetMethodID(clz, "getPriority", "()I");
+    if (mid) {
+        p = env->CallIntMethod(thread, mid);
+        debug("new thread priority is %d\n", p);
+    }*/
+fail:
+    jvm->DetachCurrentThread();
+    return err;
+}
 
 // exports
 #ifndef CLASS
@@ -51,8 +106,8 @@ JNIEXPORT void JNICALL NAME(close)(JNIEnv *env, jobject thiz) {
     player_close();
 }
 
-JNIEXPORT jint JNICALL NAME(play)(JNIEnv *env, jobject thiz, jdouble start, jint ast) {
-    return player_play(start, ast);
+JNIEXPORT jint JNICALL NAME(play)(JNIEnv *env, jobject thiz, jdouble start, jint ast, jint vst, jint sst) {
+    return player_play(start, ast, vst, sst);
 }
 
 JNIEXPORT void JNICALL NAME(pause)(JNIEnv *env, jobject thiz) {
@@ -89,6 +144,18 @@ JNIEXPORT jint JNICALL NAME(getVideoHeight)(JNIEnv *env, jobject thiz) {
     return player_get_video_height();
 }
 
+JNIEXPORT jint JNICALL NAME(getAudioStreamCount)(JNIEnv *env, jobject thiz) {
+    return player_get_audio_stream_count();
+}
+
+JNIEXPORT jint JNICALL NAME(getVideoStreamCount)(JNIEnv *env, jobject thiz) {
+    return player_get_video_stream_count();
+}
+
+JNIEXPORT jint JNICALL NAME(getSubtitleStreamCount)(JNIEnv *env, jobject thiz) {
+    return player_get_subtitle_stream_count();
+}
+
 JNIEXPORT jboolean JNICALL NAME(isPlaying)(JNIEnv *env, jobject thiz) {
     return player_is_playing() == 0 ? 1 : 0;
 }
@@ -99,6 +166,13 @@ JNIEXPORT jint JNICALL NAME(attach)(JNIEnv *env, jobject thiz, jobject surf) {
 
 JNIEXPORT void JNICALL NAME(detach)(JNIEnv *env, jobject thiz) {
     detach(env, thiz);
+}
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
+{
+    jvm = vm;
+
+    return JNI_VERSION_1_4;
 }
 
 }

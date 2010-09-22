@@ -354,8 +354,6 @@ LOCAL_SRC_FILES := \
     libavcodec/arm/dsputil_init_armv6.c \
     libavcodec/arm/dsputil_armv6.S \
     libavcodec/arm/simple_idct_armv6.S \
-    libavcodec/arm/dsputil_vfp.S \
-    libavcodec/arm/dsputil_init_vfp.c \
     libavcore/imgutils.c \
     libavcore/parseutils.c \
     libavcore/utils.c \
@@ -591,6 +589,8 @@ LOCAL_SRC_FILES := \
     libswscale/swscale.c \
     libswscale/utils.c \
     libswscale/yuv2rgb.c
+
+LOCAL_SRC_FILES += sincos.c
 
 LOCAL_LDLIBS := -lc -lm -lz -llog
 

@@ -70,15 +70,11 @@ typedef struct {
     int64_t video_last_pts;
     int64_t subtitle_last_pts;
 
-    int64_t audio_decode_pts;
-    int64_t video_decode_pts;
-    int64_t subtitle_decode_pts;
+    int64_t avg_audio_decode_time;
+    int64_t avg_video_decode_time;
+    int64_t avg_subtitle_decode_time;
 
-    // try to drop some frame
-    // to handle higher bit rate
-    int skip_level;
-    int skip_count;
-    pthread_mutex_t skip_mutex;
+    int64_t avg_video_display_time;
 
     // 0 = centeral surface if possible
     // 1 = fit surface

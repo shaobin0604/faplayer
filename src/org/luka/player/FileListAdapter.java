@@ -6,6 +6,7 @@ import java.util.Vector;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,15 @@ public class FileListAdapter extends BaseAdapter implements
 	private Vector<File> mFileList;
 	private String mCurrentPath;
 
+	public static String getExternalStoragePath() {
+		boolean exists = Environment.getExternalStorageState().equals(
+				android.os.Environment.MEDIA_MOUNTED);
+		if (exists)
+			return Environment.getExternalStorageDirectory().getAbsolutePath();
+		else
+			return "/";
+	}
+
 	public FileListAdapter(Context context, String path) {
 		mContext = context;
 		setDirectory(path);
@@ -34,7 +44,8 @@ public class FileListAdapter extends BaseAdapter implements
 		if (mFile == null)
 			return;
 		File[] list = mFile.listFiles(this);
-		if ((list == null || list.length == 0) && (!path.equals("/sdcard"))) {
+		if ((list == null || list.length == 0)
+				&& (!path.equals(getExternalStoragePath()))) {
 			return;
 		}
 		mFileList = new Vector<File>();
@@ -101,7 +112,7 @@ public class FileListAdapter extends BaseAdapter implements
 	@Override
 	public boolean onKey(View v, int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (!mCurrentPath.equals("/sdcard")) {
+			if (!mCurrentPath.equals(getExternalStoragePath())) {
 				setDirectory(mFile.getParentFile().getAbsolutePath());
 				return true;
 			} else
