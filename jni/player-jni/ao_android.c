@@ -19,7 +19,7 @@ static int ao_init_android() {
 }
 
 static int ao_play_android(Samples* sam) {
-    int err, i, n, m;
+    int err, i, n, m, c;
     void* in[6];
     void* out[6];
     int in_stride[6];
@@ -53,14 +53,15 @@ static int ao_play_android(Samples* sam) {
             }
         }
         m = (sam->format == SAMPLE_FMT_U8) ? sizeof(uint8_t) : sizeof(int16_t);
-        out[0] = malloc(sam->size * m * (sam->channel > 1 ? 2 : sam->channel));
+        c = sam->size * m * (sam->channel > 1 ? 2 : sam->channel);
+        out[0] = malloc(c);
         if (!out[0])
             return -1;
         out[1] = out[2] = out[3] = out[4] = out[5] = 0;
         out_stride[0] = m;
         out_stride[1] = out_stride[2] = out_stride[3] = out_stride[4] = out_stride[5] = 0;
         if (sam->channel > 1) {
-            out[1] = (uint8_t*)(out[0]) + sam->size * m / n / 2;
+            out[1] = (uint8_t*)(out[0]) + c / 2;
             if (!out[1]) {
                 free(out[0]);
                 return -1;
@@ -70,8 +71,6 @@ static int ao_play_android(Samples* sam) {
         err = av_audio_convert(cvt, out, out_stride, (const void * const*)in, in_stride, sam->size);
         if (err < 0) {
             free(out[0]);
-            if (sam->channel > 1)
-                free(out[1]);
             return -1;
         }
     }
