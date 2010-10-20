@@ -66,3 +66,59 @@
 +
 +extern const uint32_t ff_inverse[257];
 +
+diff -Nurp ffmpeg/libavutil/log.c ffmpeg/libavutil/log.c.1 
+--- ffmpeg/libavutil/log.c	2010-10-13 10:16:02.594236709 +0800
++++ ffmpeg/libavutil/log.c.1	2010-09-27 22:01:43.293211777 +0800
+@@ -28,6 +28,13 @@
+ #include <stdlib.h>
+ #include "avutil.h"
+ #include "log.h"
++#if defined(ANDROID)
++#include <android/log.h>
++#endif
++
++#if defined(ANDROID)
++#define LOGTAG "ffmpeg"
++#endif
+ 
+ #if LIBAVUTIL_VERSION_MAJOR > 50
+ static
+@@ -120,7 +127,38 @@ void av_log_default_callback(void* ptr, 
+         fprintf(stderr, "    Last message repeated %d times\n", count);
+         count=0;
+     }
++#if defined(ANDROID)
++    switch(level) {
++        case AV_LOG_QUIET:
++            level = ANDROID_LOG_SILENT;
++            break;
++        case AV_LOG_PANIC:
++        case AV_LOG_FATAL:
++            level = ANDROID_LOG_FATAL;
++            break;
++        case AV_LOG_ERROR:
++            level = ANDROID_LOG_ERROR;
++            break;
++        case AV_LOG_WARNING:
++            level = ANDROID_LOG_WARN;
++            break;
++        case AV_LOG_INFO:
++            level = ANDROID_LOG_INFO;
++            break;
++        case AV_LOG_VERBOSE:
++            level = ANDROID_LOG_VERBOSE;
++            break;
++        case AV_LOG_DEBUG:
++            level = ANDROID_LOG_INFO;
++            break;
++        default:
++            level = ANDROID_LOG_UNKNOWN;
++            break;
++    }
++    __android_log_print(level, LOGTAG, "%s", line);
++#else
+     colored_fputs(av_clip(level>>3, 0, 6), line);
++#endif
+     strcpy(prev, line);
+ }
+ 

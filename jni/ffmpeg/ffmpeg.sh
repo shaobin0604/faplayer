@@ -1,8 +1,10 @@
 ./configure \
+--disable-bsfs \
+--disable-devices \
 --disable-encoders \
 --disable-muxers \
 --enable-cross-compile \
---cross-prefix=arm-android-linux-gnueabi- \
+--cross-prefix=arm-none-linux-gnueabi- \
 --arch=armv6j \
 --cpu=arm1136j-s \
 --target-os=linux \

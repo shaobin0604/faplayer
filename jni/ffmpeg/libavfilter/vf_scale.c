@@ -49,16 +49,16 @@ static av_cold int init(AVFilterContext *ctx, const char *args, void *opaque)
     const char *p;
 
     scale->flags = SWS_BILINEAR;
-    if (args){
+    if (args) {
         sscanf(args, "%d:%d", &scale->w, &scale->h);
-        p= strstr(args,"flags=");
-        if(p) scale->flags= strtoul(p+6, NULL, 0);
+        p = strstr(args,"flags=");
+        if (p) scale->flags = strtoul(p+6, NULL, 0);
     }
 
     /* sanity check params */
     if (scale->w <  -1 || scale->h <  -1) {
         av_log(ctx, AV_LOG_ERROR, "Size values less than -1 are not acceptable.\n");
-        return -1;
+        return AVERROR(EINVAL);
     }
     if (scale->w == -1 && scale->h == -1)
         scale->w = scale->h = 0;
@@ -197,7 +197,7 @@ static void draw_slice(AVFilterLink *link, int y, int h, int slice_dir)
 
 AVFilter avfilter_vf_scale = {
     .name      = "scale",
-    .description = "Scale the input video to width:height size and/or convert the image format.",
+    .description = NULL_IF_CONFIG_SMALL("Scale the input video to width:height size and/or convert the image format."),
 
     .init      = init,
     .uninit    = uninit,

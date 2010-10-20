@@ -25,7 +25,7 @@
 #include "libavutil/avutil.h"
 
 #define LIBAVFILTER_VERSION_MAJOR  1
-#define LIBAVFILTER_VERSION_MINOR 39
+#define LIBAVFILTER_VERSION_MINOR 53
 #define LIBAVFILTER_VERSION_MICRO  0
 
 #define LIBAVFILTER_VERSION_INT AV_VERSION_INT(LIBAVFILTER_VERSION_MAJOR, \
@@ -127,7 +127,12 @@ typedef struct AVFilterBufferRef {
     int linesize[8];            ///< number of bytes per line
     int format;                 ///< media format
 
-    int64_t pts;                ///< presentation timestamp in units of 1/AV_TIME_BASE
+    /**
+     * presentation timestamp. The time unit may change during
+     * filtering, as it is specified in the link and the filter code
+     * may need to rescale the PTS accordingly.
+     */
+    int64_t pts;
     int64_t pos;                ///< byte position in stream, -1 if unknown
 
     int perms;                  ///< permissions, see the AV_PERM_* flags
@@ -391,7 +396,7 @@ struct AVFilterPad {
 
     /**
      * Frame poll callback. This returns the number of immediately available
-     * frames. It should return a positive value if the next request_frame()
+     * samples. It should return a positive value if the next request_frame()
      * is guaranteed to return one frame (with no delay).
      *
      * Defaults to just calling the source poll_frame() method.
@@ -556,10 +561,10 @@ struct AVFilterContext {
  */
 struct AVFilterLink {
     AVFilterContext *src;       ///< source filter
-    unsigned int srcpad;        ///< index of the output pad on the source filter
+    AVFilterPad *srcpad;        ///< output pad on the source filter
 
     AVFilterContext *dst;       ///< dest filter
-    unsigned int dstpad;        ///< index of the input pad on the dest filter
+    AVFilterPad *dstpad;        ///< input pad on the dest filter
 
     /** stage of the initialization of the link properties (dimensions, etc) */
     enum {
@@ -598,6 +603,15 @@ struct AVFilterLink {
 
     AVFilterBufferRef *cur_buf;
     AVFilterBufferRef *out_buf;
+
+    /**
+     * Define the time base used by the PTS of the frames/samples
+     * which will pass through this link.
+     * During the configuration stage, each filter is supposed to
+     * change only the output timebase, while the timebase of the
+     * input link is assumed to be an unchangeable property.
+     */
+    AVRational time_base;
 };
 
 /**
@@ -645,7 +659,7 @@ AVFilterBufferRef *avfilter_get_video_buffer(AVFilterLink *link, int perms,
  * @param channel_layout the number and type of channels per sample in the buffer to allocate
  * @param planar         audio data layout - planar or packed
  * @return               A reference to the samples. This must be unreferenced with
- *                       avfilter_unref_samples when you are finished with it.
+ *                       avfilter_unref_buffer when you are finished with it.
  */
 AVFilterBufferRef *avfilter_get_audio_buffer(AVFilterLink *link, int perms,
                                              enum SampleFormat sample_fmt, int size,
@@ -783,12 +797,12 @@ void avfilter_destroy(AVFilterContext *filter);
  *
  * @param link the link into which the filter should be inserted
  * @param filt the filter to be inserted
- * @param in   the input pad on the filter to connect
- * @param out  the output pad on the filter to connect
+ * @param filt_srcpad_idx the input pad on the filter to connect
+ * @param filt_dstpad_idx the output pad on the filter to connect
  * @return     zero on success
  */
 int avfilter_insert_filter(AVFilterLink *link, AVFilterContext *filt,
-                           unsigned in, unsigned out);
+                           unsigned filt_srcpad_idx, unsigned filt_dstpad_idx);
 
 /**
  * Insert a new pad.

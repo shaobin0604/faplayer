@@ -19,6 +19,7 @@ static int stop = 0;
 static pthread_t adtid = 0;
 static pthread_t vdtid = 0;
 static pthread_t sdtid = 0;
+static pthread_t sytid = 0;
 
 static void* audio_decode_thread(void* para) {
     AVPacket* pkt;
@@ -27,7 +28,7 @@ static void* audio_decode_thread(void* para) {
     int count;
     int64_t time, bgn, end;
 
-    err = SetThreadPriority(8);
+    err = SetThreadPriority(9);
     if (err < 0)
         debug("warning: failed to set audio decode thread priority!\n");
 
@@ -58,7 +59,12 @@ static void* audio_decode_thread(void* para) {
             if (size)
                 memcpy(sam->samples, gCtx->samples, size);
             sam->format = gCtx->audio_ctx->sample_fmt;
-            sam->pts = pkt->pts;
+            if (pkt->pts != AV_NOPTS_VALUE)
+                sam->pts = pkt->pts * gCtx->audio_time_base;
+            else if (pkt->dts != AV_NOPTS_VALUE)
+                sam->pts = pkt->dts * gCtx->audio_time_base;
+            else
+                sam->pts = 0;
             samples_queue_push_head(sam);
             end = av_gettime();
             count++;
@@ -80,9 +86,7 @@ static void* video_decode_thread(void* para) {
     int fps, step;
     int64_t time, bgn, end;
     int64_t temp[16];
-    int latency;
-    int skip_sched, skip_total, skip_count;
-    int dt, et, left, show;
+    int show;
 
     err = SetThreadPriority(10);
     if (err < 0)
@@ -94,11 +98,6 @@ static void* video_decode_thread(void* para) {
     time = 0;
     fps = (int)(gCtx->fps);
     step = (fps >> 2);
-    skip_sched = 0;
-    skip_total = 0;
-    skip_count = 0;
-    dt = 0;
-    et = (int)(1000 / gCtx->fps);
     for (;;) {
         if (stop) {
             pthread_exit(0);
@@ -110,38 +109,28 @@ static void* video_decode_thread(void* para) {
         bgn = av_gettime();
         pkt = video_packet_queue_pop_tail();
         if (pkt) {
-            latency = (int)((gCtx->audio_last_pts * gCtx->audio_time_base - gCtx->video_last_pts * gCtx->video_time_base) * fps);
-            if (count > step) {
-                dt = (gCtx->avg_video_decode_time + gCtx->avg_video_display_time) / 1000;
-                skip_sched = (dt < et) ? 0 : (fps * (dt- et) / et + 1);
-                skip_total += skip_sched;
-            }
-            if (!(count % step)) {
-                skip_count += ((skip_total << 1) / step);
-                skip_count = (latency > skip_count) ? latency : skip_count;
-                skip_count = (latency < 0) ? skip_count >> 1 : skip_count;
-                if (skip_count) {
-                    left = picture_queue_size();
-                    if (left)
-                        skip_count /= left;
-                }
-                debug("scheduled skip %d in %d, total %d, latency %d\n", (skip_total / fps), step, skip_count, latency);
-                skip_total = 0;
-            }
+            gCtx->video_packet_last_pts = pkt->pts;
             show = -1;
-            /*if (skip_count) {
+            pthread_mutex_lock(&gCtx->skip_mutex);
+            if (gCtx->skip_count > 0) {
                 gCtx->video_ctx->flags |= CODEC_FLAG_LOW_DELAY;
-                gCtx->video_ctx->skip_frame = AVDISCARD_NONREF;
-                gCtx->video_ctx->skip_idct = AVDISCARD_NONREF;
-                gCtx->video_ctx->skip_loop_filter = AVDISCARD_NONREF;
-                skip_count--;
+                gCtx->video_ctx->skip_frame = gCtx->skip_level;
+                gCtx->video_ctx->skip_idct = gCtx->skip_level;
+                gCtx->video_ctx->skip_loop_filter = AVDISCARD_ALL;
+                gCtx->skip_count--;
+                if (gCtx->skip_level > AVDISCARD_NONREF)
+                    show = 0;
             }
-            else {*/
+            else {
                 gCtx->video_ctx->flags &= (~CODEC_FLAG_LOW_DELAY);
                 gCtx->video_ctx->skip_frame = AVDISCARD_DEFAULT;
                 gCtx->video_ctx->skip_idct = AVDISCARD_DEFAULT;
                 gCtx->video_ctx->skip_loop_filter = AVDISCARD_DEFAULT;
-            //}
+                gCtx->skip_level = AVDISCARD_DEFAULT;
+                gCtx->skip_count = 0;
+            }
+            debug("skip level %d skip count %d\n", gCtx->skip_level, gCtx->skip_count);
+            pthread_mutex_unlock(&gCtx->skip_mutex);
             err = avcodec_decode_video2(gCtx->video_ctx, gCtx->frame, &got, pkt);
             if (err < 0) {
                 debug("avcodec_decode_video2 fail: %d\n", err);
@@ -162,7 +151,13 @@ static void* video_decode_thread(void* para) {
                 pic->width = gCtx->video_ctx->width;
                 pic->height = gCtx->video_ctx->height;
                 pic->format = gCtx->video_ctx->pix_fmt;
-                pic->pts = pkt->pts;
+                if (pkt->dts == AV_NOPTS_VALUE && gCtx->frame->opaque && *(uint64_t*)gCtx->frame->opaque != AV_NOPTS_VALUE) {
+                    pic->pts = *(uint64_t*)gCtx->frame->opaque * gCtx->video_time_base;
+                } else if (pkt->dts != AV_NOPTS_VALUE) {
+                    pic->pts = pkt->dts * gCtx->video_time_base;
+                } else {
+                    pic->pts = 0;
+                }
                 picture_queue_push_head(pic);
             }
 next:
@@ -172,6 +167,8 @@ next:
                 gCtx->avg_video_decode_time = time / step;
                 time -= temp[(count - 1) % step];
             }
+            else
+                gCtx->avg_video_decode_time = time / count;
             time += (end - bgn);
             temp[(count - 1) % step] = (end - bgn);
             free_AVPacket(pkt);
@@ -198,6 +195,62 @@ static void* subtitle_decode_thread(void* para) {
     return 0;
 }
 
+static void* synchronize_thread(void* para) {
+    int idx, fps, step;
+    int sched, etime, dtime;
+    double temp[16];
+    double diff, total, adif;
+    double judge;
+
+    idx = 0;
+    fps = (int)(gCtx->fps);
+    step = fps >> 2;
+    etime = 1000 / fps;
+    total = 0;
+
+    pthread_mutex_lock(&gCtx->start_mutex);
+    while ((gCtx->audio_enabled && (samples_queue_size() < step)) || (gCtx->video_enabled && (picture_queue_size() < step)))
+        usleep(5 * 1000);
+    gCtx->start = -1;
+    pthread_cond_broadcast(&gCtx->start_condv);
+    pthread_mutex_unlock(&gCtx->start_mutex);
+
+    for (;;) {
+        if (stop) {
+            pthread_exit(0);
+        }
+        idx++;
+        //
+        dtime = (gCtx->avg_video_decode_time + gCtx->avg_video_display_time) / 1000;
+        sched = (dtime > etime) ? (fps - 1000 / dtime) : 0;
+        //
+        diff = gCtx->audio_last_pts - gCtx->video_last_pts;
+        if (idx >= step) {
+            adif = total / step;
+            total -= temp[(idx - 1) % step];
+        }
+        total += diff;
+        temp[(idx - 1) % step] = diff;
+        judge = (adif + diff * 4.0) / 5.0 + (double)(sched << 1) / (double)(fps);
+        debug("etime %d dtime %d sched %d diff %.3f adif %.3f judge %.3f\n", etime, dtime, sched, diff, adif, judge);
+        pthread_mutex_lock(&gCtx->skip_mutex);
+        if (floor(judge) > 0) {
+            if (!gCtx->skip_count) {
+                gCtx->skip_level = AVDISCARD_NONREF;
+                gCtx->skip_count = ceil(judge);
+            }
+        }
+        else {
+            gCtx->skip_level = AVDISCARD_DEFAULT;
+            gCtx->skip_count = 0;
+        }        
+        pthread_mutex_unlock(&gCtx->skip_mutex);
+        usleep(1000 * 1000 / fps);
+    }
+
+    return 0;
+}
+
 int decode_init() {
     int policy, priority;
     pthread_attr_t attr;
@@ -211,37 +264,18 @@ int decode_init() {
     adtid = 0;
     vdtid = 0;
     sdtid = 0;
+    sytid = 0;
 
     if (gCtx->audio_enabled) {
-        pthread_attr_init(&attr);
-        pthread_attr_getschedpolicy(&attr, &policy);
-        if (policy != SCHED_RR) {
-            policy = SCHED_RR;
-            pthread_attr_setschedpolicy(&attr, policy);
-        }
-        priority = sched_get_priority_max(policy);
-        priority = priority ? 85 : 0;
-        para.sched_priority = priority;
-        pthread_attr_setschedparam(&attr, &para);
         pthread_create(&adtid, 0, audio_decode_thread, 0);
-        pthread_attr_destroy(&attr);
     }
     if (gCtx->video_enabled) {
-        pthread_attr_init(&attr);
-        pthread_attr_getschedpolicy(&attr, &policy);
-        if (policy != SCHED_RR) {
-            policy = SCHED_RR;
-            pthread_attr_setschedpolicy(&attr, policy);
-        }
-        priority = sched_get_priority_max(policy);
-        priority = priority ? 90 : 0;
-        para.sched_priority = priority;
-        pthread_attr_setschedparam(&attr, &para);
-        pthread_create(&vdtid, &attr, video_decode_thread, 0);
-        pthread_attr_destroy(&attr);
+        pthread_create(&vdtid, 0, video_decode_thread, 0);
     }
     if (gCtx->subtitle_enabled)
         pthread_create(&sdtid, 0, subtitle_decode_thread, 0);
+    if (gCtx->audio_enabled && gCtx->video_enabled)
+        pthread_create(&sytid, 0, synchronize_thread, 0);
 
 	return 0;
 }
@@ -262,6 +296,10 @@ void decode_free() {
         subtitle_packet_queue_wake();
         pthread_join(sdtid, 0);
         sdtid = 0;
+    }
+    if (sytid) {
+        pthread_join(sytid, 0);
+        sytid = 0;
     }
 }
 

@@ -33,9 +33,23 @@ version <next>:
 - Apple HTTP Live Streaming demuxer
 - a64 codec
 - MMS-HTTP support
-- G.722 ADPCM audio decoder
+- G.722 ADPCM audio encoder/decoder
 - R10k video decoder
 - ocv_smooth filter
+- frei0r wrapper filter
+- change crop filter syntax to width:height:x:y
+- make the crop filter accept parametric expressions
+- make ffprobe accept AVFormatContext options
+- yadif filter
+- blackframe filter
+- Demuxer for Leitch/Harris' VR native stream format (LXF)
+- RTP depacketization of the X-QT QuickTime format
+- SAP (Session Announcement Protocol, RFC 2974) muxer and demuxer
+- cropdetect filter
+- ffmpeg -crop* options removed
+- transpose filter added
+- ffmpeg -force_key_frames option added
+- demuxer for receiving raw rtp:// URLs without an SDP description
 
 
 version 0.6:

@@ -52,6 +52,10 @@ typedef struct {
 
     // runtime parameters
 
+    int start;
+    pthread_mutex_t start_mutex;
+    pthread_cond_t start_condv;
+
     AVFormatContext* av_ctx;
     AVCodecContext* audio_ctx;
     AVCodec* audio_codec;
@@ -66,15 +70,21 @@ typedef struct {
     double audio_time_base;
     double video_time_base;
     double subtitle_time_base;
-    int64_t audio_last_pts;
-    int64_t video_last_pts;
-    int64_t subtitle_last_pts;
+    double audio_last_pts;
+    double video_last_pts;
+    double subtitle_last_pts;
+
+    int64_t video_packet_last_pts;
 
     int64_t avg_audio_decode_time;
     int64_t avg_video_decode_time;
     int64_t avg_subtitle_decode_time;
 
     int64_t avg_video_display_time;
+
+    int skip_level;
+    int skip_count;
+    pthread_mutex_t skip_mutex;
 
     // 0 = centeral surface if possible
     // 1 = fit surface

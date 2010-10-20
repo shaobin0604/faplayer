@@ -1,15 +1,15 @@
 10
 
 dir
-25146
+25530
 svn://svn.ffmpeg.org/ffmpeg/trunk/tests/ref/fate
 svn://svn.ffmpeg.org/ffmpeg
 
 
 
-2010-09-11T10:23:02.936210Z
-25104
-mstorsjo
+2010-10-10T02:20:02.146293Z
+25432
+astrange
 
 
 
@@ -162,40 +162,6 @@ mru
 
 33
 
-h264-conformance-aud_mw_e
-file
-
-
-
-
-2010-08-19T01:41:43.142135Z
-baa497292a18b1e0f6b949e4819dc891
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2866
-
 caf
 file
 
@@ -229,6 +195,40 @@ mru
 
 
 15
+
+h264-conformance-aud_mw_e
+file
+
+
+
+
+2010-08-19T01:41:43.142135Z
+baa497292a18b1e0f6b949e4819dc891
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2866
 
 h264-conformance-caba3_sony_c
 file
@@ -298,40 +298,6 @@ mru
 
 7700
 
-h264-conformance-camanl1_toshiba_b
-file
-
-
-
-
-2010-08-19T01:41:43.142135Z
-928363319947f86504d0a5581d199d99
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2666
-
 zmbv-32bit
 file
 
@@ -365,6 +331,40 @@ mru
 
 
 4846
+
+h264-conformance-camanl1_toshiba_b
+file
+
+
+
+
+2010-08-19T01:41:43.142135Z
+928363319947f86504d0a5581d199d99
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2666
 
 h264-conformance-cvfi2_sony_h
 file
@@ -1114,14 +1114,14 @@ mru
 
 969
 
-h264-conformance-mr1_mw_a
+qt-mac3-mono
 file
 
 
 
 
 2010-08-19T01:41:43.154136Z
-9daa04e595c95070a706c7142806eac3
+04c9781aa24fbf23a8cc11f1fe2eb70b
 2010-03-15T19:23:24.221542Z
 22552
 mru
@@ -1146,7 +1146,7 @@ mru
 
 
 
-4316
+33
 
 h264-conformance-mps_mw_a
 file
@@ -1182,14 +1182,14 @@ mru
 
 4316
 
-qt-mac3-mono
+h264-conformance-mr1_mw_a
 file
 
 
 
 
 2010-08-19T01:41:43.154136Z
-04c9781aa24fbf23a8cc11f1fe2eb70b
+9daa04e595c95070a706c7142806eac3
 2010-03-15T19:23:24.221542Z
 22552
 mru
@@ -1214,7 +1214,7 @@ mru
 
 
 
-33
+4316
 
 h264-conformance-sva_nl1_b
 file
@@ -1420,40 +1420,6 @@ mru
 
 2466
 
-iff-ilbm
-file
-
-
-
-
-2010-08-19T01:41:43.154136Z
-8a9080414c0848b99ffa0c8576e1cdeb
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-25
-
 smacker
 file
 
@@ -1487,6 +1453,40 @@ mru
 
 
 5382
+
+iff-ilbm
+file
+
+
+
+
+2010-08-19T01:41:43.154136Z
+8a9080414c0848b99ffa0c8576e1cdeb
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+25
 
 vmnc-16bit
 file
@@ -1624,14 +1624,14 @@ mru
 
 4328
 
-h264-conformance-frext-hpcaflnl_bcrm_c
+h264-conformance-caba1_sony_d
 file
 
 
 
 
-2010-08-19T01:41:43.158134Z
-8ef3afde102e510813b6bf434cc14558
+2010-08-19T01:41:43.154136Z
+8e77f55555b44e2903a0192e74e5b929
 2010-03-15T19:23:24.221542Z
 22552
 mru
@@ -1656,7 +1656,7 @@ mru
 
 
 
-8988
+1416
 
 dpx
 file
@@ -1692,48 +1692,14 @@ mru
 
 26
 
-h264-conformance-caba1_sony_d
-file
-
-
-
-
-2010-08-19T01:41:43.154136Z
-8e77f55555b44e2903a0192e74e5b929
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1416
-
-feeble-dxa
+h264-conformance-frext-hpcaflnl_bcrm_c
 file
 
 
 
 
 2010-08-19T01:41:43.158134Z
-b35a85c364704a198c3a6609068d30cc
+8ef3afde102e510813b6bf434cc14558
 2010-03-15T19:23:24.221542Z
 22552
 mru
@@ -1758,41 +1724,7 @@ mru
 
 
 
-1812
-
-qt-msimaadpcm-stereo
-file
-
-
-
-
-2010-08-19T01:41:43.158134Z
-cb877951547cb9f362cbfdad4dd39a17
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-33
+8988
 
 svq3
 file
@@ -1828,6 +1760,74 @@ mru
 
 5359
 
+qt-msimaadpcm-stereo
+file
+
+
+
+
+2010-08-19T01:41:43.158134Z
+cb877951547cb9f362cbfdad4dd39a17
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+33
+
+feeble-dxa
+file
+
+
+
+
+2010-08-19T01:41:43.158134Z
+b35a85c364704a198c3a6609068d30cc
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1812
+
 h264-conformance-frext-hcafr3_hhi_a
 file
 
@@ -1862,40 +1862,6 @@ mru
 
 284
 
-mimic
-file
-
-
-
-
-2010-08-19T01:41:43.158134Z
-ef034140a9b2f3f5da795a65e735a5b3
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2113
-
 mpeg4-als-conformance-00
 file
 
@@ -1929,6 +1895,40 @@ mru
 
 
 15
+
+mimic
+file
+
+
+
+
+2010-08-19T01:41:43.158134Z
+ef034140a9b2f3f5da795a65e735a5b3
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2113
 
 mpeg4-als-conformance-01
 file
@@ -1998,40 +1998,6 @@ mru
 
 15
 
-mpeg4-als-conformance-03
-file
-
-
-
-
-2010-08-19T01:41:43.158134Z
-499ec26d6a9e1c3d0cd9eba41e398fe2
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-15
-
 dxa-scummvm
 file
 
@@ -2065,6 +2031,40 @@ vitor
 
 
 343
+
+mpeg4-als-conformance-03
+file
+
+
+
+
+2010-08-19T01:41:43.158134Z
+499ec26d6a9e1c3d0cd9eba41e398fe2
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+15
 
 mpeg4-als-conformance-04
 file
@@ -4412,40 +4412,6 @@ mru
 
 661
 
-fax-g3s
-file
-
-
-
-
-2010-08-31T10:51:27.016791Z
-c241753f93aea3b391ac69b79c3d5d1b
-2010-08-28T11:46:03.214541Z
-24954
-vitor
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-26
-
 vp3
 file
 
@@ -4479,6 +4445,40 @@ vitor
 
 
 3386
+
+fax-g3s
+file
+
+
+
+
+2010-08-31T10:51:27.016791Z
+c241753f93aea3b391ac69b79c3d5d1b
+2010-08-28T11:46:03.214541Z
+24954
+vitor
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+26
 
 h264-conformance-sva_fm1_e
 file
@@ -4514,40 +4514,6 @@ mru
 
 470
 
-h264-conformance-basqp1_sony_c
-file
-
-
-
-
-2010-08-19T01:41:43.174134Z
-2e266e4d83b6d40d4750baf84ff2772c
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-106
-
 vp5
 file
 
@@ -4581,6 +4547,40 @@ mru
 
 
 7347
+
+h264-conformance-basqp1_sony_c
+file
+
+
+
+
+2010-08-19T01:41:43.174134Z
+2e266e4d83b6d40d4750baf84ff2772c
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+106
 
 pcm_dvd
 file
@@ -4650,40 +4650,6 @@ mru
 
 33
 
-ea-tgq
-file
-
-
-
-
-2010-08-19T01:41:43.174134Z
-1b0e3d795c8739fdaf812e438d7705f5
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-8151
-
 h264-conformance-cabac_mot_mbaff0_full
 file
 
@@ -4718,14 +4684,14 @@ mru
 
 866
 
-h264-conformance-canl1_sva_b
+ea-tgq
 file
 
 
 
 
 2010-08-19T01:41:43.174134Z
-a995cfef8c5c3cdde100480a3fc8ef84
+1b0e3d795c8739fdaf812e438d7705f5
 2010-03-15T19:23:24.221542Z
 22552
 mru
@@ -4750,7 +4716,7 @@ mru
 
 
 
-470
+8151
 
 mszh
 file
@@ -4785,6 +4751,40 @@ mru
 
 
 25
+
+h264-conformance-canl1_sva_b
+file
+
+
+
+
+2010-08-19T01:41:43.174134Z
+a995cfef8c5c3cdde100480a3fc8ef84
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+470
 
 westwood-aud
 file
@@ -5058,14 +5058,14 @@ mru
 
 2666
 
-h264-conformance-sva_cl1_e
+h264-conformance-cama1_sony_c
 file
 
 
 
 
 2010-08-19T01:41:43.178134Z
-056d48d8bf85e14e1493a11e5ecc75ea
+b6be3e97800f8bfee5bf135fb397b01e
 2010-03-15T19:23:24.221542Z
 22552
 mru
@@ -5090,41 +5090,7 @@ mru
 
 
 
-1416
-
-h264-conformance-frext-frext2_panasonic_b
-file
-
-
-
-
-2010-08-19T01:41:43.178134Z
-3227635f99ba33a07a07ee6c64354ddf
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-429
+139
 
 duck-dk3
 file
@@ -5160,14 +5126,14 @@ mru
 
 33
 
-h264-conformance-cama1_sony_c
+h264-conformance-frext-frext2_panasonic_b
 file
 
 
 
 
 2010-08-19T01:41:43.178134Z
-b6be3e97800f8bfee5bf135fb397b01e
+3227635f99ba33a07a07ee6c64354ddf
 2010-03-15T19:23:24.221542Z
 22552
 mru
@@ -5192,7 +5158,41 @@ mru
 
 
 
-139
+429
+
+h264-conformance-sva_cl1_e
+file
+
+
+
+
+2010-08-19T01:41:43.178134Z
+056d48d8bf85e14e1493a11e5ecc75ea
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1416
 
 duck-dk4
 file
@@ -5228,40 +5228,6 @@ mru
 
 33
 
-h264-conformance-frext-hpcamolq_brcm_b
-file
-
-
-
-
-2010-08-19T01:41:43.178134Z
-6ea13cf4bfc0462f7024d24280a00c59
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2966
-
 h264-conformance-cvpcmnl1_sva_c
 file
 
@@ -5296,14 +5262,14 @@ mru
 
 866
 
-h264-conformance-cama3_vtc_b
+h264-conformance-frext-hpcamolq_brcm_b
 file
 
 
 
 
 2010-08-19T01:41:43.178134Z
-32d46fd09e8f5a62b73e301d85ad6ba2
+6ea13cf4bfc0462f7024d24280a00c59
 2010-03-15T19:23:24.221542Z
 22552
 mru
@@ -5328,7 +5294,7 @@ mru
 
 
 
-110
+2966
 
 tiertex-seq
 file
@@ -5363,6 +5329,40 @@ mru
 
 
 4176
+
+h264-conformance-cama3_vtc_b
+file
+
+
+
+
+2010-08-19T01:41:43.178134Z
+32d46fd09e8f5a62b73e301d85ad6ba2
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+110
 
 vcr1
 file
@@ -5466,40 +5466,6 @@ vitor
 
 4665
 
-h264-conformance-cvnlfi1_sony_c
-file
-
-
-
-
-2010-08-19T01:41:43.182133Z
-dacc024ae84a08c679386110361f595f
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-487
-
 h264-conformance-cvmanl2_toshiba_b
 file
 
@@ -5533,6 +5499,40 @@ mru
 
 
 2666
+
+h264-conformance-cvnlfi1_sony_c
+file
+
+
+
+
+2010-08-19T01:41:43.182133Z
+dacc024ae84a08c679386110361f595f
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+487
 
 h264-conformance-frext-bcrm_freh10
 file
@@ -5670,40 +5670,6 @@ mru
 
 470
 
-h264-conformance-cvmp_mot_fld_l30_b
-file
-
-
-
-
-2010-08-19T01:41:43.182133Z
-50e3c92ff004e0ac3d470cd30ff997ec
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-866
-
 h264-conformance-canlma3_sony_c
 file
 
@@ -5737,6 +5703,40 @@ mru
 
 
 487
+
+h264-conformance-cvmp_mot_fld_l30_b
+file
+
+
+
+
+2010-08-19T01:41:43.182133Z
+50e3c92ff004e0ac3d470cd30ff997ec
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+866
 
 h264-conformance-hcmp1_hhi_a
 file
@@ -5772,40 +5772,6 @@ mru
 
 7466
 
-h264-conformance-mr2_mw_a
-file
-
-
-
-
-2010-08-19T01:41:43.182133Z
-b370a8a10076f49e753994adce487843
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-8688
-
 vqf-demux
 file
 
@@ -5839,6 +5805,40 @@ mru
 
 
 33
+
+h264-conformance-mr2_mw_a
+file
+
+
+
+
+2010-08-19T01:41:43.182133Z
+b370a8a10076f49e753994adce487843
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+8688
 
 h264-conformance-frext-hpcaq2lq_brcm_b
 file
@@ -5874,40 +5874,6 @@ mru
 
 2966
 
-h264-conformance-cvmapaqp3_sony_e
-file
-
-
-
-
-2010-08-19T01:41:43.182133Z
-f099e7560d337e6f97e3c31d2a169cc7
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-226
-
 psx-str
 file
 
@@ -5941,6 +5907,40 @@ mru
 
 
 5729
+
+h264-conformance-cvmapaqp3_sony_e
+file
+
+
+
+
+2010-08-19T01:41:43.182133Z
+f099e7560d337e6f97e3c31d2a169cc7
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+226
 
 h264-conformance-canl1_sony_e
 file
@@ -5976,40 +5976,6 @@ mru
 
 1416
 
-h264-conformance-canl4_sva_b
-file
-
-
-
-
-2010-08-19T01:41:43.186134Z
-1423004087942a11f3258918358e580b
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-923
-
 sierra-audio
 file
 
@@ -6043,6 +6009,40 @@ mru
 
 
 33
+
+h264-conformance-canl4_sva_b
+file
+
+
+
+
+2010-08-19T01:41:43.186134Z
+1423004087942a11f3258918358e580b
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+923
 
 h264-conformance-cvwp1_toshiba_e
 file
@@ -6078,40 +6078,6 @@ mru
 
 2666
 
-mpc8-demux
-file
-
-
-
-
-2010-08-19T01:41:43.186134Z
-b7d4997217bacdb53a6fb6bdddcfee93
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-15
-
 vp8-sign-bias
 file
 
@@ -6145,6 +6111,40 @@ vitor
 
 
 453
+
+mpc8-demux
+file
+
+
+
+
+2010-08-19T01:41:43.186134Z
+b7d4997217bacdb53a6fb6bdddcfee93
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+15
 
 vc1
 file
@@ -6248,40 +6248,6 @@ mru
 
 4609
 
-h264-conformance-caba3_toshiba_e
-file
-
-
-
-
-2010-08-19T01:41:43.186134Z
-0154036ddc04475bd3e96328ea5fafd4
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-8688
-
 qt-rawpcm-8bit-mono-unsigned
 file
 
@@ -6315,6 +6281,40 @@ mru
 
 
 33
+
+h264-conformance-caba3_toshiba_e
+file
+
+
+
+
+2010-08-19T01:41:43.186134Z
+0154036ddc04475bd3e96328ea5fafd4
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+8688
 
 h264-conformance-ls_sva_d
 file
@@ -6418,40 +6418,6 @@ mru
 
 836
 
-bink-demux-video
-file
-
-
-
-
-2010-08-19T01:41:43.190134Z
-1ef883f1d7f021284ec7ec345181050b
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-578
-
 qt-mac6-stereo
 file
 
@@ -6485,6 +6451,40 @@ mru
 
 
 33
+
+bink-demux-video
+file
+
+
+
+
+2010-08-19T01:41:43.190134Z
+1ef883f1d7f021284ec7ec345181050b
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+578
 
 sha
 file
@@ -6520,40 +6520,6 @@ vitor
 
 1077
 
-8bps
-file
-
-
-
-
-2010-08-19T01:41:43.190134Z
-0553b8f624df1c941e4da430733229c3
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-957
-
 real-rv40
 file
 
@@ -6587,6 +6553,40 @@ mru
 
 
 3611
+
+8bps
+file
+
+
+
+
+2010-08-19T01:41:43.190134Z
+0553b8f624df1c941e4da430733229c3
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+957
 
 h264-conformance-capcmnl1_sand_e
 file
@@ -6758,40 +6758,6 @@ mru
 
 1005
 
-h264-conformance-cvma1_sony_d
-file
-
-
-
-
-2010-08-19T01:41:43.190134Z
-b6be3e97800f8bfee5bf135fb397b01e
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-139
-
 h264-conformance-cavlc_mot_picaff0_full_b
 file
 
@@ -6825,6 +6791,40 @@ mru
 
 
 866
+
+h264-conformance-cvma1_sony_d
+file
+
+
+
+
+2010-08-19T01:41:43.190134Z
+b6be3e97800f8bfee5bf135fb397b01e
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+139
 
 h264-conformance-frext-hcafr4_hhi_a
 file
@@ -6860,14 +6860,14 @@ mru
 
 284
 
-h264-conformance-frext-frext_mmco4_sony_b
+sunraster-24bit-raw
 file
 
 
 
 
 2010-08-19T01:41:43.190134Z
-65e8e9943cea9221fc43dfb5a7be2867
+166f7ca30869e785316e25f2b118eb05
 2010-03-15T19:23:24.221542Z
 22552
 mru
@@ -6892,7 +6892,7 @@ mru
 
 
 
-1766
+25
 
 rl2
 file
@@ -6928,14 +6928,14 @@ mru
 
 3227
 
-sunraster-24bit-raw
+h264-conformance-frext-frext_mmco4_sony_b
 file
 
 
 
 
 2010-08-19T01:41:43.190134Z
-166f7ca30869e785316e25f2b118eb05
+65e8e9943cea9221fc43dfb5a7be2867
 2010-03-15T19:23:24.221542Z
 22552
 mru
@@ -6960,7 +6960,7 @@ mru
 
 
 
-25
+1766
 
 pictor
 file
@@ -6996,40 +6996,6 @@ vitor
 
 25
 
-qcp-demux
-file
-
-
-
-
-2010-08-19T01:41:43.194133Z
-8e5598ae3b90d2d761edd2f10ca4c94b
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-15
-
 sunraster-1bit-rle
 file
 
@@ -7063,6 +7029,40 @@ mru
 
 
 24
+
+qcp-demux
+file
+
+
+
+
+2010-08-19T01:41:43.194133Z
+8e5598ae3b90d2d761edd2f10ca4c94b
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+15
 
 h264-conformance-mr7_bt_b
 file
@@ -7132,40 +7132,6 @@ mru
 
 3649
 
-ea-cmv
-file
-
-
-
-
-2010-08-19T01:41:43.194133Z
-d61c9102f35ac191fac973c0c462e9d1
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-5885
-
 4xm
 file
 
@@ -7199,6 +7165,40 @@ mru
 
 
 33
+
+ea-cmv
+file
+
+
+
+
+2010-08-19T01:41:43.194133Z
+d61c9102f35ac191fac973c0c462e9d1
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5885
 
 qt-alaw-mono
 file
@@ -7370,40 +7370,6 @@ mru
 
 8161
 
-h264-conformance-mr4_tandberg_c
-file
-
-
-
-
-2010-08-19T01:41:43.194133Z
-14ec710ce8da2d146b28e3f6edc1955d
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-8688
-
 amv
 file
 
@@ -7438,14 +7404,14 @@ mru
 
 9074
 
-h264-conformance-cabastbr3_sony_b
+h264-conformance-mr4_tandberg_c
 file
 
 
 
 
 2010-08-19T01:41:43.194133Z
-73f5a2bca01fc488173fac2975ac0c5e
+14ec710ce8da2d146b28e3f6edc1955d
 2010-03-15T19:23:24.221542Z
 22552
 mru
@@ -7470,7 +7436,7 @@ mru
 
 
 
-719
+8688
 
 h264-conformance-capcm1_sand_e
 file
@@ -7505,6 +7471,40 @@ mru
 
 
 866
+
+h264-conformance-cabastbr3_sony_b
+file
+
+
+
+
+2010-08-19T01:41:43.194133Z
+73f5a2bca01fc488173fac2975ac0c5e
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+719
 
 real-14_4
 file
@@ -7574,40 +7574,6 @@ mru
 
 487
 
-motionpixels
-file
-
-
-
-
-2010-08-19T01:41:43.198133Z
-61560970fbf603e0385c4338422ecb41
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3338
-
 h264-conformance-cvma1_toshiba_b
 file
 
@@ -7641,6 +7607,40 @@ mru
 
 
 2666
+
+motionpixels
+file
+
+
+
+
+2010-08-19T01:41:43.198133Z
+61560970fbf603e0385c4338422ecb41
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3338
 
 h264-conformance-cvfi1_sony_d
 file
@@ -7676,14 +7676,14 @@ mru
 
 487
 
-h264-conformance-frext-frext01_jvc_d
+h264-conformance-caba2_sony_e
 file
 
 
 
 
 2010-08-19T01:41:43.198133Z
-1c02a27ec6af28a292ec9f6915cf8f92
+da9ca1786922083f607211e58294cc63
 2010-03-15T19:23:24.221542Z
 22552
 mru
@@ -7708,7 +7708,7 @@ mru
 
 
 
-458
+8688
 
 corepng
 file
@@ -7744,14 +7744,14 @@ mru
 
 1036
 
-h264-conformance-caba2_sony_e
+h264-conformance-frext-frext01_jvc_d
 file
 
 
 
 
 2010-08-19T01:41:43.198133Z
-da9ca1786922083f607211e58294cc63
+1c02a27ec6af28a292ec9f6915cf8f92
 2010-03-15T19:23:24.221542Z
 22552
 mru
@@ -7776,7 +7776,7 @@ mru
 
 
 
-8688
+458
 
 qt-ulaw-mono
 file
@@ -8016,14 +8016,14 @@ mru
 
 110
 
-h264-conformance-frext-hpcamapalq_bcrm_b
+sunraster-8bit-rle
 file
 
 
 
 
 2010-08-19T01:41:43.198133Z
-ca3d4f1ba9ed4b523b629f5b76e4e3b8
+5856e48f148ef220948a837e1b1bc1d6
 2010-03-15T19:23:24.221542Z
 22552
 mru
@@ -8048,7 +8048,7 @@ mru
 
 
 
-8988
+25
 
 h264-conformance-ci_mw_d
 file
@@ -8084,14 +8084,14 @@ mru
 
 2866
 
-sunraster-8bit-rle
+h264-conformance-frext-hpcamapalq_bcrm_b
 file
 
 
 
 
 2010-08-19T01:41:43.198133Z
-5856e48f148ef220948a837e1b1bc1d6
+ca3d4f1ba9ed4b523b629f5b76e4e3b8
 2010-03-15T19:23:24.221542Z
 22552
 mru
@@ -8116,7 +8116,7 @@ mru
 
 
 
-25
+8988
 
 thp-mjpeg-adpcm
 file
@@ -8152,40 +8152,6 @@ mru
 
 4066
 
-h264-conformance-frext-hpcvflnl_bcrm_a
-file
-
-
-
-
-2010-08-19T01:41:43.202134Z
-8ef3afde102e510813b6bf434cc14558
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-8988
-
 h264-conformance-cavlc_mot_mbaff0_full_b
 file
 
@@ -8219,6 +8185,40 @@ mru
 
 
 866
+
+h264-conformance-frext-hpcvflnl_bcrm_a
+file
+
+
+
+
+2010-08-19T01:41:43.202134Z
+8ef3afde102e510813b6bf434cc14558
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+8988
 
 h264-conformance-ci1_ft_b
 file
@@ -8594,40 +8594,6 @@ mru
 
 8631
 
-lossless-monkeysaudio
-file
-
-
-
-
-2010-08-19T01:41:43.202134Z
-61e67a1bf6c55ee3314a22a5998c4849
-2010-03-15T19:23:24.221542Z
-22552
-mru
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-33
-
 ea-mad-pcm-planar
 file
 
@@ -8661,6 +8627,40 @@ mru
 
 
 8394
+
+lossless-monkeysaudio
+file
+
+
+
+
+2010-08-19T01:41:43.202134Z
+61e67a1bf6c55ee3314a22a5998c4849
+2010-03-15T19:23:24.221542Z
+22552
+mru
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+33
 
 w64
 file
@@ -8934,40 +8934,6 @@ vitor
 
 26
 
-gsm
-file
-
-
-
-
-2010-08-19T01:41:43.206134Z
-80a11348a56b7438d3cd5808c5bb5ee1
-2010-07-16T09:58:17.670318Z
-24257
-vitor
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2369
-
 h264-conformance-cabref3_sand_d
 file
 
@@ -9001,6 +8967,40 @@ mru
 
 
 1466
+
+gsm
+file
+
+
+
+
+2010-10-07T11:55:52.240910Z
+2cc7d585084b080751bcfaf10b708f19
+2010-10-02T09:56:21.984929Z
+25313
+reimar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+13435
 
 h264-conformance-capama3_sand_f
 file
@@ -12306,11 +12306,11 @@ file
 
 
 
-2010-09-02T07:47:00.830016Z
-384ba151eab0e9b468ff1275383d99b7
-2010-08-31T11:15:04.016299Z
-25008
-vitor
+2010-10-11T09:50:13.332702Z
+53c437fc2b010348845a3aefd21846f7
+2010-10-10T02:20:02.146293Z
+25432
+astrange
 
 
 
@@ -12605,6 +12605,40 @@ mru
 
 
 8988
+
+gsm-ms
+file
+
+
+
+
+2010-10-07T11:55:52.240910Z
+80a11348a56b7438d3cd5808c5bb5ee1
+2010-10-02T09:56:21.984929Z
+25313
+reimar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2369
 
 h264-conformance-frext-freh1_b
 file

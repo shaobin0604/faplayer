@@ -32,7 +32,7 @@
 #include "libavcore/imgutils.h"
 #include "avcodec.h"
 #include "dsputil.h"
-#include "opt.h"
+#include "libavutil/opt.h"
 #include "imgconvert.h"
 #include "audioconvert.h"
 #include "internal.h"
@@ -471,11 +471,17 @@ int attribute_align_arg avcodec_open(AVCodecContext *avctx, AVCodec *codec)
         goto end;
 
     if (codec->priv_data_size > 0) {
+      if(!avctx->priv_data){
         avctx->priv_data = av_mallocz(codec->priv_data_size);
         if (!avctx->priv_data) {
             ret = AVERROR(ENOMEM);
             goto end;
         }
+        if(codec->priv_class){ //this can be droped once all user apps use   avcodec_get_context_defaults3()
+            *(AVClass**)avctx->priv_data= codec->priv_class;
+            av_opt_set_defaults(avctx->priv_data);
+        }
+      }
     } else {
         avctx->priv_data = NULL;
     }
@@ -585,7 +591,7 @@ int avcodec_encode_subtitle(AVCodecContext *avctx, uint8_t *buf, int buf_size,
     return ret;
 }
 
-#if LIBAVCODEC_VERSION_MAJOR < 53
+#if FF_API_VIDEO_OLD
 int attribute_align_arg avcodec_decode_video(AVCodecContext *avctx, AVFrame *picture,
                          int *got_picture_ptr,
                          const uint8_t *buf, int buf_size)
@@ -624,7 +630,7 @@ int attribute_align_arg avcodec_decode_video2(AVCodecContext *avctx, AVFrame *pi
     return ret;
 }
 
-#if LIBAVCODEC_VERSION_MAJOR < 53
+#if FF_API_AUDIO_OLD
 int attribute_align_arg avcodec_decode_audio2(AVCodecContext *avctx, int16_t *samples,
                          int *frame_size_ptr,
                          const uint8_t *buf, int buf_size)
@@ -665,7 +671,7 @@ int attribute_align_arg avcodec_decode_audio3(AVCodecContext *avctx, int16_t *sa
     return ret;
 }
 
-#if LIBAVCODEC_VERSION_MAJOR < 53
+#if FF_API_SUBTITLE_OLD
 int avcodec_decode_subtitle(AVCodecContext *avctx, AVSubtitle *sub,
                             int *got_sub_ptr,
                             const uint8_t *buf, int buf_size)

@@ -1,11 +1,11 @@
 prefix=
 exec_prefix=
 libdir=${pcfiledir}
-includedir=/home/luka/Workspace/!/DemoPlayer/jni/ffmpeg
+includedir=/home/luka/Workspace/-/DemoPlayer/jni/ffmpeg
 
 Name: libavutil
 Description: FFmpeg utility library
-Version: 50.27.0
+Version: 50.32.3
 Requires: 
 Conflicts:
 Libs: ${libdir}/libavutil.a 

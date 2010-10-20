@@ -5,8 +5,8 @@ includedir=${prefix}/include
 
 Name: libavfilter
 Description: FFmpeg video filtering library
-Version: 1.39.0
-Requires: libavcore = 0.9.0
+Version: 1.53.0
+Requires: libavcore = 0.9.1
 Requires.private: 
 Conflicts:
 Libs: -L${libdir} -lavfilter -lm -pthread

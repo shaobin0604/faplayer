@@ -19,10 +19,12 @@ static pthread_t votid = 0;
 static void* audio_output_thread(void* para) {
     Samples* sam;
     int idx;
-    int64_t inc;
 
-    idx = 0;
-    inc = 0;
+    pthread_mutex_lock(&gCtx->start_mutex);
+    while (!gCtx->start)
+        pthread_cond_wait(&gCtx->start_condv, &gCtx->start_mutex);
+    pthread_mutex_unlock(&gCtx->start_mutex);
+
     for (;;) {
         if (stop) {
             pthread_exit(0);
@@ -33,15 +35,9 @@ static void* audio_output_thread(void* para) {
         }
         sam = samples_queue_pop_tail();
         if (sam) {
-            idx++;
             if (ao && ao->play)
                 ao->play(sam);
-            if (sam->pts >= 0) {
-                gCtx->audio_last_pts = sam->pts;
-                inc = sam->pts / idx;
-            }
-            else
-                gCtx->audio_last_pts += inc;
+            gCtx->audio_last_pts = sam->pts;
             free_Samples(sam);
         }
     }
@@ -52,18 +48,18 @@ static void* audio_output_thread(void* para) {
 static void* video_output_thread(void* para) {
     Picture* pic;
     int64_t bgn, end, left;
-    double temp[16];
-    double diff, total, avg, factor;
-    int idx, fps, step, count;
-    int64_t inc, vb, ve, vt;
+    double diff, factor;
+    int count;
+    int64_t vb, ve, vt;
 
-    idx = 0;
-    inc = 0;
+    pthread_mutex_lock(&gCtx->start_mutex);
+    while (!gCtx->start)
+        pthread_cond_wait(&gCtx->start_condv, &gCtx->start_mutex);
+    pthread_mutex_unlock(&gCtx->start_mutex);
+
     vt = 0;
     count = 0;
-    fps = (int)(gCtx->fps);
-    step = (fps >> 2);
-    total = 0;
+    diff = 0;
     factor = 1.0;
     for (;;) {
         if (stop) {
@@ -76,7 +72,6 @@ static void* video_output_thread(void* para) {
         bgn = av_gettime();
         pic = picture_queue_pop_tail();
         if (pic) {
-            idx++;
             if (vo && vo->display) {
                 count++;
                 vb = av_gettime();
@@ -85,34 +80,20 @@ static void* video_output_thread(void* para) {
                 vt += (ve - vb);
                 gCtx->avg_video_display_time = vt / count;
             }
-            if (pic->pts >= 0) {
-                gCtx->video_last_pts = pic->pts;
-                inc = pic->pts / idx;
-            }
-            else
-                gCtx->video_last_pts += (int64_t)(1.0 / gCtx->fps / gCtx->video_time_base);
+            gCtx->video_last_pts = pic->pts;
             free_Picture(pic);
         }
         end = av_gettime();
         left = (int64_t)(1000 * 1000 / gCtx->fps) - end + bgn;
         if (gCtx->audio_enabled) {
-            if (idx >= fps) {
-                avg = total / step;
-                total -= temp[(idx - 1) % step];
-                debug("avg a/v diff %.3f since last %d output\n", avg, step);
-                if (avg > 0.2)
-                    factor = 0;
-                else if (avg > -0.2)
-                    factor = 1.0;
-                else
-                    factor = 1.0 - avg / 2;
-            }
-            diff = gCtx->audio_last_pts * gCtx->audio_time_base - gCtx->video_last_pts * gCtx->video_time_base;
-            if (idx >= (fps - step))
-                total += diff;
-            temp[(idx - 1) % step] = diff;
-            debug("cur a/v/d %.3f/%.3f/%.3f\n", gCtx->audio_last_pts * gCtx->audio_time_base, gCtx->video_last_pts * gCtx->video_time_base, diff);
-            if (left > 0) {
+            diff = gCtx->audio_last_pts - gCtx->video_last_pts;
+            factor = 1.0;
+            if (diff > 0)
+                factor = 0;
+            else
+                factor = 1.0 - diff / 2;
+            debug("cur a/v/d %.3f/%.3f/%.3f\n", gCtx->audio_last_pts, gCtx->video_last_pts, diff);
+            if (left > 0 && factor > 0) {
                 usleep((int64_t)(left * factor));
             }
         }

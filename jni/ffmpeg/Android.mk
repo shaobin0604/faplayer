@@ -113,7 +113,6 @@ LOCAL_SRC_FILES := \
     libavcodec/dvdsubdec.c \
     libavcodec/dv.c \
     libavcodec/dvdata.c \
-    libavcodec/dxa.c \
     libavcodec/eac3dec.c \
     libavcodec/eac3dec_data.c \
     libavcodec/eacmv.c \
@@ -133,7 +132,6 @@ LOCAL_SRC_FILES := \
     libavcodec/flacdec.c \
     libavcodec/flacdata.c \
     libavcodec/flac.c \
-    libavcodec/flashsv.c \
     libavcodec/flicvideo.c \
     libavcodec/4xm.c \
     libavcodec/fraps.c \
@@ -141,6 +139,8 @@ LOCAL_SRC_FILES := \
     libavcodec/gifdec.c \
     libavcodec/lzw.c \
     libavcodec/gsmdec.c \
+    libavcodec/gsmdec_data.c \
+    libavcodec/msgsmdec.c \
     libavcodec/h261dec.c \
     libavcodec/h261.c \
     libavcodec/h263dec.c \
@@ -204,8 +204,6 @@ LOCAL_SRC_FILES := \
     libavcodec/pcx.c \
     libavcodec/pgssubdec.c \
     libavcodec/pictordec.c \
-    libavcodec/png.c \
-    libavcodec/pngdec.c \
     libavcodec/ptx.c \
     libavcodec/qcelpdec.c \
     libavcodec/qdm2.c \
@@ -248,7 +246,6 @@ LOCAL_SRC_FILES := \
     libavcodec/truemotion1.c \
     libavcodec/truemotion2.c \
     libavcodec/truespeech.c \
-    libavcodec/tscc.c \
     libavcodec/tta.c \
     libavcodec/twinvq.c \
     libavcodec/txd.c \
@@ -293,7 +290,6 @@ LOCAL_SRC_FILES := \
     libavcodec/xl.c \
     libavcodec/xsubdec.c \
     libavcodec/yop.c \
-    libavcodec/zmbv.c \
     libavcodec/pcm.c \
     libavcodec/pcm-mpeg.c \
     libavcodec/adpcm.c \
@@ -324,17 +320,6 @@ LOCAL_SRC_FILES := \
     libavcodec/vc1_parser.c \
     libavcodec/vp3_parser.c \
     libavcodec/vp8_parser.c \
-    libavcodec/aac_adtstoasc_bsf.c \
-    libavcodec/chomp_bsf.c \
-    libavcodec/dump_extradata_bsf.c \
-    libavcodec/h264_mp4toannexb_bsf.c \
-    libavcodec/imx_dump_header_bsf.c \
-    libavcodec/mjpega_dump_header_bsf.c \
-    libavcodec/movsub_bsf.c \
-    libavcodec/mp3_header_compress_bsf.c \
-    libavcodec/mp3_header_decompress_bsf.c \
-    libavcodec/noise_bsf.c \
-    libavcodec/remove_extradata_bsf.c \
     libavcodec/pthread.c \
     libavcodec/inverse.c \
     libavcodec/arm/dsputil_init_arm.c \
@@ -359,10 +344,6 @@ LOCAL_SRC_FILES := \
     libavcore/utils.c \
     libavdevice/alldevices.c \
     libavdevice/avdevice.c \
-    libavdevice/dv1394.c \
-    libavdevice/oss_audio.c \
-    libavdevice/v4l2.c \
-    libavdevice/v4l.c \
     libavfilter/allfilters.c \
     libavfilter/avfilter.c \
     libavfilter/avfiltergraph.c \
@@ -371,8 +352,11 @@ LOCAL_SRC_FILES := \
     libavfilter/graphparser.c \
     libavfilter/parseutils.c \
     libavfilter/af_anull.c \
+    libavfilter/asrc_anullsrc.c \
+    libavfilter/asink_anullsink.c \
     libavfilter/vf_aspect.c \
     libavfilter/vf_crop.c \
+    libavfilter/vf_drawbox.c \
     libavfilter/vf_fifo.c \
     libavfilter/vf_format.c \
     libavfilter/vf_hflip.c \
@@ -380,7 +364,9 @@ LOCAL_SRC_FILES := \
     libavfilter/vf_pad.c \
     libavfilter/vf_pixdesctest.c \
     libavfilter/vf_scale.c \
+    libavfilter/vf_settb.c \
     libavfilter/vf_slicify.c \
+    libavfilter/vf_transpose.c \
     libavfilter/vf_unsharp.c \
     libavfilter/vf_vflip.c \
     libavfilter/vsrc_buffer.c \
@@ -388,6 +374,8 @@ LOCAL_SRC_FILES := \
     libavfilter/vsink_nullsink.c \
     libavformat/allformats.c \
     libavformat/cutils.c \
+    libavformat/id3v1.c \
+    libavformat/id3v2.c \
     libavformat/metadata.c \
     libavformat/metadata_compat.c \
     libavformat/options.c \
@@ -398,8 +386,6 @@ LOCAL_SRC_FILES := \
     libavformat/avio.c \
     libavformat/aviobuf.c \
     libavformat/aacdec.c \
-    libavformat/id3v1.c \
-    libavformat/id3v2.c \
     libavformat/rawdec.c \
     libavformat/ac3dec.c \
     libavformat/aea.c \
@@ -463,6 +449,7 @@ LOCAL_SRC_FILES := \
     libavformat/iv8.c \
     libavformat/ivfdec.c \
     libavformat/lmlm4.c \
+    libavformat/lxfdec.c \
     libavformat/m4vdec.c \
     libavformat/matroskadec.c \
     libavformat/matroska.c \
@@ -506,6 +493,7 @@ LOCAL_SRC_FILES := \
     libavformat/rpl.c \
     libavformat/rtsp.c \
     libavformat/httpauth.c \
+    libavformat/sapdec.c \
     libavformat/rdt.c \
     libavformat/rtp.c \
     libavformat/rtpdec.c \
@@ -516,9 +504,11 @@ LOCAL_SRC_FILES := \
     libavformat/rtpdec_latm.c \
     libavformat/rtpdec_mpeg4.c \
     libavformat/rtpdec_qdm2.c \
+    libavformat/rtpdec_qt.c \
     libavformat/rtpdec_svq3.c \
     libavformat/rtpdec_vp8.c \
     libavformat/rtpdec_xiph.c \
+    libavformat/rtpenc_chain.c \
     libavformat/segafilm.c \
     libavformat/siff.c \
     libavformat/smacker.c \
@@ -544,6 +534,7 @@ LOCAL_SRC_FILES := \
     libavformat/xa.c \
     libavformat/yop.c \
     libavformat/yuv4mpeg.c \
+    libavformat/concat.c \
     libavformat/file.c \
     libavformat/gopher.c \
     libavformat/http.c \
@@ -556,7 +547,6 @@ LOCAL_SRC_FILES := \
     libavformat/rtpproto.c \
     libavformat/tcp.c \
     libavformat/udp.c \
-    libavformat/concat.c \
     libavutil/adler32.c \
     libavutil/aes.c \
     libavutil/avstring.c \
@@ -576,6 +566,7 @@ LOCAL_SRC_FILES := \
     libavutil/mathematics.c \
     libavutil/md5.c \
     libavutil/mem.c \
+    libavutil/opt.c \
     libavutil/pixdesc.c \
     libavutil/random_seed.c \
     libavutil/rational.c \
@@ -589,8 +580,6 @@ LOCAL_SRC_FILES := \
     libswscale/swscale.c \
     libswscale/utils.c \
     libswscale/yuv2rgb.c
-
-LOCAL_SRC_FILES += sincos.c
 
 LOCAL_LDLIBS := -lc -lm -lz -llog
 

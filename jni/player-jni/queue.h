@@ -38,7 +38,7 @@ typedef struct {
     int width;
     int height;
     enum PixelFormat format;
-    int64_t pts;
+    double pts;
 }Picture;
 
 typedef struct {
@@ -47,7 +47,7 @@ typedef struct {
     int size;
     int16_t* samples;
     enum SampleFormat format;
-    int64_t pts;
+    double pts;
 }Samples;
 
 int queue_init();

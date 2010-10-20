@@ -162,6 +162,7 @@ Configuration options:
 External library support:
   --enable-avisynth        enable reading of AVISynth script files [no]
   --enable-bzlib           enable bzlib [autodetect]
+  --enable-frei0r          enable frei0r video filtering
   --enable-libopencore-amrnb enable AMR-NB de/encoding via libopencore-amrnb [no]
   --enable-libopencore-amrwb enable AMR-WB decoding via libopencore-amrwb [no]
   --enable-libopencv       enable video filtering via libopencv [no]
@@ -873,6 +874,7 @@ CONFIG_LIST="
     ffprobe
     ffserver
     fft
+    frei0r
     golomb
     gpl
     gray
@@ -981,6 +983,7 @@ HAVE_LIST="
     $ARCH_EXT_LIST
     $HAVE_LIST_PUB
     $THREADS_LIST
+    aligned_stack
     alsa_asoundlib_h
     altivec_h
     arpa_inet_h
@@ -1049,6 +1052,7 @@ HAVE_LIST="
     poll_h
     setrlimit
     strerror_r
+    strtok_r
     struct_addrinfo
     struct_ipv6_mreq
     struct_sockaddr_in6
@@ -1070,6 +1074,7 @@ HAVE_LIST="
     VirtualAlloc
     winsock2_h
     xform_asm
+    xmm_clobbers
     yasm
 "
 
@@ -1164,6 +1169,7 @@ mmx2_deps="mmx"
 sse_deps="mmx"
 ssse3_deps="sse"
 
+aligned_stack_if_any="ppc x86"
 fast_64bit_if_any="alpha ia64 mips64 parisc64 ppc64 sparc64 x86_64"
 fast_clz_if_any="alpha armv5te avr32 mips ppc x86"
 fast_unaligned_if_any="armv6 ppc x86"
@@ -1355,11 +1361,12 @@ mpegtsraw_demuxer_select="mpegts_demuxer"
 mxf_d10_muxer_select="mxf_muxer"
 ogg_demuxer_select="golomb"
 psp_muxer_select="mov_muxer"
-rtsp_demuxer_deps="sdp_demuxer"
-rtsp_muxer_deps="sdp_demuxer"
-rtsp_muxer_select="rtp_muxer"
-sdp_demuxer_deps="rtp_protocol mpegts_demuxer"
-sdp_demuxer_select="asf_demuxer rm_demuxer"
+rtp_demuxer_select="sdp_demuxer"
+rtsp_demuxer_select="http_protocol sdp_demuxer"
+rtsp_muxer_select="rtp_muxer http_protocol sdp_demuxer"
+sap_demuxer_select="sdp_demuxer"
+sap_muxer_select="rtp_muxer rtp_protocol"
+sdp_demuxer_select="asf_demuxer rm_demuxer rtp_protocol mpegts_demuxer mov_demuxer"
 spdif_muxer_select="aac_parser"
 tg2_muxer_select="mov_muxer"
 tgp_muxer_select="mov_muxer"
@@ -1393,7 +1400,11 @@ tcp_protocol_deps="network"
 udp_protocol_deps="network"
 
 # filters
+blackframe_filter_deps="gpl"
+cropdetect_filter_deps="gpl"
+frei0r_filter_deps="frei0r dlopen strtok_r"
 ocv_smooth_filter_deps="libopencv"
+yadif_filter_deps="gpl"
 
 # libraries
 avdevice_deps="avcodec avformat"
@@ -1838,6 +1849,7 @@ elif $cc --version 2>/dev/null | grep -q Intel; then
     cc_type=icc
     cc_version="AV_STRINGIFY(__INTEL_COMPILER)"
     cc_ident=$($cc --version | head -n1)
+    icc_version=$($cc -dumpversion)
     CC_DEPFLAGS='-MMD'
     AS_DEPFLAGS='-MMD'
     speed_cflags='-O3'
@@ -2578,6 +2590,9 @@ EOF
     check_asm ebx_available '""::"b"(0)' &&
         check_asm ebx_available '"":::"%ebx"'
 
+    # check whether xmm clobbers are supported
+    check_asm xmm_clobbers '"":::"%xmm0"'
+
     # check whether more than 10 operands are supported
     check_cc <<EOF && enable ten_operands
 int main(void) {
@@ -2596,14 +2611,23 @@ EOF
 
     check_asm bswap '"bswap %%eax" ::: "%eax"'
 
-    YASMFLAGS="-f $objformat"
-    enabled     x86_64        && append YASMFLAGS "-m amd64"
-    enabled     pic           && append YASMFLAGS "-DPIC"
-    test -n "$extern_prefix"  && append YASMFLAGS "-DPREFIX"
-    case "$objformat" in
-        elf) enabled debug && append YASMFLAGS "-g dwarf2" ;;
-    esac
     if ! disabled_any asm mmx yasm; then
+        if check_cmd $yasmexe --version; then
+            enabled x86_64 && yasm_extra="-m amd64"
+            yasm_debug="-g dwarf2"
+        elif check_cmd nasm -v; then
+            yasmexe=nasm
+            yasm_debug="-g -F dwarf"
+            enabled x86_64 && test "$objformat" = elf && objformat=elf64
+        fi
+
+        YASMFLAGS="-f $objformat $yasm_extra"
+        enabled pic               && append YASMFLAGS "-DPIC"
+        test -n "$extern_prefix"  && append YASMFLAGS "-DPREFIX"
+        case "$objformat" in
+            elf*) enabled debug && append YASMFLAGS $yasm_debug ;;
+        esac
+
         check_yasm "pabsw xmm0, xmm0" && enable yasm ||
             die "yasm not found, use --disable-yasm for a crippled build"
     fi
@@ -2644,6 +2668,7 @@ check_func  mkstemp
 check_func  ${malloc_prefix}posix_memalign      && enable posix_memalign
 check_func  setrlimit
 check_func  strerror_r
+check_func  strtok_r
 check_func_headers io.h setmode
 check_func_headers lzo/lzo1x.h lzo1x_999_compress
 check_lib2 "windows.h psapi.h" GetProcessMemoryInfo -lpsapi
@@ -2717,12 +2742,13 @@ check_mathfunc truncf
 
 # these are off by default, so fail if requested and not available
 enabled avisynth   && require2 vfw32 "windows.h vfw.h" AVIFileInit -lavifil32
+enabled frei0r     && { check_header frei0r.h || die "ERROR: frei0r.h header not found"; }
 enabled libdirac   && add_cflags $(pkg-config --cflags dirac) &&
                       require  libdirac libdirac_decoder/dirac_parser.h dirac_decoder_init $(pkg-config --libs dirac) &&
                       require  libdirac libdirac_encoder/dirac_encoder.h dirac_encoder_init $(pkg-config --libs dirac)
 enabled libfaac    && require2 libfaac "stdint.h faac.h" faacEncGetVersion -lfaac
 enabled libgsm     && require  libgsm gsm/gsm.h gsm_create -lgsm
-enabled libmp3lame && require  "libmp3lame >= 3.98.3" lame/lame.h hip_decode_init -lmp3lame
+enabled libmp3lame && require  "libmp3lame >= 3.98.3" lame/lame.h lame_set_VBR_quality -lmp3lame
 enabled libnut     && require  libnut libnut.h nut_demuxer_init -lnut
 enabled libopencore_amrnb  && require libopencore_amrnb opencore-amrnb/interf_dec.h Decoder_Interface_init -lopencore-amrnb
 enabled libopencore_amrwb  && require libopencore_amrwb opencore-amrwb/dec_if.h D_IF_init -lopencore-amrwb
@@ -2772,7 +2798,7 @@ texi2html -version > /dev/null 2>&1 && enable texi2html || disable texi2html
 if enabled network; then
     check_type "sys/types.h sys/socket.h" socklen_t
     check_type netdb.h "struct addrinfo"
-    check_type netinet/in.h "struct ipv6_mreq"
+    check_type netinet/in.h "struct ipv6_mreq" -D_DARWIN_C_SOURCE
     check_type netinet/in.h "struct sockaddr_in6"
     check_type "sys/types.h sys/socket.h" "struct sockaddr_storage"
     check_struct "sys/types.h sys/socket.h" "struct sockaddr" sa_len
@@ -2898,7 +2924,11 @@ if enabled icc; then
     check_ldflags -march=$cpu
     # icc 11.0 and 11.1 work with ebp_available, but don't pass the test
     enable ebp_available
-    enabled x86_32 && check_cflags -falign-stack=maintain-16-byte
+    if enabled x86_32; then
+        test ${icc_version%%.*} -ge 11 && \
+            check_cflags -falign-stack=maintain-16-byte || \
+            disable aligned_stack
+    fi
 elif enabled ccc; then
     # disable some annoying warnings
     add_cflags -msg_disable cvtu32to64
@@ -3005,6 +3035,7 @@ echo "threading support         ${thread_type-no}"
 echo "SDL support               ${sdl-no}"
 echo "Sun medialib support      ${mlib-no}"
 echo "AVISynth enabled          ${avisynth-no}"
+echo "frei0r enabled            ${frei0r-no}"
 echo "libdc1394 support         ${libdc1394-no}"
 echo "libdirac enabled          ${libdirac-no}"
 echo "libfaac enabled           ${libfaac-no}"
@@ -3059,6 +3090,7 @@ if enabled source_path_used; then
         libavcore
         libavdevice
         libavfilter
+        libavfilter/$arch
         libavformat
         libavutil
         libavutil/$arch
@@ -3078,6 +3110,7 @@ if enabled source_path_used; then
         libavcore/Makefile
         libavdevice/Makefile
         libavfilter/Makefile
+        libavfilter/${arch}/Makefile
         libavformat/Makefile
         libavutil/Makefile
         libpostproc/Makefile
@@ -3196,6 +3229,7 @@ cat > $TMPH <<EOF
 #define ASMALIGN(ZEROBITS) ".p2align " #ZEROBITS "\\n\\t"
 #define EXTERN_PREFIX "${extern_prefix}"
 #define EXTERN_ASM ${extern_prefix}
+#define SLIBSUF "$SLIBSUF"
 EOF
 
 test -n "$malloc_prefix" &&

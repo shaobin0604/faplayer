@@ -367,8 +367,10 @@ static int mpeg_mux_init(AVFormatContext *ctx)
             stream->id = mpv_id++;
             if (st->codec->rc_buffer_size)
                 stream->max_buffer_size = 6*1024 + st->codec->rc_buffer_size/8;
-            else
+            else {
+                av_log(ctx, AV_LOG_WARNING, "VBV buffer size not set, muxing may fail\n");
                 stream->max_buffer_size = 230*1024; //FIXME this is probably too small as default
+            }
 #if 0
                 /* see VCD standard, p. IV-7*/
                 stream->max_buffer_size = 46 * 1024;
@@ -1161,8 +1163,12 @@ static int mpeg_mux_write_packet(AVFormatContext *ctx, AVPacket *pkt)
     pts= pkt->pts;
     dts= pkt->dts;
 
-    if(pts != AV_NOPTS_VALUE) pts += preload;
-    if(dts != AV_NOPTS_VALUE) dts += preload;
+    if(pts != AV_NOPTS_VALUE) pts += 2*preload;
+    if(dts != AV_NOPTS_VALUE){
+        if(!s->last_scr)
+            s->last_scr= dts + preload;
+        dts += 2*preload;
+    }
 
 //av_log(ctx, AV_LOG_DEBUG, "dts:%f pts:%f flags:%d stream:%d nopts:%d\n", dts/90000.0, pts/90000.0, pkt->flags, pkt->stream_index, pts != AV_NOPTS_VALUE);
     if (!stream->premux_packet)

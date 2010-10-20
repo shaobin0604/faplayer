@@ -5,8 +5,8 @@ includedir=${prefix}/include
 
 Name: libavformat
 Description: FFmpeg container format library
-Version: 52.78.5
-Requires: libavcodec = 52.89.0
+Version: 52.84.0
+Requires: libavcodec = 52.92.0
 Requires.private: 
 Conflicts:
 Libs: -L${libdir} -lavformat -lm -pthread

@@ -1,11 +1,11 @@
-#!/usr/bin/ruby
+#!/usr/local/bin/ruby
 
 def loadcf(mf)
     config = Hash.new
     f = File.open('config.mak')
     while not f.eof?
         line = f.readline
-        if line.scan(/^!{0,1}(CONFIG|HAVE|ARCH)/).size == 1
+        if line.scan(/^!{0,1}(CONFIG|HAVE|ARCH)_/).size == 1
             config[line.split('=')[0]] = 'yes'
         end
     end
@@ -34,7 +34,7 @@ def loadmf(mf, cf)
             name = whole.scan(/^(.+?)\s*?(\+){0,1}=/)[0][0]
             cond = name.scan(/\$\((.+?)\)/)
             if cond.length > 0
-                cond = cond[0].to_s
+                cond = cond[0][0].to_s
                 name.delete!("$(")
                 name.delete!(")")
                 name = name.gsub(/#{cond}/, cf[cond] != nil ? "yes" : "no")
@@ -61,7 +61,7 @@ def loadmf(mf, cf)
             # inherited
             group = line.scan(/\$\((.+?)\)/)
             group.each { |g|
-                g = g.to_s
+                g = g[0].to_s
                 if !cf.has_key?(g) && !result.has_key?(g)
                     next
                 end

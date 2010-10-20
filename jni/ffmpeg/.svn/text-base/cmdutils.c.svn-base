@@ -49,12 +49,37 @@
 #endif
 
 const char **opt_names;
+const char **opt_values;
 static int opt_name_count;
 AVCodecContext *avcodec_opts[AVMEDIA_TYPE_NB];
 AVFormatContext *avformat_opts;
 struct SwsContext *sws_opts;
 
 const int this_year = 2010;
+
+void init_opts(void)
+{
+    int i;
+    for (i = 0; i < AVMEDIA_TYPE_NB; i++)
+        avcodec_opts[i] = avcodec_alloc_context2(i);
+    avformat_opts = avformat_alloc_context();
+    sws_opts = sws_getContext(16, 16, 0, 16, 16, 0, SWS_BICUBIC, NULL, NULL, NULL);
+}
+
+void uninit_opts(void)
+{
+    int i;
+    for (i = 0; i < AVMEDIA_TYPE_NB; i++)
+        av_freep(&avcodec_opts[i]);
+    av_freep(&avformat_opts->key);
+    av_freep(&avformat_opts);
+    av_freep(&sws_opts);
+}
+
+void log_callback_help(void* ptr, int level, const char* fmt, va_list vl)
+{
+    vfprintf(stdout, fmt, vl);
+}
 
 double parse_number_or_die(const char *context, const char *numstr, int type, double min, double max)
 {
@@ -193,12 +218,12 @@ int opt_default(const char *opt, const char *arg){
     const AVOption *o= NULL;
     int opt_types[]={AV_OPT_FLAG_VIDEO_PARAM, AV_OPT_FLAG_AUDIO_PARAM, 0, AV_OPT_FLAG_SUBTITLE_PARAM, 0};
 
-    for(type=0; type<AVMEDIA_TYPE_NB && ret>= 0; type++){
+    for(type=0; *avcodec_opts && type<AVMEDIA_TYPE_NB && ret>= 0; type++){
         const AVOption *o2 = av_find_opt(avcodec_opts[0], opt, NULL, opt_types[type], opt_types[type]);
         if(o2)
             ret = av_set_string3(avcodec_opts[type], opt, arg, 1, &o);
     }
-    if(!o)
+    if(!o && avformat_opts)
         ret = av_set_string3(avformat_opts, opt, arg, 1, &o);
     if(!o && sws_opts)
         ret = av_set_string3(sws_opts, opt, arg, 1, &o);
@@ -215,17 +240,27 @@ int opt_default(const char *opt, const char *arg){
         exit(1);
     }
     if (!o) {
+        AVCodec *p = NULL;
+        while ((p=av_codec_next(p))){
+            AVClass *c= p->priv_class;
+            if(c && av_find_opt(&c, opt, NULL, 0, 0))
+                break;
+        }
+        if(!p){
         fprintf(stderr, "Unrecognized option '%s'\n", opt);
         exit(1);
+        }
     }
 
 //    av_log(NULL, AV_LOG_ERROR, "%s:%s: %f 0x%0X\n", opt, arg, av_get_double(avcodec_opts, opt, NULL), (int)av_get_int(avcodec_opts, opt, NULL));
 
     //FIXME we should always use avcodec_opts, ... for storing options so there will not be any need to keep track of what i set over this
+    opt_values= av_realloc(opt_values, sizeof(void*)*(opt_name_count+1));
+    opt_values[opt_name_count]= o ? NULL : arg;
     opt_names= av_realloc(opt_names, sizeof(void*)*(opt_name_count+1));
-    opt_names[opt_name_count++]= o->name;
+    opt_names[opt_name_count++]= o ? o->name : opt;
 
-    if(avcodec_opts[0]->debug || avformat_opts->debug)
+    if ((*avcodec_opts && avcodec_opts[0]->debug) || (avformat_opts && avformat_opts->debug))
         av_log_set_level(AV_LOG_DEBUG);
     return 0;
 }
@@ -278,9 +313,16 @@ int opt_timelimit(const char *opt, const char *arg)
     return 0;
 }
 
-void set_context_opts(void *ctx, void *opts_ctx, int flags)
+void set_context_opts(void *ctx, void *opts_ctx, int flags, AVCodec *codec)
 {
     int i;
+    void *priv_ctx=NULL;
+    if(!strcmp("AVCodecContext", (*(AVClass**)ctx)->class_name)){
+        AVCodecContext *avctx= ctx;
+        if(codec && codec->priv_class && avctx->priv_data){
+            priv_ctx= avctx->priv_data;
+        }
+    }
     for(i=0; i<opt_name_count; i++){
         char buf[256];
         const AVOption *opt;
@@ -288,6 +330,12 @@ void set_context_opts(void *ctx, void *opts_ctx, int flags)
         /* if an option with name opt_names[i] is present in opts_ctx then str is non-NULL */
         if(str && ((opt->flags & flags) == flags))
             av_set_string3(ctx, opt_names[i], str, 1, NULL);
+        /* We need to use a differnt system to pass options to the private context because
+           it is not known which codec and thus context kind that will be when parsing options
+           we thus use opt_values directly instead of opts_ctx */
+        if(!str && priv_ctx && av_get_string(priv_ctx, opt_names[i], &opt, buf, sizeof(buf))){
+            av_set_string3(priv_ctx, opt_names[i], opt_values[i], 1, NULL);
+        }
     }
 }
 
@@ -672,3 +720,93 @@ int read_file(const char *filename, char **bufptr, size_t *size)
     fclose(f);
     return 0;
 }
+
+void init_pts_correction(PtsCorrectionContext *ctx)
+{
+    ctx->num_faulty_pts = ctx->num_faulty_dts = 0;
+    ctx->last_pts = ctx->last_dts = INT64_MIN;
+}
+
+int64_t guess_correct_pts(PtsCorrectionContext *ctx, int64_t reordered_pts, int64_t dts)
+{
+    int64_t pts = AV_NOPTS_VALUE;
+
+    if (dts != AV_NOPTS_VALUE) {
+        ctx->num_faulty_dts += dts <= ctx->last_dts;
+        ctx->last_dts = dts;
+    }
+    if (reordered_pts != AV_NOPTS_VALUE) {
+        ctx->num_faulty_pts += reordered_pts <= ctx->last_pts;
+        ctx->last_pts = reordered_pts;
+    }
+    if ((ctx->num_faulty_pts<=ctx->num_faulty_dts || dts == AV_NOPTS_VALUE)
+       && reordered_pts != AV_NOPTS_VALUE)
+        pts = reordered_pts;
+    else
+        pts = dts;
+
+    return pts;
+}
+
+#if CONFIG_AVFILTER
+
+static int ffsink_init(AVFilterContext *ctx, const char *args, void *opaque)
+{
+    FFSinkContext *priv = ctx->priv;
+
+    if (!opaque)
+        return AVERROR(EINVAL);
+    *priv = *(FFSinkContext *)opaque;
+
+    return 0;
+}
+
+static void null_end_frame(AVFilterLink *inlink) { }
+
+static int ffsink_query_formats(AVFilterContext *ctx)
+{
+    FFSinkContext *priv = ctx->priv;
+    enum PixelFormat pix_fmts[] = { priv->pix_fmt, PIX_FMT_NONE };
+
+    avfilter_set_common_formats(ctx, avfilter_make_format_list(pix_fmts));
+    return 0;
+}
+
+AVFilter ffsink = {
+    .name      = "ffsink",
+    .priv_size = sizeof(FFSinkContext),
+    .init      = ffsink_init,
+
+    .query_formats = ffsink_query_formats,
+
+    .inputs    = (AVFilterPad[]) {{ .name          = "default",
+                                    .type          = AVMEDIA_TYPE_VIDEO,
+                                    .end_frame     = null_end_frame,
+                                    .min_perms     = AV_PERM_READ, },
+                                  { .name = NULL }},
+    .outputs   = (AVFilterPad[]) {{ .name = NULL }},
+};
+
+int get_filtered_video_frame(AVFilterContext *ctx, AVFrame *frame,
+                             AVFilterBufferRef **picref_ptr, AVRational *tb)
+{
+    int ret;
+    AVFilterBufferRef *picref;
+
+    if ((ret = avfilter_request_frame(ctx->inputs[0])) < 0)
+        return ret;
+    if (!(picref = ctx->inputs[0]->cur_buf))
+        return AVERROR(ENOENT);
+    *picref_ptr = picref;
+    ctx->inputs[0]->cur_buf = NULL;
+    *tb = ctx->inputs[0]->time_base;
+
+    memcpy(frame->data,     picref->data,     sizeof(frame->data));
+    memcpy(frame->linesize, picref->linesize, sizeof(frame->linesize));
+    frame->interlaced_frame = picref->video->interlaced;
+    frame->top_field_first  = picref->video->top_field_first;
+
+    return 1;
+}
+
+#endif /* CONFIG_AVFILTER */

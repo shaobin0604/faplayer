@@ -1,12 +1,12 @@
 prefix=
 exec_prefix=
 libdir=${pcfiledir}
-includedir=/home/luka/Workspace/!/DemoPlayer/jni/ffmpeg
+includedir=/home/luka/Workspace/-/DemoPlayer/jni/ffmpeg
 
 Name: libavcore
 Description: FFmpeg multimedia shared core utilities library
-Version: 0.9.0
-Requires: libavutil = 50.27.0
+Version: 0.9.1
+Requires: libavutil = 50.32.3
 Conflicts:
 Libs: ${libdir}/libavcore.a 
 Cflags: -I${includedir}

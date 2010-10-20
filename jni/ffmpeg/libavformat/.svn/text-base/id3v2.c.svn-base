@@ -23,6 +23,7 @@
 #include "id3v1.h"
 #include "libavutil/avstring.h"
 #include "libavutil/intreadwrite.h"
+#include "metadata.h"
 
 int ff_id3v2_match(const uint8_t *buf, const char * magic)
 {
@@ -59,20 +60,20 @@ void ff_id3v2_read(AVFormatContext *s, const char *magic)
     do {
         /* save the current offset in case there's nothing to read/skip */
         off = url_ftell(s->pb);
-    ret = get_buffer(s->pb, buf, ID3v2_HEADER_SIZE);
-    if (ret != ID3v2_HEADER_SIZE)
-        return;
-        found_header = ff_id3v2_match(buf, magic);
-        if (found_header) {
-        /* parse ID3v2 header */
-        len = ((buf[6] & 0x7f) << 21) |
-            ((buf[7] & 0x7f) << 14) |
-            ((buf[8] & 0x7f) << 7) |
-            (buf[9] & 0x7f);
-        ff_id3v2_parse(s, len, buf[3], buf[5]);
-    } else {
-        url_fseek(s->pb, off, SEEK_SET);
-    }
+        ret = get_buffer(s->pb, buf, ID3v2_HEADER_SIZE);
+        if (ret != ID3v2_HEADER_SIZE)
+            return;
+            found_header = ff_id3v2_match(buf, magic);
+            if (found_header) {
+            /* parse ID3v2 header */
+            len = ((buf[6] & 0x7f) << 21) |
+                  ((buf[7] & 0x7f) << 14) |
+                  ((buf[8] & 0x7f) << 7) |
+                   (buf[9] & 0x7f);
+            ff_id3v2_parse(s, len, buf[3], buf[5]);
+        } else {
+            url_fseek(s->pb, off, SEEK_SET);
+        }
     } while (found_header);
 }
 
@@ -249,6 +250,7 @@ void ff_id3v2_parse(AVFormatContext *s, int len, uint8_t version, uint8_t flags)
         /* Skip to end of tag */
         url_fseek(s->pb, next, SEEK_SET);
     }
+    ff_metadata_conv(&s->metadata, NULL, ff_id3v2_metadata_conv);
 
     if (len > 0) {
         /* Skip padding */
