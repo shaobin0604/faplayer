@@ -1,7 +1,7 @@
 
 #include <pthread.h>
 #include <jni.h>
-#if PLATFORM == 4
+#if PLATFORM < 8
 #include <ui/Surface.h>
 #elif PLATFORM == 8
 #include <surfaceflinger/Surface.h>
@@ -59,7 +59,7 @@ int getSurfaceHeight() {
 
 void* getSurfaceBuffer() {
     // work around for eclair
-#if PLATFORM == 4
+#if PLATFORM < 8
     return locked ? (reinterpret_cast<int>(info->bits) < 0x0200 ? info->base : info->bits) : 0;
 #elif PLATFORM == 8
     return locked ? info->bits : 0;

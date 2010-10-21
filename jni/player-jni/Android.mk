@@ -4,9 +4,9 @@ include $(CLEAR_VARS)
 
 LOCAL_ARM_MODE := arm
 
-LOCAL_MODULE := player-4
+LOCAL_MODULE := player-3
 
-AOSP := /home/luka/Source/aosp-donut
+AOSP := /opt/google/aosp-c
 
 LOCAL_C_INCLUDES += \
     $(AOSP)/hardware/libhardware/include \
@@ -15,7 +15,7 @@ LOCAL_C_INCLUDES += \
     $(AOSP)/frameworks/base/include \
     $(LOCAL_PATH)/../ffmpeg
 
-LOCAL_CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DCLASS=org_luka_player_NativePlayer4 -DPLATFORM=4
+LOCAL_CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DCLASS=org_luka_player_NativePlayer3 -DPLATFORM=3
 
 LOCAL_SRC_FILES := \
     debug.c \
@@ -32,7 +32,9 @@ LOCAL_SRC_FILES := \
     vo_android_wrapper.cpp \
     jni.cpp
 
-LOCAL_LDLIBS += -llog -lutils -lui -lmedia -lffmpeg
+LOCAL_LDFLAGS += -L$(LOCAL_PATH)/aosp-c
+LOCAL_LDLIBS += -llog -lutils -lui -lmedia
+LOCAL_SHARED_LIBRARIES += ffmpeg
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -42,7 +44,7 @@ LOCAL_ARM_MODE := arm
 
 LOCAL_MODULE := player-8
 
-AOSP := /home/luka/Source/aosp-froyo
+AOSP := /opt/google/aosp-f
 
 LOCAL_C_INCLUDES += \
     $(AOSP)/hardware/libhardware/include \
@@ -68,7 +70,9 @@ LOCAL_SRC_FILES := \
     vo_android_wrapper.cpp \
     jni.cpp
 
-LOCAL_LDLIBS += -llog -lutils -lsurfaceflinger_client -lmedia -lffmpeg
+LOCAL_LDFLAGS += -L$(LOCAL_PATH)/aosp-f
+LOCAL_LDLIBS += -llog -lutils -lsurfaceflinger_client -lmedia
+LOCAL_SHARED_LIBRARIES += libffmpeg
 
 include $(BUILD_SHARED_LIBRARY)
 

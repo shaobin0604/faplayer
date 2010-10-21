@@ -18,8 +18,8 @@ public class NativePlayerSurface extends SurfaceView implements
 		mSurfaceHolder.addCallback(this);
 		if (mPlayer == null) {
 			int version = Build.VERSION.SDK_INT;
-			if (version >= 4 && version < 8) {
-				mPlayer = new NativePlayer4();
+			if (version < 8) {
+				mPlayer = new NativePlayer3();
 			} else if (version == 8) {
 				mPlayer = new NativePlayer8();
 			}

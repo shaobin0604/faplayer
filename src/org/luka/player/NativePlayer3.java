@@ -2,11 +2,11 @@ package org.luka.player;
 
 import android.view.Surface;
 
-class NativePlayer4 implements NativePlayer {
+class NativePlayer3 implements NativePlayer {
 
 	static {
 		System.loadLibrary("ffmpeg");
-		System.loadLibrary("player-4");
+		System.loadLibrary("player-3");
 	}
 
 	public native int open(String file);
