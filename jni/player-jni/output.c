@@ -18,7 +18,7 @@ static pthread_t votid = 0;
 
 static void* audio_output_thread(void* para) {
     Samples* sam;
-    int idx;
+    int64_t cnt, total = 0;
 
     pthread_mutex_lock(&gCtx->start_mutex);
     while (!gCtx->start)
@@ -37,7 +37,29 @@ static void* audio_output_thread(void* para) {
         if (sam) {
             if (ao && ao->play)
                 ao->play(sam);
-            gCtx->audio_last_pts = sam->pts;
+            cnt = sam->size / sam->channel;
+            switch (sam->format) {
+                case SAMPLE_FMT_U8:
+                    cnt = cnt / sizeof(uint8_t);
+                    break;
+                case SAMPLE_FMT_S16:
+                    cnt = cnt / sizeof(int16_t);
+                    break;
+                case SAMPLE_FMT_S32:
+                    cnt = cnt / sizeof(int32_t);
+                    break;
+                case SAMPLE_FMT_FLT:
+                    cnt = cnt / sizeof(float);
+                    break;
+                case SAMPLE_FMT_DBL:
+                    cnt = cnt / sizeof(double);
+                    break;
+                default:
+                    cnt = 0;
+                    break;
+            }
+            total += cnt;
+            gCtx->audio_last_pts = (sam->pts != AV_NOPTS_VALUE) ? sam->pts : (total / sam->rate);
             free_Samples(sam);
         }
     }
