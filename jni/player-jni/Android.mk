@@ -15,7 +15,7 @@ LOCAL_C_INCLUDES += \
     $(AOSP)/frameworks/base/include \
     $(LOCAL_PATH)/../ffmpeg
 
-LOCAL_CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DCLASS=org_luka_player_NativePlayer3 -DPLATFORM=3
+LOCAL_CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DCLASS=org_stagex_player_NativePlayer3 -DPLATFORM=3
 
 LOCAL_SRC_FILES := \
     debug.c \
@@ -53,7 +53,7 @@ LOCAL_C_INCLUDES += \
     $(AOSP)/frameworks/base/include \
     $(LOCAL_PATH)/../ffmpeg
 
-LOCAL_CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DCLASS=org_luka_player_NativePlayer8 -DPLATFORM=8
+LOCAL_CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DCLASS=org_stagex_player_NativePlayer8 -DPLATFORM=8
 
 LOCAL_SRC_FILES := \
     debug.c \

@@ -20,7 +20,7 @@ void debug(const char* fmt, ...) {
     }
     pthread_mutex_lock(&mutex);
 #ifdef ANDROID
-    __android_log_vprint(ANDROID_LOG_DEBUG, "player-4", fmt, vlist);
+    __android_log_vprint(ANDROID_LOG_DEBUG, "faplayer", fmt, vlist);
 #else
     vfprintf(stdout, fmt, vlist);
     fflush(stdout);

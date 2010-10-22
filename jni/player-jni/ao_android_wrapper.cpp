@@ -34,7 +34,7 @@ int audio_track_create(int rate, int format, int channel) {
     }
     if (!audio) {
         audio = new AudioTrack();
-        // donut
+        // try cupcake
         status_t status;
         status = audio->set(
             AudioSystem::MUSIC,
@@ -43,7 +43,7 @@ int audio_track_create(int rate, int format, int channel) {
             channel,
             4096 * 4
         );
-        // not donut
+        // try eclair or higher
         if (status == BAD_VALUE) {
             status = audio->set(
                 AudioSystem::MUSIC,
