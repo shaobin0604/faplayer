@@ -10,11 +10,9 @@ extern int audio_track_create(int rate, int format, int channel);
 extern void audio_track_play(const void* buffer, int length);
 extern void audio_track_destroy();
 
-static pthread_mutex_t lock;
 static ReSampleContext* cvt;
 
 static int ao_init_android() {
-    pthread_mutex_init(&lock, 0);
     return 0;
 }
 
@@ -70,11 +68,9 @@ static int ao_play_android(Samples* sam) {
         }
         smp = out;
     }
-    pthread_mutex_lock(&lock);
     err = audio_track_create(sam->rate, fmt, chl);
     if (!err && smp && sam->size)
         audio_track_play(smp, size);
-    pthread_mutex_unlock(&lock);
     if (needed) {
         av_free(out);
     }
@@ -83,10 +79,7 @@ static int ao_play_android(Samples* sam) {
 }
 
 static void ao_free_android() {
-    pthread_mutex_lock(&lock);
     audio_track_destroy();
-    pthread_mutex_unlock(&lock);
-    pthread_mutex_destroy(&lock);
     if (cvt) {
         audio_resample_close(cvt);
         cvt = 0;

@@ -55,9 +55,12 @@ static void* audio_decode_thread(void* para) {
             sam->rate = gCtx->audio_ctx->sample_rate;
             sam->channel = gCtx->audio_ctx->channels;
             sam->size = size;
-            sam->samples = size > 0 ? av_malloc(size) : 0;
-            if (size)
-                memcpy(sam->samples, gCtx->samples, size);
+            sam->samples = av_malloc(size);
+            if (!sam->samples) {
+                av_free(sam);
+                goto next;
+            }
+            memcpy(sam->samples, gCtx->samples, size);
             sam->format = gCtx->audio_ctx->sample_fmt;
             if (pkt->pts != AV_NOPTS_VALUE)
                 sam->pts = pkt->pts * gCtx->audio_time_base;
@@ -109,7 +112,6 @@ static void* video_decode_thread(void* para) {
         bgn = av_gettime();
         pkt = video_packet_queue_pop_tail();
         if (pkt) {
-            gCtx->video_packet_last_pts = pkt->pts;
             show = -1;
             pthread_mutex_lock(&gCtx->skip_mutex);
             if (gCtx->skip_count > 0) {
@@ -151,8 +153,8 @@ static void* video_decode_thread(void* para) {
                 pic->width = gCtx->video_ctx->width;
                 pic->height = gCtx->video_ctx->height;
                 pic->format = gCtx->video_ctx->pix_fmt;
-                if (pkt->dts == AV_NOPTS_VALUE && gCtx->frame->opaque && *(uint64_t*)gCtx->frame->opaque != AV_NOPTS_VALUE) {
-                    pic->pts = *(uint64_t*)gCtx->frame->opaque * gCtx->video_time_base;
+                if (pkt->pts != AV_NOPTS_VALUE) {
+                    pic->pts = pkt->pts * gCtx->video_time_base;
                 } else if (pkt->dts != AV_NOPTS_VALUE) {
                     pic->pts = pkt->dts * gCtx->video_time_base;
                 } else {

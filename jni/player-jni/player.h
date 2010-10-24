@@ -55,6 +55,7 @@ typedef struct {
     int start;
     pthread_mutex_t start_mutex;
     pthread_cond_t start_condv;
+    int pause;
 
     AVFormatContext* av_ctx;
     AVCodecContext* audio_ctx;
@@ -74,8 +75,6 @@ typedef struct {
     double video_last_pts;
     double subtitle_last_pts;
 
-    int64_t video_packet_last_pts;
-
     int64_t avg_audio_decode_time;
     int64_t avg_video_decode_time;
     int64_t avg_subtitle_decode_time;
@@ -90,7 +89,6 @@ typedef struct {
     // 1 = fit surface
     // 2 = full surface
     int mode;
-    int pause;
 }PlayerCtx;
 
 extern PlayerCtx* gCtx;

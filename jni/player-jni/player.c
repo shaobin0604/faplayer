@@ -31,23 +31,6 @@ int player_get_subtitle_stream_count();
 
 int player_is_playing();
 
-static int private_get_buffer(struct AVCodecContext* ctx, AVFrame* pic) {
-    int err;
-    uint64_t *pts;
-
-    err = avcodec_default_get_buffer(ctx, pic);
-    pts = av_malloc(sizeof(uint64_t));
-    *pts = gCtx->video_packet_last_pts;
-    pic->opaque = pts;
-    return err;
-}
-
-static void private_del_buffer(struct AVCodecContext* ctx, AVFrame* pic) {
-    if (pic)
-        av_freep(&pic->opaque);
-    avcodec_default_release_buffer(ctx, pic);
-}
-
 static void init_video_codec_ctx(AVCodecContext* ctx) {
     if (!ctx)
         return;
@@ -61,8 +44,6 @@ static void init_video_codec_ctx(AVCodecContext* ctx) {
     ctx->debug_mv = 0;
     ctx->skip_idct = AVDISCARD_DEFAULT;
 	ctx->skip_frame = AVDISCARD_DEFAULT;
-    ctx->get_buffer = private_get_buffer;
-    ctx->release_buffer = private_del_buffer;
 }
 
 int player_open(const char* file) {
@@ -247,7 +228,6 @@ int player_play(double start, int audio, int video, int subtitle) {
         player_close();
         return -1;
     }
-    gCtx->video_packet_last_pts = AV_NOPTS_VALUE;
     if (queue_init() < 0) {
         player_close();
         return -1;

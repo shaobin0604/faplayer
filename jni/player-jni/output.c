@@ -20,10 +20,12 @@ static void* audio_output_thread(void* para) {
     Samples* sam;
     int64_t cnt, total = 0;
 
-    pthread_mutex_lock(&gCtx->start_mutex);
-    while (!gCtx->start)
-        pthread_cond_wait(&gCtx->start_condv, &gCtx->start_mutex);
-    pthread_mutex_unlock(&gCtx->start_mutex);
+    if (gCtx->video_enabled) {
+        pthread_mutex_lock(&gCtx->start_mutex);
+        while (!gCtx->start)
+            pthread_cond_wait(&gCtx->start_condv, &gCtx->start_mutex);
+        pthread_mutex_unlock(&gCtx->start_mutex);
+    }
 
     for (;;) {
         if (stop) {
@@ -59,7 +61,7 @@ static void* audio_output_thread(void* para) {
                     break;
             }
             total += cnt;
-            gCtx->audio_last_pts = (sam->pts != AV_NOPTS_VALUE) ? sam->pts : (total / sam->rate);
+            gCtx->audio_last_pts = (sam->pts != 0) ? sam->pts : ((double)total / (double)(sam->rate));
             free_Samples(sam);
         }
     }
@@ -71,7 +73,7 @@ static void* video_output_thread(void* para) {
     Picture* pic;
     int64_t bgn, end, left;
     double diff, factor;
-    int count;
+    int err, count;
     int64_t vb, ve, vt;
 
     pthread_mutex_lock(&gCtx->start_mutex);
@@ -96,9 +98,14 @@ static void* video_output_thread(void* para) {
         if (pic) {
             if (vo && vo->display) {
                 count++;
-                vb = av_gettime();
-                vo->display(pic);
-                ve = av_gettime();
+                // wait until surface is ready
+                while (-1) {
+                    vb = av_gettime();
+                    err = vo->display(pic);
+                    ve = av_gettime();
+                    if (!err)
+                        break;
+                }
                 vt += (ve - vb);
                 gCtx->avg_video_display_time = vt / count;
             }

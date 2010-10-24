@@ -15,7 +15,7 @@ using namespace android;
 static pthread_mutex_t mutex;
 static int locked = 0;
 static Surface* surface = 0;
-static char dummy[32];
+static char dummy[sizeof(Surface::SurfaceInfo)];
 static Surface::SurfaceInfo* info = (Surface::SurfaceInfo*) dummy;
 
 extern "C" {
@@ -58,7 +58,7 @@ int getSurfaceHeight() {
 }
 
 void* getSurfaceBuffer() {
-    // work around for eclair
+    // workaround for eclair
 #if PLATFORM < 8
     return locked ? (reinterpret_cast<int>(info->bits) < 0x0200 ? info->base : info->bits) : 0;
 #elif PLATFORM == 8

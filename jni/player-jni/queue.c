@@ -201,6 +201,8 @@ void free_Samples(void* data) {
     if (data) {
         Samples* sam = (Samples*) data;
 
+        if (sam->samples)
+            av_free(sam->samples);
         av_free(data);
     }
 }

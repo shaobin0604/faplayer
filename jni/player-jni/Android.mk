@@ -4,7 +4,7 @@ include $(CLEAR_VARS)
 
 LOCAL_ARM_MODE := arm
 
-LOCAL_MODULE := player-3
+LOCAL_MODULE := player-4
 
 AOSP := /opt/google/aosp-c
 
@@ -15,7 +15,7 @@ LOCAL_C_INCLUDES += \
     $(AOSP)/frameworks/base/include \
     $(LOCAL_PATH)/../ffmpeg
 
-LOCAL_CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DCLASS=org_stagex_player_NativePlayer3 -DPLATFORM=3
+LOCAL_CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DCLASS=org_stagex_player_NativePlayer4 -DPLATFORM=4
 
 LOCAL_SRC_FILES := \
     debug.c \
@@ -32,7 +32,7 @@ LOCAL_SRC_FILES := \
     vo_android_wrapper.cpp \
     jni.cpp
 
-LOCAL_LDFLAGS += -L$(LOCAL_PATH)/aosp-c
+LOCAL_LDFLAGS += -L$(LOCAL_PATH)/aosp-d
 LOCAL_LDLIBS += -llog -lutils -lui -lmedia
 LOCAL_SHARED_LIBRARIES += ffmpeg
 
