@@ -19,7 +19,7 @@ public class NativePlayerSurface extends SurfaceView implements
 		if (mPlayer == null) {
 			int version = Integer.parseInt(Build.VERSION.SDK);
 			if (version < 8) {
-				mPlayer = new NativePlayer3();
+				mPlayer = new NativePlayer4();
 			} else if (version == 8) {
 				mPlayer = new NativePlayer8();
 			}

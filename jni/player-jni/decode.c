@@ -19,7 +19,6 @@ static int stop = 0;
 static pthread_t adtid = 0;
 static pthread_t vdtid = 0;
 static pthread_t sdtid = 0;
-static pthread_t sytid = 0;
 
 static void* audio_decode_thread(void* para) {
     AVPacket* pkt;
@@ -131,7 +130,7 @@ static void* video_decode_thread(void* para) {
                 gCtx->skip_level = AVDISCARD_DEFAULT;
                 gCtx->skip_count = 0;
             }
-            debug("skip level %d skip count %d\n", gCtx->skip_level, gCtx->skip_count);
+            //debug("skip level %d skip count %d\n", gCtx->skip_level, gCtx->skip_count);
             pthread_mutex_unlock(&gCtx->skip_mutex);
             err = avcodec_decode_video2(gCtx->video_ctx, gCtx->frame, &got, pkt);
             if (err < 0) {
@@ -197,62 +196,6 @@ static void* subtitle_decode_thread(void* para) {
     return 0;
 }
 
-static void* synchronize_thread(void* para) {
-    int idx, fps, step;
-    int sched, etime, dtime;
-    double temp[16];
-    double diff, total, adif;
-    double judge;
-
-    idx = 0;
-    fps = (int)(gCtx->fps);
-    step = fps >> 2;
-    etime = 1000 / fps;
-    total = 0;
-
-    pthread_mutex_lock(&gCtx->start_mutex);
-    while ((gCtx->audio_enabled && (samples_queue_size() < step)) || (gCtx->video_enabled && (picture_queue_size() < step)))
-        usleep(5 * 1000);
-    gCtx->start = -1;
-    pthread_cond_broadcast(&gCtx->start_condv);
-    pthread_mutex_unlock(&gCtx->start_mutex);
-
-    for (;;) {
-        if (stop) {
-            pthread_exit(0);
-        }
-        idx++;
-        //
-        dtime = (gCtx->avg_video_decode_time + gCtx->avg_video_display_time) / 1000;
-        sched = (dtime > etime) ? (fps - 1000 / dtime) : 0;
-        //
-        diff = gCtx->audio_last_pts - gCtx->video_last_pts;
-        if (idx >= step) {
-            adif = total / step;
-            total -= temp[(idx - 1) % step];
-        }
-        total += diff;
-        temp[(idx - 1) % step] = diff;
-        judge = (adif + diff * 4.0) / 5.0 + (double)(sched << 1) / (double)(fps);
-        debug("etime %d dtime %d sched %d diff %.3f adif %.3f judge %.3f\n", etime, dtime, sched, diff, adif, judge);
-        pthread_mutex_lock(&gCtx->skip_mutex);
-        if (floor(judge) > 0) {
-            if (!gCtx->skip_count) {
-                gCtx->skip_level = AVDISCARD_NONREF;
-                gCtx->skip_count = ceil(judge);
-            }
-        }
-        else {
-            gCtx->skip_level = AVDISCARD_DEFAULT;
-            gCtx->skip_count = 0;
-        }        
-        pthread_mutex_unlock(&gCtx->skip_mutex);
-        usleep(1000 * 1000 / fps);
-    }
-
-    return 0;
-}
-
 int decode_init() {
     int policy, priority;
     pthread_attr_t attr;
@@ -266,18 +209,13 @@ int decode_init() {
     adtid = 0;
     vdtid = 0;
     sdtid = 0;
-    sytid = 0;
 
-    if (gCtx->audio_enabled) {
+    if (gCtx->audio_enabled)
         pthread_create(&adtid, 0, audio_decode_thread, 0);
-    }
-    if (gCtx->video_enabled) {
+    if (gCtx->video_enabled)
         pthread_create(&vdtid, 0, video_decode_thread, 0);
-    }
     if (gCtx->subtitle_enabled)
         pthread_create(&sdtid, 0, subtitle_decode_thread, 0);
-    if (gCtx->audio_enabled && gCtx->video_enabled)
-        pthread_create(&sytid, 0, synchronize_thread, 0);
 
 	return 0;
 }
@@ -298,10 +236,6 @@ void decode_free() {
         subtitle_packet_queue_wake();
         pthread_join(sdtid, 0);
         sdtid = 0;
-    }
-    if (sytid) {
-        pthread_join(sytid, 0);
-        sytid = 0;
     }
 }
 

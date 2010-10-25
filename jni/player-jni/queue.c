@@ -184,7 +184,7 @@ void q_free(queue_t** q, void (*func)(void*)) {
 void free_AVPacket(void* data) {
     if (data) {
         av_free_packet((AVPacket*) data);
-        av_free((AVPacket*) data);
+        av_free(data);
     }
 }
 

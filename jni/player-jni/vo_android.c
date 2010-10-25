@@ -80,6 +80,7 @@ static int vo_display_android(Picture* pic) {
     screen = getSurfaceBuffer();
     if (!sw || !sh || !screen)
         goto fail;
+    // TODO: calculate according to actual format
     ssz = sw * sh * 2;
     psz = pic->width * pic->height * 2;
     if (!buffer) {

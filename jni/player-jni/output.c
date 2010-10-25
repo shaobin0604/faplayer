@@ -15,17 +15,16 @@ static int stop = 0;
 
 static pthread_t aotid = 0;
 static pthread_t votid = 0;
+static pthread_t sytid = 0;
 
 static void* audio_output_thread(void* para) {
     Samples* sam;
     int64_t cnt, total = 0;
 
-    if (gCtx->video_enabled) {
-        pthread_mutex_lock(&gCtx->start_mutex);
-        while (!gCtx->start)
-            pthread_cond_wait(&gCtx->start_condv, &gCtx->start_mutex);
-        pthread_mutex_unlock(&gCtx->start_mutex);
-    }
+    pthread_mutex_lock(&gCtx->start_mutex);
+    while (!gCtx->start)
+        pthread_cond_wait(&gCtx->start_condv, &gCtx->start_mutex);
+    pthread_mutex_unlock(&gCtx->start_mutex);
 
     for (;;) {
         if (stop) {
@@ -101,6 +100,8 @@ static void* video_output_thread(void* para) {
                 // wait until surface is ready
                 while (-1) {
                     vb = av_gettime();
+                    // FIXME: this will block when the activity lost focus
+                    // and when using a monitor you will see memory consumes very fast
                     err = vo->display(pic);
                     ve = av_gettime();
                     if (!err)
@@ -121,7 +122,7 @@ static void* video_output_thread(void* para) {
                 factor = 0;
             else
                 factor = 1.0 - diff / 2;
-            debug("cur a/v/d %.3f/%.3f/%.3f\n", gCtx->audio_last_pts, gCtx->video_last_pts, diff);
+            //debug("cur a/v/d %.3f/%.3f/%.3f\n", gCtx->audio_last_pts, gCtx->video_last_pts, diff);
             if (left > 0 && factor > 0) {
                 usleep((int64_t)(left * factor));
             }
@@ -131,10 +132,69 @@ static void* video_output_thread(void* para) {
     return 0;
 }
 
+static void* synchronize_thread(void* para) {
+    int idx, fps, step;
+    int sched, etime, dtime;
+    double temp[16];
+    double diff, total, adif;
+    double judge;
+
+    idx = 0;
+    fps = (int)(gCtx->fps);
+    step = fps >> 2;
+    etime = 1000 / fps;
+    total = 0;
+
+    pthread_mutex_lock(&gCtx->start_mutex);
+    while ((gCtx->audio_enabled && (samples_queue_size() < step)) || (gCtx->video_enabled && (picture_queue_size() < step)))
+        usleep(5 * 1000);
+    gCtx->start = -1;
+    pthread_cond_broadcast(&gCtx->start_condv);
+    pthread_mutex_unlock(&gCtx->start_mutex);
+
+    if (!(gCtx->audio_enabled && (gCtx->video_enabled || gCtx->subtitle_enabled)))
+        pthread_exit(0);
+
+    for (;;) {
+        if (stop) {
+            pthread_exit(0);
+        }
+        idx++;
+        //
+        dtime = (gCtx->avg_video_decode_time + gCtx->avg_video_display_time) / 1000;
+        sched = (dtime > etime) ? (fps - 1000 / dtime) : 0;
+        //
+        diff = gCtx->audio_last_pts - gCtx->video_last_pts;
+        if (idx >= step) {
+            adif = total / step;
+            total -= temp[(idx - 1) % step];
+        }
+        total += diff;
+        temp[(idx - 1) % step] = diff;
+        judge = (adif + diff * 4.0) / 5.0 + (double)(sched << 1) / (double)(fps);
+        //debug("etime %d dtime %d sched %d diff %.3f adif %.3f judge %.3f\n", etime, dtime, sched, diff, adif, judge);
+        pthread_mutex_lock(&gCtx->skip_mutex);
+        if (floor(judge) > 0) {
+            if (!gCtx->skip_count) {
+                gCtx->skip_level = AVDISCARD_NONREF;
+                gCtx->skip_count = ceil(judge);
+            }
+        }
+        else {
+            gCtx->skip_level = AVDISCARD_DEFAULT;
+            gCtx->skip_count = 0;
+        }        
+        pthread_mutex_unlock(&gCtx->skip_mutex);
+        usleep(1000 * 1000 / fps);
+    }
+
+    return 0;
+}
+
 int output_init() {
     char *audio, *video;
 
-    if (ao || vo || aotid || votid)
+    if (ao || vo || aotid || votid || sytid)
         return -1;
     if (gCtx->audio_enabled) {
         ao_register_all();
@@ -157,11 +217,14 @@ int output_init() {
 
     aotid = 0;
     votid = 0;
+    sytid = 0;
 
     if (gCtx->audio_enabled)
         pthread_create(&aotid, 0, audio_output_thread, 0);
     if (gCtx->video_enabled || gCtx->subtitle_enabled)
         pthread_create(&votid, 0, video_output_thread, 0);
+    if (gCtx->audio_enabled || gCtx->video_enabled)
+        pthread_create(&sytid, 0, synchronize_thread, 0);
 
     return 0;
 }
@@ -177,6 +240,10 @@ void output_free() {
         picture_queue_wake();
         pthread_join(votid, 0);
         votid = 0;
+    }
+    if (sytid) {
+        pthread_join(sytid, 0);
+        sytid = 0;
     }
     if (ao) {
         ao->free();

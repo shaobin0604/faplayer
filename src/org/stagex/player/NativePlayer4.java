@@ -2,11 +2,11 @@ package org.stagex.player;
 
 import android.view.Surface;
 
-class NativePlayer3 implements NativePlayer {
+class NativePlayer4 implements NativePlayer {
 
 	static {
 		System.loadLibrary("ffmpeg");
-		System.loadLibrary("player-3");
+		System.loadLibrary("player-4");
 	}
 
 	public native int open(String file);

@@ -36,11 +36,11 @@ static void init_video_codec_ctx(AVCodecContext* ctx) {
         return;
     ctx->flags = CODEC_FLAG_BITEXACT;
     ctx->flags2 |= (CODEC_FLAG2_FAST | CODEC_FLAG2_FASTPSKIP | CODEC_FLAG2_BPYRAMID | CODEC_FLAG2_MIXED_REFS | CODEC_FLAG2_BRDO);
-	ctx->thread_count = 2;
+	ctx->thread_count = 1;
 	ctx->workaround_bugs = FF_BUG_AUTODETECT;
     ctx->error_recognition = FF_ER_CAREFUL;
     ctx->error_concealment = FF_EC_GUESS_MVS | FF_EC_DEBLOCK;
-    ctx->debug = 0;
+    ctx->debug = FF_DEBUG_BUFFERS;
     ctx->debug_mv = 0;
     ctx->skip_idct = AVDISCARD_DEFAULT;
 	ctx->skip_frame = AVDISCARD_DEFAULT;
@@ -81,10 +81,10 @@ int player_open(const char* file) {
             break;
         case CODEC_TYPE_VIDEO:
             if (!gCtx->video) {
-                gCtx->video++;
                 gCtx->width = codec->width;
                 gCtx->height = codec->height;
             }
+            gCtx->video++;
             break;
         case CODEC_TYPE_SUBTITLE:
             gCtx->subtitle++;
@@ -93,6 +93,8 @@ int player_open(const char* file) {
             break;
         }
     }
+
+    dump_format(gCtx->av_ctx, 0, file, 0);
 
     return 0;
 }
@@ -128,19 +130,19 @@ int player_play(double start, int audio, int video, int subtitle) {
 
     if (!gCtx)
         return -1;
-    if (gCtx->audio > 0 && (audio >= 0))
+    if (gCtx->audio > 0 && (audio >= 0 && audio < gCtx->audio))
         gCtx->audio_enabled = -1;
-    if (gCtx->video > 0 && (video >= 0))
+    if (gCtx->video > 0 && (video >= 0 && video < gCtx->video))
         gCtx->video_enabled = -1;
-    if (gCtx->subtitle > 0 && (subtitle >= 0))
+    if (gCtx->subtitle > 0 && (subtitle >= 0 && subtitle < gCtx->subtitle))
         gCtx->subtitle_enabled = -1;
-    if ((gCtx->audio_enabled && (audio >= gCtx->audio)) ||
-        (gCtx->video_enabled && (video >= gCtx->video)) ||
-        (gCtx->subtitle_enabled && (subtitle >= gCtx->subtitle)))
-        return -1;
     gCtx->preferred_audio = gCtx->audio_enabled ? audio : -1;
     gCtx->preferred_video = gCtx->video_enabled ? video : -1;
     gCtx->preferred_subtitle = gCtx->subtitle_enabled ? subtitle : -1;
+    if (gCtx->audio_enabled + gCtx->video_enabled + gCtx->subtitle_enabled == 0) {
+        player_close();
+        return -1;
+    }
     audio_st = 0;
     video_st = 0;
     subtitle_st = 0;
@@ -194,11 +196,19 @@ int player_play(double start, int audio, int video, int subtitle) {
             debug("could not find/open video codec\n");
         }
         else {
+            if (gCtx->video_codec->capabilities & CODEC_CAP_TRUNCATED)
+                gCtx->video_ctx->flags |= CODEC_FLAG_TRUNCATED;
             if (gCtx->video_st->r_frame_rate.den && gCtx->video_st->r_frame_rate.num)
     		    gCtx->fps = av_q2d(gCtx->video_st->r_frame_rate);
     		else
 		        gCtx->fps = 1 / av_q2d(gCtx->video_ctx->time_base);
             gCtx->video_time_base = av_q2d(gCtx->video_st->time_base);
+            if (gCtx->fps <= 0 || gCtx->fps > 100) {
+                gCtx->video_enabled = 0;
+                avcodec_close(gCtx->video_ctx);
+                gCtx->video_ctx = 0;
+                debug("something wrong? fps = %.2f", gCtx->fps);
+            }
         }
     }
     if (gCtx->subtitle && gCtx->subtitle_enabled) {
@@ -214,6 +224,12 @@ int player_play(double start, int audio, int video, int subtitle) {
         player_close();
         return -1;
     }
+    if (gCtx->audio_enabled)
+        debug("audio is enabled");
+    if (gCtx->video_enabled)
+        debug("video is enabled");
+    if (gCtx->subtitle_enabled)
+        debug("subtitle is enabled");
     pthread_mutex_init(&gCtx->start_mutex, 0);
     pthread_cond_init(&gCtx->start_condv, 0);
     pthread_mutex_init(&gCtx->skip_mutex, 0);
