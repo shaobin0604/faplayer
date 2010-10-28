@@ -1,8 +1,8 @@
 
 #include "decode.h"
-
 #include "player.h"
 #include "queue.h"
+#include "utility.h"
 
 #include <pthread.h>
 #include <libavcodec/avcodec.h>
@@ -11,8 +11,6 @@
 
 #define MAX_PICTURE 30
 #define MAX_SAMPLES 30
-
-extern int SetThreadPriority(int);
 
 static int stop = 0;
 
@@ -27,7 +25,7 @@ static void* audio_decode_thread(void* para) {
     int count;
     int64_t time, bgn, end;
 
-    err = SetThreadPriority(9);
+    err = set_thread_priority(9);
     if (err < 0)
         debug("warning: failed to set audio decode thread priority!\n");
 
@@ -90,7 +88,7 @@ static void* video_decode_thread(void* para) {
     int64_t temp[16];
     int show;
 
-    err = SetThreadPriority(10);
+    err = set_thread_priority(10);
     if (err < 0)
         debug("warning: failed to set video decode thread priority!\n");
 
@@ -197,10 +195,6 @@ static void* subtitle_decode_thread(void* para) {
 }
 
 int decode_init() {
-    int policy, priority;
-    pthread_attr_t attr;
-    struct sched_param para;
-
     if (!gCtx || adtid || vdtid || sdtid)
         return -1;
 

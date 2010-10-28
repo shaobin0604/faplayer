@@ -2,7 +2,7 @@
 #include <media/AudioSystem.h>
 #include <media/AudioTrack.h>
 
-#include "debug.h"
+#include "utility.h"
 
 using namespace android;
 
@@ -26,15 +26,17 @@ int audio_track_create(int rate, int format, int channel) {
             }
             return -1;
     }
-    if (audio) {
-        if (rate != audio->getSampleRate() || format != audio->format() || channel != audio->channelCount()) {
+    if (channel != 1 && channel != 2) {
+        debug("audio track channel %d is not supported\n", channel);
+        if (audio) {
             delete audio;
             audio = 0;
         }
+        return -1;
     }
     if (!audio) {
         audio = new AudioTrack();
-        // try cupcake
+        // try donut
         status_t status;
         status = audio->set(
             AudioSystem::MUSIC,
@@ -49,12 +51,13 @@ int audio_track_create(int rate, int format, int channel) {
                 AudioSystem::MUSIC,
                 rate,
                 format,
-                0x0c, // CHANNEL_OUT_STEREO
+                channel == 1 ? 0x04 : 0x0c, // CHANNEL_OUT_MONO or CHANNEL_OUT_STEREO
                 4096 * 4
             );
         }
         if (status == NO_ERROR) {
             audio->start();
+            debug("Got AudioTrack! %p", audio);
         }
         else {
             delete audio;

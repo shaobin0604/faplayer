@@ -1,11 +1,10 @@
 
 #include "player.h"
-
 #include "decode.h"
 #include "output.h"
 #include "queue.h"
+#include "utility.h"
 
-#include <malloc.h>
 #include <memory.h>
 
 PlayerCtx* gCtx = 0;
@@ -31,6 +30,8 @@ int player_get_subtitle_stream_count();
 
 int player_is_playing();
 
+int player_set_workaround(int i);
+
 static void init_video_codec_ctx(AVCodecContext* ctx) {
     if (!ctx)
         return;
@@ -40,7 +41,7 @@ static void init_video_codec_ctx(AVCodecContext* ctx) {
 	ctx->workaround_bugs = FF_BUG_AUTODETECT;
     ctx->error_recognition = FF_ER_CAREFUL;
     ctx->error_concealment = FF_EC_GUESS_MVS | FF_EC_DEBLOCK;
-    ctx->debug = FF_DEBUG_BUFFERS;
+    ctx->debug = 0;
     ctx->debug_mv = 0;
     ctx->skip_idct = AVDISCARD_DEFAULT;
 	ctx->skip_frame = AVDISCARD_DEFAULT;

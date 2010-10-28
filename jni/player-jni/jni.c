@@ -1,86 +1,12 @@
 
 #include <jni.h>
 
-#include "debug.h"
+#include "player.h"
+#include "utility.h"
+#include "vo_android.h"
 
-static JavaVM* jvm = 0;
+JavaVM* jvm = 0;
 
-extern "C" {
-
-// definations from player.c
-int player_open(const char* file);
-void player_close();
-int player_play(double start, int ast, int vst, int sst);
-void player_pause();
-void player_resume();
-int player_seek(double time);
-
-int player_get_duration();
-double player_get_current_time();
-
-int player_set_video_mode(int mode);
-
-int player_get_video_width();
-int player_get_video_height();
-
-int player_get_audio_stream_count();
-int player_get_video_stream_count();
-int player_get_subtitle_stream_count();
-
-int player_is_playing();
-
-// defination from ao_android_wrapper.cpp
-jint attach(JNIEnv *env, jobject thiz, jobject surf);
-void detach(JNIEnv *env, jobject thiz);
-
-// 
-
-int SetThreadPriority(int p) {
-    int err = 0;
-    JNIEnv* env;
-    jclass clz;
-    jmethodID mid;
-    jobject thread;
-
-    if (!jvm)
-        return -1;
-    err = jvm->AttachCurrentThread(&env, 0);
-    if (err < 0) {
-        err = -1;
-        goto fail;
-    }
-    clz = env->FindClass("java/lang/Thread");
-    if (!clz) {
-        err = -1;
-        goto fail;
-    }
-    mid = env->GetStaticMethodID(clz, "currentThread", "()Ljava/lang/Thread;");
-    if (!mid) {
-        err = -1;
-        goto fail;
-    }
-    thread = env->CallStaticObjectMethod(clz, mid);
-    if (!thread) {
-        err = -1;
-        goto fail;
-    }
-    mid = env->GetMethodID(clz, "setPriority", "(I)V");
-    if (!mid) {
-        err = -1;
-        goto fail;
-    }
-    env->CallVoidMethod(thread, mid, p);
-    /*mid = env->GetMethodID(clz, "getPriority", "()I");
-    if (mid) {
-        p = env->CallIntMethod(thread, mid);
-        debug("new thread priority is %d\n", p);
-    }*/
-fail:
-    jvm->DetachCurrentThread();
-    return err;
-}
-
-// exports
 #ifndef CLASS
 #error "?"
 #endif
@@ -95,9 +21,9 @@ JNIEXPORT jint JNICALL NAME(open)(JNIEnv *env, jobject thiz, jstring file) {
     const char *f;
     jboolean copy;
 
-    f = env->GetStringUTFChars(file, &copy);
+    f = (*env)->GetStringUTFChars(env, file, &copy);
     result = player_open(f);
-    env->ReleaseStringUTFChars(file, f);
+    (*env)->ReleaseStringUTFChars(env, file, f);
 
     return result;
 }
@@ -160,8 +86,8 @@ JNIEXPORT jboolean JNICALL NAME(isPlaying)(JNIEnv *env, jobject thiz) {
     return player_is_playing() == 0 ? 1 : 0;
 }
 
-JNIEXPORT jint JNICALL NAME(attach)(JNIEnv *env, jobject thiz, jobject surf) {
-    return attach(env, thiz, surf);
+JNIEXPORT jint JNICALL NAME(attach)(JNIEnv *env, jobject thiz, jobject obj, jint w, jint h) {
+    return attach(env, thiz, obj, w, h);
 }
 
 JNIEXPORT void JNICALL NAME(detach)(JNIEnv *env, jobject thiz) {
@@ -173,7 +99,5 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
     jvm = vm;
 
     return JNI_VERSION_1_4;
-}
-
 }
 

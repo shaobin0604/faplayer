@@ -12,7 +12,7 @@ typedef struct _ao_ {
     char* name;
     int (*init)();
     void (*free)();
-    int (*play)(Samples*);
+    int (*play)(Samples*, void* extra);
     struct _ao_* next;
 }ao_t;
 

@@ -16,7 +16,7 @@ static int ao_init_android() {
     return 0;
 }
 
-static int ao_play_android(Samples* sam) {
+static int ao_play_android(Samples* sam, void* extra) {
     int needed;
     int fmt, chl, size;
     void *smp, *in, *out;
@@ -69,7 +69,7 @@ static int ao_play_android(Samples* sam) {
         smp = out;
     }
     err = audio_track_create(sam->rate, fmt, chl);
-    if (!err && smp && sam->size)
+    if (!err && smp && size)
         audio_track_play(smp, size);
     if (needed) {
         av_free(out);

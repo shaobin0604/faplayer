@@ -1,12 +1,14 @@
 
 #include "output.h"
-
 #include "ao.h"
 #include "vo.h"
 #include "player.h"
 #include "queue.h"
-
+#include "utility.h"
+#include <jni.h>
 #include <pthread.h>
+
+extern JavaVM* jvm;
 
 static ao_t* ao = 0;
 static vo_t* vo = 0;
@@ -20,6 +22,11 @@ static pthread_t sytid = 0;
 static void* audio_output_thread(void* para) {
     Samples* sam;
     int64_t cnt, total = 0;
+    JNIEnv* env;
+
+    set_thread_priority(8);
+
+    (*jvm)->AttachCurrentThread(jvm, &env, 0);
 
     pthread_mutex_lock(&gCtx->start_mutex);
     while (!gCtx->start)
@@ -28,7 +35,7 @@ static void* audio_output_thread(void* para) {
 
     for (;;) {
         if (stop) {
-            pthread_exit(0);
+            break;
         }
         if (gCtx->pause) {
             usleep(25 * 1000);
@@ -37,7 +44,7 @@ static void* audio_output_thread(void* para) {
         sam = samples_queue_pop_tail();
         if (sam) {
             if (ao && ao->play)
-                ao->play(sam);
+                ao->play(sam, env);
             cnt = sam->size / sam->channel;
             switch (sam->format) {
                 case SAMPLE_FMT_U8:
@@ -64,6 +71,8 @@ static void* audio_output_thread(void* para) {
             free_Samples(sam);
         }
     }
+    (*jvm)->DetachCurrentThread(jvm);
+    pthread_exit(0);
 
     return 0;
 }
@@ -74,6 +83,11 @@ static void* video_output_thread(void* para) {
     double diff, factor;
     int err, count;
     int64_t vb, ve, vt;
+    JNIEnv* env;
+
+    set_thread_priority(8);
+
+    (*jvm)->AttachCurrentThread(jvm, &env, 0);
 
     pthread_mutex_lock(&gCtx->start_mutex);
     while (!gCtx->start)
@@ -86,7 +100,7 @@ static void* video_output_thread(void* para) {
     factor = 1.0;
     for (;;) {
         if (stop) {
-            pthread_exit(0);
+            break;
         }
         if (gCtx->pause) {
             usleep(25 * 1000);
@@ -98,17 +112,16 @@ static void* video_output_thread(void* para) {
             if (vo && vo->display) {
                 count++;
                 // wait until surface is ready
-                while (-1) {
+                while (-1 && !stop) {
                     vb = av_gettime();
-                    // FIXME: this will block when the activity lost focus
-                    // and when using a monitor you will see memory consumes very fast
-                    err = vo->display(pic);
+                    err = vo->display(pic, env);
                     ve = av_gettime();
                     if (!err)
                         break;
                 }
                 vt += (ve - vb);
                 gCtx->avg_video_display_time = vt / count;
+                debug("vo time %lld", gCtx->avg_video_display_time);
             }
             gCtx->video_last_pts = pic->pts;
             free_Picture(pic);
@@ -128,6 +141,8 @@ static void* video_output_thread(void* para) {
             }
         }
     }
+    (*jvm)->DetachCurrentThread(jvm);
+    pthread_exit(0);
 
     return 0;
 }

@@ -23,15 +23,15 @@ public class PlayerActivity extends Activity {
 		String file = bundle.getString("file");
 		Log.d("faplayer", file);
 		if (mPlayer.open(file) != 0) {
-			Log.d("faplayer", "Failed to open file!");
 			Toast.makeText(this, "Failed to open file!", Toast.LENGTH_SHORT)
 					.show();
+			return;
 		}
 		mPlayer.setVideoMode(NativePlayer.VIDEO_MODE_FIT);
 		if (mPlayer.play(0.0, 0, 0, -1) != 0) {
-			Log.d("faplayer", "Failed to play file!");
 			Toast.makeText(this, "Failed to play file!", Toast.LENGTH_SHORT)
 					.show();
+			return;
 		}
 	}
 

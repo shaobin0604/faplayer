@@ -29,7 +29,7 @@ public class NativePlayerSurface extends SurfaceView implements
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
-		mPlayer.attach(holder.getSurface());
+		mPlayer.attach(holder, width, height);
 	}
 
 	@Override
@@ -43,9 +43,9 @@ public class NativePlayerSurface extends SurfaceView implements
 
 	// ----------------
 
-    public int open(String file) {
-        return mPlayer.open(file);
-    }
+	public int open(String file) {
+		return mPlayer.open(file);
+	}
 
 	public void close() {
 		mPlayer.close();

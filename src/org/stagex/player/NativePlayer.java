@@ -1,12 +1,12 @@
 package org.stagex.player;
 
-import android.view.Surface;
+import android.view.SurfaceHolder;
 
 interface NativePlayer {
 
 	public static final int VIDEO_MODE_NONE = 0;
-	public static final int VIDEO_MODE_FIT = 1;
-	public static final int VIDEO_MODE_FILL = 2;
+	public static final int VIDEO_MODE_FILL = 1;
+	public static final int VIDEO_MODE_FIT = 2;
 
 	public abstract int open(String file);
 
@@ -38,7 +38,7 @@ interface NativePlayer {
 
 	public abstract boolean isPlaying();
 
-	public abstract int attach(Surface surface);
+	public abstract int attach(SurfaceHolder holder, int width, int height);
 
 	public abstract void detach();
 

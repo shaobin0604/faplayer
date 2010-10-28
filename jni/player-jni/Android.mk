@@ -18,7 +18,7 @@ LOCAL_C_INCLUDES += \
 LOCAL_CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DCLASS=org_stagex_player_NativePlayer4 -DPLATFORM=4
 
 LOCAL_SRC_FILES := \
-    debug.c \
+    utility.c \
     player.c \
     input.c \
     output.c \
@@ -29,11 +29,10 @@ LOCAL_SRC_FILES := \
     ao_android.c \
     ao_android_wrapper.cpp \
     vo_android.c \
-    vo_android_wrapper.cpp \
-    jni.cpp
+    jni.c
 
 LOCAL_LDFLAGS += -L$(LOCAL_PATH)/aosp-d
-LOCAL_LDLIBS += -llog -lutils -lui -lmedia
+LOCAL_LDLIBS += -llog -lutils -lmedia
 LOCAL_SHARED_LIBRARIES += ffmpeg
 
 include $(BUILD_SHARED_LIBRARY)
@@ -56,7 +55,7 @@ LOCAL_C_INCLUDES += \
 LOCAL_CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DCLASS=org_stagex_player_NativePlayer8 -DPLATFORM=8
 
 LOCAL_SRC_FILES := \
-    debug.c \
+    utility.c \
     player.c \
     input.c \
     output.c \
@@ -67,11 +66,10 @@ LOCAL_SRC_FILES := \
     ao_android.c \
     ao_android_wrapper.cpp \
     vo_android.c \
-    vo_android_wrapper.cpp \
-    jni.cpp
+    jni.c
 
 LOCAL_LDFLAGS += -L$(LOCAL_PATH)/aosp-f
-LOCAL_LDLIBS += -llog -lutils -lsurfaceflinger_client -lmedia
+LOCAL_LDLIBS += -llog -lutils -lmedia
 LOCAL_SHARED_LIBRARIES += libffmpeg
 
 include $(BUILD_SHARED_LIBRARY)
