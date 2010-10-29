@@ -47,16 +47,12 @@ static void* audio_output_thread(void* para) {
     int64_t cnt, total = 0;
     JNIEnv* env;
 
-    set_thread_priority(8);
-
-    (*jvm)->AttachCurrentThread(jvm, &env, 0);
+    set_thread_priority(7);
 
     pthread_mutex_lock(&gCtx->start_mutex);
     while (!gCtx->start)
         pthread_cond_wait(&gCtx->start_condv, &gCtx->start_mutex);
     pthread_mutex_unlock(&gCtx->start_mutex);
-
-    debug("in ao thread");
 
     for (;;) {
         if (stop) {
@@ -69,7 +65,7 @@ static void* audio_output_thread(void* para) {
         sam = audio_frame_queue_pop_tail();
         if (sam) {
             if (ao && ao->play)
-                ao->play(sam, env);
+                ao->play(sam, 0);
             cnt = sam->size / sam->channel;
             cnt /= get_audio_format_size(sam->format);
             if (cnt > 0) {
@@ -79,8 +75,6 @@ static void* audio_output_thread(void* para) {
             free_Samples(sam);
         }
     }
-    (*jvm)->DetachCurrentThread(jvm);
-    pthread_exit(0);
 
     return 0;
 }
@@ -91,18 +85,13 @@ static void* video_output_thread(void* para) {
     double diff, factor;
     int err, count;
     int64_t vb, ve, vt;
-    JNIEnv* env;
 
-    set_thread_priority(8);
-
-    (*jvm)->AttachCurrentThread(jvm, &env, 0);
+    set_thread_priority(7);
 
     pthread_mutex_lock(&gCtx->start_mutex);
     while (!gCtx->start)
         pthread_cond_wait(&gCtx->start_condv, &gCtx->start_mutex);
     pthread_mutex_unlock(&gCtx->start_mutex);
-
-    debug("in vo thread");
 
     vt = 0;
     count = 0;
@@ -124,14 +113,13 @@ static void* video_output_thread(void* para) {
                 // wait until surface is ready
                 while (!stop) {
                     vb = av_gettime();
-                    err = vo->display(pic, env);
+                    err = vo->display(pic, 0);
                     ve = av_gettime();
                     if (!err)
                         break;
                 }
                 vt += (ve - vb);
                 gCtx->avg_video_display_time = vt / count;
-                debug("vo time %lld", gCtx->avg_video_display_time);
             }
             gCtx->video_last_pts = pic->pts;
             free_Picture(pic);
@@ -151,8 +139,6 @@ static void* video_output_thread(void* para) {
             }
         }
     }
-    (*jvm)->DetachCurrentThread(jvm);
-    pthread_exit(0);
 
     return 0;
 }
@@ -223,6 +209,8 @@ static void* audio_convert_thread(void* para) {
     int err, is, os, cnt;
     void *cvt, *in, *out;
 
+    set_thread_priority(8);
+
     for (;;) {
         if (stop)
             break;
@@ -280,18 +268,20 @@ static void* video_convert_thread(void* para) {
     void* buffer;
     Picture* picture;
 
+    set_thread_priority(8);
+
     for (;;) {
         if (stop)
             break;
         picture = picture_queue_pop_tail();
         if (!picture)
             continue;
-        video_cvt_ctx = sws_getCachedContext(video_cvt_ctx, picture->width, picture->height, picture->format, picture->width, picture->height, PIX_FMT_RGB32, SWS_POINT, 0, 0, 0);
+        video_cvt_ctx = sws_getCachedContext(video_cvt_ctx, picture->width, picture->height, picture->format, picture->width, picture->height, PIX_FMT_RGB565, SWS_POINT, 0, 0, 0);
         if (!video_cvt_ctx) {
             free_Picture(picture);
             continue;
         }
-        err = avpicture_alloc(&dest, PIX_FMT_RGB32, picture->width, picture->height);
+        err = avpicture_alloc(&dest, PIX_FMT_RGB565, picture->width, picture->height);
         if (err < 0) {
             free_Picture(picture);
             continue;
@@ -304,7 +294,7 @@ static void* video_convert_thread(void* para) {
         }
         avpicture_free(&picture->picture);
         picture->picture = dest;
-        picture->format = PIX_FMT_RGB32;
+        picture->format = PIX_FMT_RGB565;
         video_frame_queue_push_head(picture);
     }
 }

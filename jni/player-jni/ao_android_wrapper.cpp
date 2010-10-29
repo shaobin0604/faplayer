@@ -11,28 +11,20 @@ static AudioTrack* audio = 0;
 extern "C" {
 
 int audio_track_create(int rate, int format, int channel) {
-    switch(format) {
-        case 0: // SAMPLE_FMT_U8
-            format = AudioSystem::PCM_8_BIT;
-            break;
-        case 1: // SAMPLE_FMT_S16
-            format = AudioSystem::PCM_16_BIT;
-            break;
-        default:
-            debug("audio track format %d is not supported\n", format);
-            if (audio) {
-                delete audio;
-                audio = 0;
-            }
-            return -1;
-    }
-    if (channel != 1 && channel != 2) {
-        debug("audio track channel %d is not supported\n", channel);
+    if (rate < 4000 || rate > 48000 || format < 0 || format > 1 || channel < 1 || channel > 2) {
         if (audio) {
             delete audio;
             audio = 0;
         }
         return -1;
+    }
+    switch(format) {
+        case 0: // SAMPLE_FMT_U8
+            format = AudioSystem::PCM_8_BIT;
+            break;
+        default: // SAMPLE_FMT_S16
+            format = AudioSystem::PCM_16_BIT;
+            break;
     }
     if (!audio) {
         audio = new AudioTrack();
@@ -55,10 +47,8 @@ int audio_track_create(int rate, int format, int channel) {
                 4096 * 4
             );
         }
-        if (status == NO_ERROR) {
+        if (status == NO_ERROR)
             audio->start();
-            debug("Got AudioTrack! %p", audio);
-        }
         else {
             delete audio;
             audio = 0;

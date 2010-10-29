@@ -25,9 +25,7 @@ static void* audio_decode_thread(void* para) {
     int count;
     int64_t time, bgn, end;
 
-    err = set_thread_priority(9);
-    if (err < 0)
-        debug("warning: failed to set audio decode thread priority!\n");
+    set_thread_priority(10);
 
     count = 0;
     time = 0;
@@ -88,9 +86,7 @@ static void* video_decode_thread(void* para) {
     int64_t temp[16];
     int show;
 
-    err = set_thread_priority(10);
-    if (err < 0)
-        debug("warning: failed to set video decode thread priority!\n");
+    set_thread_priority(10);
 
     pkt = 0;
     pic = 0;

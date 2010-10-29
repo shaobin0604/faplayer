@@ -29,7 +29,7 @@ public class NativePlayerSurface extends SurfaceView implements
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
-		mPlayer.attach(holder, width, height);
+		mPlayer.attach(holder.getSurface());
 	}
 
 	@Override

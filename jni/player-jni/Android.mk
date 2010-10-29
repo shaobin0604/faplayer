@@ -29,10 +29,11 @@ LOCAL_SRC_FILES := \
     ao_android.c \
     ao_android_wrapper.cpp \
     vo_android.c \
+    vo_android_wrapper.cpp \
     jni.c
 
 LOCAL_LDFLAGS += -L$(LOCAL_PATH)/aosp-d
-LOCAL_LDLIBS += -llog -lutils -lmedia
+LOCAL_LDLIBS += -llog -lutils -lui -lmedia
 LOCAL_SHARED_LIBRARIES += ffmpeg
 
 include $(BUILD_SHARED_LIBRARY)
@@ -66,10 +67,11 @@ LOCAL_SRC_FILES := \
     ao_android.c \
     ao_android_wrapper.cpp \
     vo_android.c \
+    vo_android_wrapper.cpp \
     jni.c
 
 LOCAL_LDFLAGS += -L$(LOCAL_PATH)/aosp-f
-LOCAL_LDLIBS += -llog -lutils -lmedia
+LOCAL_LDLIBS += -llog -lutils -lsurfaceflinger_client -lmedia
 LOCAL_SHARED_LIBRARIES += libffmpeg
 
 include $(BUILD_SHARED_LIBRARY)

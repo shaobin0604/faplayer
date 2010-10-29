@@ -3,7 +3,6 @@
 
 #include "player.h"
 #include "utility.h"
-#include "vo_android.h"
 
 JavaVM* jvm = 0;
 
@@ -86,8 +85,8 @@ JNIEXPORT jboolean JNICALL NAME(isPlaying)(JNIEnv *env, jobject thiz) {
     return player_is_playing() == 0 ? 1 : 0;
 }
 
-JNIEXPORT jint JNICALL NAME(attach)(JNIEnv *env, jobject thiz, jobject obj, jint w, jint h) {
-    return attach(env, thiz, obj, w, h);
+JNIEXPORT jint JNICALL NAME(attach)(JNIEnv *env, jobject thiz, jobject obj) {
+    return attach(env, thiz, obj);
 }
 
 JNIEXPORT void JNICALL NAME(detach)(JNIEnv *env, jobject thiz) {

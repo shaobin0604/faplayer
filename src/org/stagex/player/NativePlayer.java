@@ -1,6 +1,6 @@
 package org.stagex.player;
 
-import android.view.SurfaceHolder;
+import android.view.Surface;
 
 interface NativePlayer {
 
@@ -38,7 +38,7 @@ interface NativePlayer {
 
 	public abstract boolean isPlaying();
 
-	public abstract int attach(SurfaceHolder holder, int width, int height);
+	public abstract int attach(Surface surf);
 
 	public abstract void detach();
 
