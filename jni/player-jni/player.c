@@ -287,6 +287,8 @@ int player_seek(double time) {
         subtitle_packet_queue_abort();
         samples_queue_abort();
         picture_queue_abort();
+        audio_frame_queue_abort();
+        video_frame_queue_abort();
         gCtx->pause = 0;
         return 0;
     }

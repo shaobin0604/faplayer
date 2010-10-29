@@ -6,6 +6,8 @@
 #include "ao.h"
 #include "queue.h"
 
+// TODO: remove libmedia.so dependency
+
 extern int audio_track_create(int rate, int format, int channel);
 extern void audio_track_play(const void* buffer, int length);
 extern void audio_track_destroy();

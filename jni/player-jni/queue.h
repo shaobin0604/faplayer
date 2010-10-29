@@ -56,6 +56,8 @@ void queue_free();
 void free_AVPacket(void* data);
 void free_Picture(void* data);
 void free_Samples(void* data);
+void free_AndroidVideo(void* data);
+void free_AndroidAudio(void* data);
 
 #define DECLARE_QUEUE(NAME, TYPE) \
     int NAME##_init(); \
@@ -121,6 +123,8 @@ DECLARE_QUEUE(video_packet_queue, AVPacket)
 DECLARE_QUEUE(subtitle_packet_queue, AVPacket)
 DECLARE_QUEUE(picture_queue, Picture)
 DECLARE_QUEUE(samples_queue, Samples)
+DECLARE_QUEUE(video_frame_queue, Picture)
+DECLARE_QUEUE(audio_frame_queue, Samples)
 
 #ifdef __cplusplus
 }

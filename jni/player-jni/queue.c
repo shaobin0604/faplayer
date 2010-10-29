@@ -212,6 +212,8 @@ IMPLEMENT_QUEUE(video_packet_queue, AVPacket)
 IMPLEMENT_QUEUE(subtitle_packet_queue, AVPacket)
 IMPLEMENT_QUEUE(picture_queue, Picture)
 IMPLEMENT_QUEUE(samples_queue, Samples)
+IMPLEMENT_QUEUE(video_frame_queue, Picture)
+IMPLEMENT_QUEUE(audio_frame_queue, Samples)
 
 int queue_init() {
     int err;
@@ -225,12 +227,18 @@ int queue_init() {
         err = samples_queue_init();
         if (err < 0)
             goto fail;
+        err = audio_frame_queue_init();
+        if (err < 0)
+            goto fail;
     }
     if (gCtx->video_enabled) {
         err = video_packet_queue_init();
         if (err < 0)
             goto fail;
         err = picture_queue_init();
+        if (err < 0)
+            goto fail;
+        err = video_frame_queue_init();
         if (err < 0)
             goto fail;
     }
@@ -256,5 +264,9 @@ void queue_free() {
         picture_queue_free();
     if (samples_queue)
         samples_queue_free();
+    if (video_frame_queue)
+        video_frame_queue_free();
+    if (audio_frame_queue)
+        audio_frame_queue_free();
 }
 

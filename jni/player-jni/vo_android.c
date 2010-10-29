@@ -1,7 +1,6 @@
 
 #include <pthread.h>
 #include <libavutil/avutil.h>
-#include <libswscale/swscale.h>
 #include <jni.h>
 
 #include "vo.h"
@@ -18,9 +17,6 @@ static jobject colors = 0;
 static jmethodID mid_SurfaceHolder_lockCanvas = 0;
 static jmethodID mid_SurfaceHolder_unlockCanvasAndPost = 0;
 static jmethodID mid_Canvas_drawBitmap = 0;
-
-static void* buffer = 0;
-static struct SwsContext* cvt = 0; 
 
 static void vo_lock() {
     if (!lock) {
@@ -149,27 +145,21 @@ static int vo_init_android() {
 }
 
 static int vo_display_android(Picture* pic, void* extra) {
-    int ret = -1, mode;
-    AVPicture dest;
+    int mode;
     int sw, sh, psz;
     int x, y, i, j;
     int nw, nh, rw, rh;
-    struct SwsContext* ctx;
     JNIEnv* env = (JNIEnv*) extra;
     jobject canvas;
+    int64_t bgn, end;
 
-    if (!pic)
+    if (!pic || pic->format != PIX_FMT_RGB32)
         return 0;
-    if (!buffer) {
-        psz = pic->width * pic->height * (sizeof(uint32_t));
-        buffer = av_malloc(psz);
-        if (!buffer)
-            return 0;
-    }
-    vo_lock();
     if (!holder || !colors)
-        goto fail;
+        return -1;
+    vo_lock();
     if (colors) {
+        bgn = av_gettime();
         sw = width;
         sh = height;
         mode = (gCtx->mode == 0 && pic->width <= sw && pic->height <= sh) ? 0 : gCtx->mode;
@@ -191,36 +181,28 @@ static int vo_display_android(Picture* pic, void* extra) {
                 break;
         }
         memset(screen, 0, sw * sh * sizeof(uint32_t));
-        cvt = sws_getCachedContext(cvt, pic->width, pic->height, pic->format, pic->width, pic->height, PIX_FMT_ARGB, SWS_POINT, 0, 0, 0);
-        avpicture_fill(&dest, buffer, PIX_FMT_ARGB, pic->width, pic->height);
-        sws_scale(cvt, (const uint8_t * const*) pic->picture.data, pic->picture.linesize, 0, pic->height, dest.data, dest.linesize);
         x = (sw - nw) / 2;
         y = (sh - nh) / 2;
-        scretch4(buffer, pic->width, pic->height, 0, 0, pic->width, pic->height, screen, sw, sh, x, y, nw, nh);
+        scretch4((uint32_t*) pic->picture.data[0], pic->width, pic->height, 0, 0, pic->width, pic->height, screen, sw, sh, x, y, nw, nh);
+        end = av_gettime();
+        debug("scretch consumes %lld", end - bgn);
         if (holder) {
+            bgn = av_gettime();
             canvas = (*env)->CallObjectMethod(env, holder, mid_SurfaceHolder_lockCanvas);
             // JNI_TRUE for ARGB8888 and JNI_FALSE for RGB565
             (*env)->CallVoidMethod(env, canvas, mid_Canvas_drawBitmap, colors, 0, sw, 0, 0, sw, sh, JNI_TRUE, 0);
             (*env)->CallVoidMethod(env, holder, mid_SurfaceHolder_unlockCanvasAndPost, canvas);
             (*env)->DeleteLocalRef(env, canvas);
+            end = av_gettime();
+            debug("paint consumes %lld", end - bgn);
         }
     }
-    ret = 0;
-fail:
     vo_unlock();
 
-    return ret;
+    return 0;
 }
 
 static void vo_free_android() {
-    if (cvt) {
-        sws_freeContext(cvt);
-        cvt = 0;
-    }
-    if (buffer) {
-        av_free(buffer);
-        buffer = 0;
-    }
 }
 
 vo_t vo_android = {

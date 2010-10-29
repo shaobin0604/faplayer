@@ -1,4 +1,5 @@
 
+#include <libswscale/swscale.h>
 #include "output.h"
 #include "ao.h"
 #include "vo.h"
@@ -15,9 +16,31 @@ static vo_t* vo = 0;
 
 static int stop = 0;
 
+static ReSampleContext* audio_cvt_ctx = 0;
+static struct SwsContext* video_cvt_ctx = 0;
+
 static pthread_t aotid = 0;
 static pthread_t votid = 0;
 static pthread_t sytid = 0;
+static pthread_t actid = 0;
+static pthread_t vctid = 0;
+
+static int get_audio_format_size(int format) {
+    switch (format) {
+        case SAMPLE_FMT_U8:
+            return sizeof(uint8_t);
+        case SAMPLE_FMT_S16:
+            return sizeof(int16_t);
+        case SAMPLE_FMT_S32:
+            return sizeof(int32_t);
+        case SAMPLE_FMT_FLT:
+            return sizeof(float);
+        case SAMPLE_FMT_DBL:
+            return sizeof(double);
+        default:
+            return -1;
+    }
+}
 
 static void* audio_output_thread(void* para) {
     Samples* sam;
@@ -33,6 +56,8 @@ static void* audio_output_thread(void* para) {
         pthread_cond_wait(&gCtx->start_condv, &gCtx->start_mutex);
     pthread_mutex_unlock(&gCtx->start_mutex);
 
+    debug("in ao thread");
+
     for (;;) {
         if (stop) {
             break;
@@ -41,33 +66,16 @@ static void* audio_output_thread(void* para) {
             usleep(25 * 1000);
             continue;
         }
-        sam = samples_queue_pop_tail();
+        sam = audio_frame_queue_pop_tail();
         if (sam) {
             if (ao && ao->play)
                 ao->play(sam, env);
             cnt = sam->size / sam->channel;
-            switch (sam->format) {
-                case SAMPLE_FMT_U8:
-                    cnt = cnt / sizeof(uint8_t);
-                    break;
-                case SAMPLE_FMT_S16:
-                    cnt = cnt / sizeof(int16_t);
-                    break;
-                case SAMPLE_FMT_S32:
-                    cnt = cnt / sizeof(int32_t);
-                    break;
-                case SAMPLE_FMT_FLT:
-                    cnt = cnt / sizeof(float);
-                    break;
-                case SAMPLE_FMT_DBL:
-                    cnt = cnt / sizeof(double);
-                    break;
-                default:
-                    cnt = 0;
-                    break;
+            cnt /= get_audio_format_size(sam->format);
+            if (cnt > 0) {
+                total += cnt;
+                gCtx->audio_last_pts = (sam->pts != 0) ? sam->pts : ((double)total / (double)(sam->rate));
             }
-            total += cnt;
-            gCtx->audio_last_pts = (sam->pts != 0) ? sam->pts : ((double)total / (double)(sam->rate));
             free_Samples(sam);
         }
     }
@@ -94,6 +102,8 @@ static void* video_output_thread(void* para) {
         pthread_cond_wait(&gCtx->start_condv, &gCtx->start_mutex);
     pthread_mutex_unlock(&gCtx->start_mutex);
 
+    debug("in vo thread");
+
     vt = 0;
     count = 0;
     diff = 0;
@@ -107,12 +117,12 @@ static void* video_output_thread(void* para) {
             continue;
         }
         bgn = av_gettime();
-        pic = picture_queue_pop_tail();
+        pic = video_frame_queue_pop_tail();
         if (pic) {
             if (vo && vo->display) {
                 count++;
                 // wait until surface is ready
-                while (-1 && !stop) {
+                while (!stop) {
                     vb = av_gettime();
                     err = vo->display(pic, env);
                     ve = av_gettime();
@@ -161,7 +171,7 @@ static void* synchronize_thread(void* para) {
     total = 0;
 
     pthread_mutex_lock(&gCtx->start_mutex);
-    while ((gCtx->audio_enabled && (samples_queue_size() < step)) || (gCtx->video_enabled && (picture_queue_size() < step)))
+    while ((gCtx->audio_enabled && (audio_frame_queue_size() < step)) || (gCtx->video_enabled && (video_frame_queue_size() < step)))
         usleep(5 * 1000);
     gCtx->start = -1;
     pthread_cond_broadcast(&gCtx->start_condv);
@@ -206,10 +216,103 @@ static void* synchronize_thread(void* para) {
     return 0;
 }
 
+static void* audio_convert_thread(void* para) {
+    Samples* samples;
+    int flag;
+    int fmt, chl, sz;
+    int err, is, os, cnt;
+    void *cvt, *in, *out;
+
+    for (;;) {
+        if (stop)
+            break;
+        samples = samples_queue_pop_tail();
+        if (!samples)
+            continue;
+        fmt = samples->format;
+        chl = samples->channel;
+        cvt = samples->samples;
+        sz = samples->size;
+        flag = (fmt > SAMPLE_FMT_S16) || (chl > 2);
+        if (flag) {
+            fmt = samples->format > SAMPLE_FMT_S16 ? SAMPLE_FMT_S16 : samples->format;
+            chl = samples->channel > 2 ? 2 : samples->channel;
+            if (!audio_cvt_ctx) {
+                audio_cvt_ctx = av_audio_resample_init(chl, samples->channel, samples->rate, samples->rate, fmt, samples->format, 0, 0, 0, 0);
+                if (!audio_cvt_ctx)
+                    break;
+            }
+            is = get_audio_format_size(samples->format);
+            if (is < 0) {
+                free_Samples(samples);
+                continue;
+            }
+            in = samples->samples;
+            os = (samples->format == SAMPLE_FMT_U8) ? sizeof(uint8_t) : sizeof(int16_t);
+            cnt = samples->size / is / samples->channel;
+            sz = cnt * os * chl;
+            out = av_mallocz(sz);
+            if (!out) {
+                free_Samples(samples);
+                continue;
+            }
+            err = audio_resample(audio_cvt_ctx, out, in, cnt);
+            if (err < 0) {
+                av_free(out);
+                free_Samples(samples);
+                continue;
+            }
+            av_free(samples->samples);
+            samples->channel = chl;
+            samples->format = fmt;
+            samples->size = sz;
+            samples->samples = out;
+        }
+        audio_frame_queue_push_head(samples);        
+    }
+
+    return 0;
+}
+
+static void* video_convert_thread(void* para) {
+    int err;
+    AVPicture dest;
+    void* buffer;
+    Picture* picture;
+
+    for (;;) {
+        if (stop)
+            break;
+        picture = picture_queue_pop_tail();
+        if (!picture)
+            continue;
+        video_cvt_ctx = sws_getCachedContext(video_cvt_ctx, picture->width, picture->height, picture->format, picture->width, picture->height, PIX_FMT_RGB32, SWS_POINT, 0, 0, 0);
+        if (!video_cvt_ctx) {
+            free_Picture(picture);
+            continue;
+        }
+        err = avpicture_alloc(&dest, PIX_FMT_RGB32, picture->width, picture->height);
+        if (err < 0) {
+            free_Picture(picture);
+            continue;
+        }
+        err = sws_scale(video_cvt_ctx, (const uint8_t * const*) picture->picture.data, picture->picture.linesize, 0, picture->height, dest.data, dest.linesize);
+        if (err < 0) {
+            avpicture_free(&dest);
+            free_Picture(picture);
+            continue;
+        }
+        avpicture_free(&picture->picture);
+        picture->picture = dest;
+        picture->format = PIX_FMT_RGB32;
+        video_frame_queue_push_head(picture);
+    }
+}
+
 int output_init() {
     char *audio, *video;
 
-    if (ao || vo || aotid || votid || sytid)
+    if (ao || vo || aotid || votid || sytid || actid || vctid)
         return -1;
     if (gCtx->audio_enabled) {
         ao_register_all();
@@ -233,11 +336,17 @@ int output_init() {
     aotid = 0;
     votid = 0;
     sytid = 0;
+    actid = 0;
+    vctid = 0;
 
-    if (gCtx->audio_enabled)
+    if (gCtx->audio_enabled) {
+        pthread_create(&actid, 0, audio_convert_thread, 0);
         pthread_create(&aotid, 0, audio_output_thread, 0);
-    if (gCtx->video_enabled || gCtx->subtitle_enabled)
+    }
+    if (gCtx->video_enabled) {
+        pthread_create(&vctid, 0, video_convert_thread, 0);
         pthread_create(&votid, 0, video_output_thread, 0);
+    }
     if (gCtx->audio_enabled || gCtx->video_enabled)
         pthread_create(&sytid, 0, synchronize_thread, 0);
 
@@ -259,6 +368,16 @@ void output_free() {
     if (sytid) {
         pthread_join(sytid, 0);
         sytid = 0;
+    }
+    if (actid) {
+        audio_frame_queue_wake();
+        pthread_join(actid, 0);
+        actid = 0;
+    }
+    if (vctid) {
+        video_frame_queue_wake();
+        pthread_join(vctid, 0);
+        vctid = 0;
     }
     if (ao) {
         ao->free();
