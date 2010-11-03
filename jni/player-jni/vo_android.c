@@ -9,12 +9,9 @@ extern void createSurfaceLock();
 extern void destroySurfaceLock();
 extern void lockSurface();
 extern void unlockSurface();
-extern int getSurfaceWidth();
-extern int getSurfaceHeight();
-extern void* getSurfaceBuffer();
+extern void getSurfaceInfo(int* w, int* h, int* s, void** p);
 
-static void copyrow2(unsigned short *src, int src_w, unsigned short *dst, int dst_w)
-{
+static void copyrow2(unsigned short *src, int src_w, unsigned short *dst, int dst_w) {
     int i;
     int pos, inc;
     unsigned short pixel = 0;
@@ -31,7 +28,7 @@ static void copyrow2(unsigned short *src, int src_w, unsigned short *dst, int ds
     }
 }
 
-static void scretch2(unsigned short* src, int sw, int sh, int srx, int sry, int srw, int srh, unsigned short* dst, int dw, int dh, int drx, int dry, int drw, int drh) {
+static void scretch2(unsigned short* src, int sw, int sh, int sstr, int srx, int sry, int srw, int srh, unsigned short* dst, int dw, int dh, int dstr, int drx, int dry, int drw, int drh) {
     int pos, inc;
     int dst_max_row;
     int src_row, dst_row;
@@ -44,11 +41,11 @@ static void scretch2(unsigned short* src, int sw, int sh, int srx, int sry, int 
 
     for (dst_max_row = dst_row + drh; dst_row < dst_max_row; ++dst_row ) {
         while (pos >= 0x10000) {
-            srcp = src + src_row * sw + srx;
+            srcp = src + src_row * sstr + srx;
             ++src_row;
             pos -= 0x10000;
         }
-        dstp = dst + dst_row * dw + drx;
+        dstp = dst + dst_row * dstr + drx;
         copyrow2(srcp, srw, dstp, drw);
         pos += inc;
     }
@@ -63,7 +60,7 @@ static int vo_display_android(Picture* pic, void* extra) {
     int mode, ret = -1;
     AVPicture dest;
     void *screen;
-    int sw, sh;
+    int sw, sh, str;
     int x, y;
     int nw, nh;
     int rw, rh;
@@ -72,11 +69,11 @@ static int vo_display_android(Picture* pic, void* extra) {
     if (!pic || !pic->width || !pic->height || pic->format != PIX_FMT_RGB565)
         return 0;
     lockSurface();
-    screen = getSurfaceBuffer();
-    sw = getSurfaceWidth();
-    sh = getSurfaceHeight();
+    getSurfaceInfo(&sw, &sh, &str, &screen);
     if (!sw || !sh || !screen)
         goto fail;
+    if (str == 2)
+        str = sw;
     mode = (gCtx->mode == 0 && pic->width <= sw && pic->height <= sh) ? 0 : gCtx->mode;
     mode = (mode < 0 || mode > 2) ? 2 : mode;
     switch (mode) {
@@ -98,7 +95,7 @@ static int vo_display_android(Picture* pic, void* extra) {
     x = (sw - nw) / 2;
     y = (sh - nh) / 2;
     memset(screen, 0, sw * sh * 2);
-    scretch2((uint16_t*) pic->picture.data[0], pic->width, pic->height, 0, 0, pic->width, pic->height, screen, sw, sh, x, y, nw, nh);
+    scretch2((uint16_t*) pic->picture.data[0], pic->width, pic->height, pic->width, 0, 0, pic->width, pic->height, screen, sw, sh, str, x, y, nw, nh);
     ret = 0;
 fail:
     unlockSurface();

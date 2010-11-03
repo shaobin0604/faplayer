@@ -49,22 +49,25 @@ void unlockSurface() {
     pthread_mutex_unlock(&mutex);
 }
 
-int getSurfaceWidth() {
-    return locked ? info->w : 0;
-}
-
-int getSurfaceHeight() {
-    return locked ? info->h : 0;
-}
-
-void* getSurfaceBuffer() {
-    // workaround for eclair
+void getSurfaceInfo(int* w , int* h, int* s, void** p) {
+    if (!locked)
+        return;
+    if (w)
+        *w = info->w;
+    if (h)
+        *h = info->h;
 #if PLATFORM < 8
-    return locked ? (reinterpret_cast<int>(info->bits) < 0x0200 ? info->base : info->bits) : 0;
+    if (s)
+        *s = info->bpr;
+    if (p)
+        *p = (reinterpret_cast<int>(info->bits) < 0x0200) ? info->base : info->bits;
 #elif PLATFORM == 8
-    return locked ? info->bits : 0;
+    if (s)
+        *s = info->s;
+    if (p)
+        *p = info->bits;
 #else
-#error "?"
+#error ?
 #endif
 }
 

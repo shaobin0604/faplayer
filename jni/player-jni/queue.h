@@ -34,6 +34,7 @@ void q_free(queue_t** q, void (*func)(void*));
 #include <libavcodec/avcodec.h>
 
 typedef struct {
+    int cvt;
     AVPicture picture;
     int width;
     int height;
@@ -42,6 +43,7 @@ typedef struct {
 }Picture;
 
 typedef struct {
+    int cvt;
     int rate;
     int channel;
     int size;

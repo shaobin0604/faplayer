@@ -6,7 +6,7 @@ LOCAL_ARM_MODE := arm
 
 LOCAL_MODULE := player-4
 
-AOSP := /opt/google/aosp-c
+AOSP := /opt/google/aosp-d
 
 LOCAL_C_INCLUDES += \
     $(AOSP)/hardware/libhardware/include \

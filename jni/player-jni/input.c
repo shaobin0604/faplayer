@@ -6,7 +6,7 @@
 #include <pthread.h>
 #include <libavcodec/avcodec.h>
 
-#define MAX_PACKET_QUEUE_SIZE 32
+#define MAX_PACKET_QUEUE_SIZE 128
 
 static int stop = 0;
 
@@ -18,9 +18,8 @@ static void* input_thread(void* para) {
 
     err = 0;
     for (;;) {
-        if (stop) {
-            pthread_exit(0);
-        }
+        if (stop)
+            break;
         if (err) {
             err = 0;
             usleep(25 * 1000);
@@ -60,6 +59,8 @@ static void* input_thread(void* para) {
             free_AVPacket(pkt);
         }
     }
+
+    debug("in thread exit");
 
     return 0;
 }

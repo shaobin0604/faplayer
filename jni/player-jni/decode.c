@@ -30,9 +30,8 @@ static void* audio_decode_thread(void* para) {
     count = 0;
     time = 0;
     for (;;) {
-        if (stop) {
-            pthread_exit(0);
-        }
+        if (stop)
+            break;
         if (samples_queue_size() >= MAX_SAMPLES) {
             usleep(25 * 1000);
             continue;
@@ -46,7 +45,7 @@ static void* audio_decode_thread(void* para) {
                 debug("avcodec_decode_audio3 fail: %d\n", err);
                 size = 0;
             }
-            sam = av_malloc(sizeof(Samples));
+            sam = av_mallocz(sizeof(Samples));
             sam->rate = gCtx->audio_ctx->sample_rate;
             sam->channel = gCtx->audio_ctx->channels;
             sam->size = size;
@@ -73,6 +72,8 @@ next:
         }
     }
 
+    debug("ad thread exit");
+
     return 0;
 }
 
@@ -95,9 +96,8 @@ static void* video_decode_thread(void* para) {
     fps = (int)(gCtx->fps);
     step = (fps >> 2);
     for (;;) {
-        if (stop) {
-            pthread_exit(0);
-        }
+        if (stop)
+            break;
         if (picture_queue_size() > MAX_PICTURE) {
             usleep(25 * 1000);
             continue;
@@ -134,7 +134,7 @@ static void* video_decode_thread(void* para) {
             if (!show)
                 goto next;
             if (got) {
-                pic = av_malloc(sizeof(Picture));
+                pic = av_mallocz(sizeof(Picture));
                 if (!pic)
                     goto next;
                 err = avpicture_alloc(&pic->picture, gCtx->video_ctx->pix_fmt, gCtx->video_ctx->width, gCtx->video_ctx->height);
@@ -170,6 +170,8 @@ next:
         }
     }
 
+    debug("vd thread exit");
+
     return 0;
 }
 
@@ -177,15 +179,16 @@ static void* subtitle_decode_thread(void* para) {
     AVPacket* pkt;
 
     for (;;) {
-        if (stop) {
-            pthread_exit(0);
-        }
+        if (stop)
+            break;
         pkt = subtitle_packet_queue_pop_tail();
         if (pkt) {
             av_free_packet(pkt);
             av_free(pkt);
         }
     }
+
+    debug("sd thread exit");
 
     return 0;
 }

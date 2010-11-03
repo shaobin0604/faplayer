@@ -44,10 +44,11 @@ static int get_audio_format_size(int format) {
 
 static void* audio_output_thread(void* para) {
     Samples* sam;
+    int cvt = -1;
     int64_t cnt, total = 0;
     JNIEnv* env;
 
-    set_thread_priority(7);
+    set_thread_priority(8);
 
     pthread_mutex_lock(&gCtx->start_mutex);
     while (!gCtx->start)
@@ -62,7 +63,12 @@ static void* audio_output_thread(void* para) {
             usleep(25 * 1000);
             continue;
         }
-        sam = audio_frame_queue_pop_tail();
+        if (cvt) {
+            sam = audio_frame_queue_pop_tail();
+            cvt = sam->cvt;
+        }
+        else
+            sam = samples_queue_pop_tail();
         if (sam) {
             if (ao && ao->play)
                 ao->play(sam, 0);
@@ -76,6 +82,8 @@ static void* audio_output_thread(void* para) {
         }
     }
 
+    debug("ao thread exit");
+
     return 0;
 }
 
@@ -86,7 +94,7 @@ static void* video_output_thread(void* para) {
     int err, count;
     int64_t vb, ve, vt;
 
-    set_thread_priority(7);
+    set_thread_priority(8);
 
     pthread_mutex_lock(&gCtx->start_mutex);
     while (!gCtx->start)
@@ -140,6 +148,8 @@ static void* video_output_thread(void* para) {
         }
     }
 
+    debug("vo thread exit");
+
     return 0;
 }
 
@@ -157,19 +167,18 @@ static void* synchronize_thread(void* para) {
     total = 0;
 
     pthread_mutex_lock(&gCtx->start_mutex);
-    while ((gCtx->audio_enabled && (audio_frame_queue_size() < step)) || (gCtx->video_enabled && (video_frame_queue_size() < step)))
+    while ((gCtx->audio_enabled && (audio_frame_queue_size() + samples_queue_size() < step)) || (gCtx->video_enabled && (video_frame_queue_size() + picture_queue_size() < step)))
         usleep(5 * 1000);
     gCtx->start = -1;
     pthread_cond_broadcast(&gCtx->start_condv);
     pthread_mutex_unlock(&gCtx->start_mutex);
 
     if (!(gCtx->audio_enabled && (gCtx->video_enabled || gCtx->subtitle_enabled)))
-        pthread_exit(0);
+        goto out;
 
     for (;;) {
-        if (stop) {
-            pthread_exit(0);
-        }
+        if (stop)
+            break;
         idx++;
         //
         dtime = (gCtx->avg_video_decode_time + gCtx->avg_video_display_time) / 1000;
@@ -199,6 +208,9 @@ static void* synchronize_thread(void* para) {
         usleep(1000 * 1000 / fps);
     }
 
+out:
+    debug("sy thread exit");
+
     return 0;
 }
 
@@ -209,7 +221,7 @@ static void* audio_convert_thread(void* para) {
     int err, is, os, cnt;
     void *cvt, *in, *out;
 
-    set_thread_priority(8);
+    set_thread_priority(9);
 
     for (;;) {
         if (stop)
@@ -222,42 +234,47 @@ static void* audio_convert_thread(void* para) {
         cvt = samples->samples;
         sz = samples->size;
         flag = (fmt > SAMPLE_FMT_S16) || (chl > 2);
-        if (flag) {
-            fmt = samples->format > SAMPLE_FMT_S16 ? SAMPLE_FMT_S16 : samples->format;
-            chl = samples->channel > 2 ? 2 : samples->channel;
-            if (!audio_cvt_ctx) {
-                audio_cvt_ctx = av_audio_resample_init(chl, samples->channel, samples->rate, samples->rate, fmt, samples->format, 0, 0, 0, 0);
-                if (!audio_cvt_ctx)
-                    break;
-            }
-            is = get_audio_format_size(samples->format);
-            if (is < 0) {
-                free_Samples(samples);
-                continue;
-            }
-            in = samples->samples;
-            os = (samples->format == SAMPLE_FMT_U8) ? sizeof(uint8_t) : sizeof(int16_t);
-            cnt = samples->size / is / samples->channel;
-            sz = cnt * os * chl;
-            out = av_mallocz(sz);
-            if (!out) {
-                free_Samples(samples);
-                continue;
-            }
-            err = audio_resample(audio_cvt_ctx, out, in, cnt);
-            if (err < 0) {
-                av_free(out);
-                free_Samples(samples);
-                continue;
-            }
-            av_free(samples->samples);
-            samples->channel = chl;
-            samples->format = fmt;
-            samples->size = sz;
-            samples->samples = out;
+        if (!flag) {
+            audio_frame_queue_push_head(samples);
+            break;
         }
+        fmt = samples->format > SAMPLE_FMT_S16 ? SAMPLE_FMT_S16 : samples->format;
+        chl = samples->channel > 2 ? 2 : samples->channel;
+        if (!audio_cvt_ctx) {
+            audio_cvt_ctx = av_audio_resample_init(chl, samples->channel, samples->rate, samples->rate, fmt, samples->format, 0, 0, 0, 0);
+            if (!audio_cvt_ctx)
+                break;
+        }
+        is = get_audio_format_size(samples->format);
+        if (is < 0) {
+            free_Samples(samples);
+            continue;
+        }
+        in = samples->samples;
+        os = (samples->format == SAMPLE_FMT_U8) ? sizeof(uint8_t) : sizeof(int16_t);
+        cnt = samples->size / is / samples->channel;
+        sz = cnt * os * chl;
+        out = av_mallocz(sz);
+        if (!out) {
+            free_Samples(samples);
+            continue;
+        }
+        err = audio_resample(audio_cvt_ctx, out, in, cnt);
+        if (err < 0) {
+            av_free(out);
+            free_Samples(samples);
+            continue;
+        }
+        samples->cvt = -1;
+        av_free(samples->samples);
+        samples->channel = chl;
+        samples->format = fmt;
+        samples->size = sz;
+        samples->samples = out;
         audio_frame_queue_push_head(samples);        
     }
+
+    debug("ac thread exit");
 
     return 0;
 }
@@ -268,7 +285,7 @@ static void* video_convert_thread(void* para) {
     void* buffer;
     Picture* picture;
 
-    set_thread_priority(8);
+    set_thread_priority(9);
 
     for (;;) {
         if (stop)
@@ -292,11 +309,16 @@ static void* video_convert_thread(void* para) {
             free_Picture(picture);
             continue;
         }
+        picture->cvt = -1;
         avpicture_free(&picture->picture);
         picture->picture = dest;
         picture->format = PIX_FMT_RGB565;
         video_frame_queue_push_head(picture);
     }
+
+    debug("vc thread exit");
+
+    return 0;
 }
 
 int output_init() {
