@@ -28,6 +28,9 @@
 #include <stdlib.h>
 #include "avutil.h"
 #include "log.h"
+#if defined(ANDROID)
+#include <android/log.h>
+#endif
 
 #if LIBAVUTIL_VERSION_MAJOR > 50
 static
@@ -121,6 +124,36 @@ void av_log_default_callback(void* ptr, int level, const char* fmt, va_list vl)
         count=0;
     }
     colored_fputs(av_clip(level>>3, 0, 6), line);
+#if defined(ANDROID)
+    switch(level) {
+        case AV_LOG_QUIET:
+            level = ANDROID_LOG_SILENT;
+            break;
+        case AV_LOG_PANIC:
+        case AV_LOG_FATAL:
+            level = ANDROID_LOG_FATAL;
+            break;
+        case AV_LOG_ERROR:
+            level = ANDROID_LOG_ERROR;
+            break;
+        case AV_LOG_WARNING:
+            level = ANDROID_LOG_WARN;
+            break;
+        case AV_LOG_INFO:
+            level = ANDROID_LOG_INFO;
+            break;
+        case AV_LOG_VERBOSE:
+            level = ANDROID_LOG_VERBOSE;
+            break;
+        case AV_LOG_DEBUG:
+            level = ANDROID_LOG_INFO;
+            break;
+        default:
+            level = ANDROID_LOG_UNKNOWN;
+            break;
+    }
+    __android_log_write(level, "ffmpeg", line);
+#endif
     strcpy(prev, line);
 }
 

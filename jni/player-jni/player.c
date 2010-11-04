@@ -30,14 +30,12 @@ int player_get_subtitle_stream_count();
 
 int player_is_playing();
 
-int player_set_workaround(int i);
-
 static void init_video_codec_ctx(AVCodecContext* ctx) {
     if (!ctx)
         return;
-    ctx->flags = CODEC_FLAG_BITEXACT;
-    ctx->flags2 |= (CODEC_FLAG2_FAST | CODEC_FLAG2_FASTPSKIP | CODEC_FLAG2_BPYRAMID | CODEC_FLAG2_MIXED_REFS | CODEC_FLAG2_BRDO);
-	ctx->thread_count = 1;
+    ctx->flags |= 0;
+    ctx->flags2 |= (CODEC_FLAG2_FAST | CODEC_FLAG2_FASTPSKIP);
+	ctx->thread_count = 2;
 	ctx->workaround_bugs = FF_BUG_AUTODETECT;
     ctx->error_recognition = FF_ER_CAREFUL;
     ctx->error_concealment = FF_EC_GUESS_MVS | FF_EC_DEBLOCK;
@@ -199,17 +197,15 @@ int player_play(double start, int audio, int video, int subtitle) {
         else {
             if (gCtx->video_codec->capabilities & CODEC_CAP_TRUNCATED)
                 gCtx->video_ctx->flags |= CODEC_FLAG_TRUNCATED;
-            if (gCtx->video_st->r_frame_rate.den && gCtx->video_st->r_frame_rate.num)
-    		    gCtx->fps = av_q2d(gCtx->video_st->r_frame_rate);
+            if (gCtx->video_st->avg_frame_rate.den && gCtx->video_st->avg_frame_rate.num)
+                gCtx->fps = av_q2d(gCtx->video_st->avg_frame_rate); // fps
+            else if (gCtx->video_st->r_frame_rate.den && gCtx->video_st->r_frame_rate.num)
+    		    gCtx->fps = av_q2d(gCtx->video_st->r_frame_rate); // tbr
     		else
-		        gCtx->fps = 1 / av_q2d(gCtx->video_ctx->time_base);
+		        gCtx->fps = 1 / av_q2d(gCtx->video_ctx->time_base); // tbn
+            if (gCtx->fps <= 0 || gCtx->fps > 100)
+                gCtx->fps = 24;
             gCtx->video_time_base = av_q2d(gCtx->video_st->time_base);
-            if (gCtx->fps <= 0 || gCtx->fps > 100) {
-                gCtx->video_enabled = 0;
-                avcodec_close(gCtx->video_ctx);
-                gCtx->video_ctx = 0;
-                debug("something wrong? fps = %.2f", gCtx->fps);
-            }
         }
     }
     if (gCtx->subtitle && gCtx->subtitle_enabled) {

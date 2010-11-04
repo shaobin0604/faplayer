@@ -71,7 +71,9 @@ typedef struct {
     double audio_time_base;
     double video_time_base;
     double subtitle_time_base;
+    int64_t audio_first_time;
     double audio_last_pts;
+    int64_t video_first_time;
     double video_last_pts;
     double subtitle_last_pts;
 

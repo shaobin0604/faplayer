@@ -48,7 +48,7 @@ static void* audio_output_thread(void* para) {
     int64_t cnt, total = 0;
     JNIEnv* env;
 
-    set_thread_priority(8);
+    set_thread_priority(7);
 
     pthread_mutex_lock(&gCtx->start_mutex);
     while (!gCtx->start)
@@ -92,9 +92,9 @@ static void* video_output_thread(void* para) {
     int64_t bgn, end, left;
     double diff, factor;
     int err, count;
-    int64_t vb, ve, vt;
+    int64_t vb, ve, vt, tm;
 
-    set_thread_priority(8);
+    set_thread_priority(7);
 
     pthread_mutex_lock(&gCtx->start_mutex);
     while (!gCtx->start)
@@ -109,7 +109,7 @@ static void* video_output_thread(void* para) {
         if (stop) {
             break;
         }
-        if (gCtx->pause) {
+        if (gCtx->pause && (gCtx->video_last_pts < gCtx->audio_last_pts)) {
             usleep(25 * 1000);
             continue;
         }
@@ -128,23 +128,21 @@ static void* video_output_thread(void* para) {
                 }
                 vt += (ve - vb);
                 gCtx->avg_video_display_time = vt / count;
+                tm = av_gettime();
+                if (!gCtx->video_first_time)
+                    gCtx->video_first_time = tm;
             }
             gCtx->video_last_pts = pic->pts;
             free_Picture(pic);
         }
         end = av_gettime();
         left = (int64_t)(1000 * 1000 / gCtx->fps) - end + bgn;
-        if (gCtx->audio_enabled) {
-            diff = gCtx->audio_last_pts - gCtx->video_last_pts;
-            factor = 1.0;
-            if (diff > 0)
-                factor = 0;
-            else
-                factor = 1.0 - diff / 2;
-            //debug("cur a/v/d %.3f/%.3f/%.3f\n", gCtx->audio_last_pts, gCtx->video_last_pts, diff);
-            if (left > 0 && factor > 0) {
-                usleep((int64_t)(left * factor));
-            }
+        factor = 1.0;
+        diff = (gCtx->audio_enabled) ? (gCtx->audio_last_pts - gCtx->video_last_pts) : ((double)(tm - gCtx->video_first_time) / (double)(1000 * 1000) - gCtx->video_last_pts);
+        factor = (diff > 0) ? 0 : (1.0 - diff / 2);
+        //debug("cur a/v/d %.3f/%.3f/%.3f\n", gCtx->audio_last_pts, gCtx->video_last_pts, diff);
+        if (left > 0 && factor > 0) {
+            usleep((int64_t)(left * factor));
         }
     }
 
@@ -221,7 +219,7 @@ static void* audio_convert_thread(void* para) {
     int err, is, os, cnt;
     void *cvt, *in, *out;
 
-    set_thread_priority(9);
+    set_thread_priority(8);
 
     for (;;) {
         if (stop)
@@ -285,7 +283,7 @@ static void* video_convert_thread(void* para) {
     void* buffer;
     Picture* picture;
 
-    set_thread_priority(9);
+    set_thread_priority(8);
 
     for (;;) {
         if (stop)

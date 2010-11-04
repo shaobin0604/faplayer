@@ -59,8 +59,8 @@ static int vo_init_android() {
 static int vo_display_android(Picture* pic, void* extra) {
     int mode, ret = -1;
     AVPicture dest;
-    void *screen;
-    int sw, sh, str;
+    void *screen = 0;
+    int sw = 0, sh = 0, ss;
     int x, y;
     int nw, nh;
     int rw, rh;
@@ -69,11 +69,11 @@ static int vo_display_android(Picture* pic, void* extra) {
     if (!pic || !pic->width || !pic->height || pic->format != PIX_FMT_RGB565)
         return 0;
     lockSurface();
-    getSurfaceInfo(&sw, &sh, &str, &screen);
+    getSurfaceInfo(&sw, &sh, &ss, &screen);
     if (!sw || !sh || !screen)
         goto fail;
-    if (str == 2)
-        str = sw;
+    if (ss == 2)
+        ss = sw;
     mode = (gCtx->mode == 0 && pic->width <= sw && pic->height <= sh) ? 0 : gCtx->mode;
     mode = (mode < 0 || mode > 2) ? 2 : mode;
     switch (mode) {
@@ -95,7 +95,7 @@ static int vo_display_android(Picture* pic, void* extra) {
     x = (sw - nw) / 2;
     y = (sh - nh) / 2;
     memset(screen, 0, sw * sh * 2);
-    scretch2((uint16_t*) pic->picture.data[0], pic->width, pic->height, pic->width, 0, 0, pic->width, pic->height, screen, sw, sh, str, x, y, nw, nh);
+    scretch2((uint16_t*) pic->picture.data[0], pic->width, pic->height, pic->width, 0, 0, pic->width, pic->height, screen, sw, sh, ss, x, y, nw, nh);
     ret = 0;
 fail:
     unlockSurface();

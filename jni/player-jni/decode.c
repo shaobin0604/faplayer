@@ -25,7 +25,7 @@ static void* audio_decode_thread(void* para) {
     int count;
     int64_t time, bgn, end;
 
-    set_thread_priority(10);
+    set_thread_priority(9);
 
     count = 0;
     time = 0;
@@ -37,39 +37,39 @@ static void* audio_decode_thread(void* para) {
             continue;
         }
         pkt = audio_packet_queue_pop_tail();
-        if (pkt) {
-            size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
-            bgn = av_gettime();
-            err = avcodec_decode_audio3(gCtx->audio_ctx, gCtx->samples, &size, pkt);
-            if (err < 0) {
-                debug("avcodec_decode_audio3 fail: %d\n", err);
-                size = 0;
-            }
-            sam = av_mallocz(sizeof(Samples));
-            sam->rate = gCtx->audio_ctx->sample_rate;
-            sam->channel = gCtx->audio_ctx->channels;
-            sam->size = size;
-            sam->samples = av_malloc(size);
-            if (!sam->samples) {
-                av_free(sam);
-                goto next;
-            }
-            memcpy(sam->samples, gCtx->samples, size);
-            sam->format = gCtx->audio_ctx->sample_fmt;
-            if (pkt->pts != AV_NOPTS_VALUE)
-                sam->pts = pkt->pts * gCtx->audio_time_base;
-            else if (pkt->dts != AV_NOPTS_VALUE)
-                sam->pts = pkt->dts * gCtx->audio_time_base;
-            else
-                sam->pts = 0;
-            samples_queue_push_head(sam);
-            end = av_gettime();
-            count++;
-            time += (end - bgn);
-            gCtx->avg_audio_decode_time = time / count;
-next:
-            free_AVPacket(pkt);
+        if (!pkt)
+            continue;
+        size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+        bgn = av_gettime();
+        err = avcodec_decode_audio3(gCtx->audio_ctx, gCtx->samples, &size, pkt);
+        if (err < 0) {
+            debug("avcodec_decode_audio3 fail: %d\n", err);
+            size = 0;
         }
+        sam = av_mallocz(sizeof(Samples));
+        sam->rate = gCtx->audio_ctx->sample_rate;
+        sam->channel = gCtx->audio_ctx->channels;
+        sam->size = size;
+        sam->samples = av_malloc(size);
+        if (!sam->samples) {
+            av_free(sam);
+            goto next;
+        }
+        memcpy(sam->samples, gCtx->samples, size);
+        sam->format = gCtx->audio_ctx->sample_fmt;
+        if (pkt->pts != AV_NOPTS_VALUE)
+            sam->pts = pkt->pts * gCtx->audio_time_base;
+        else if (pkt->dts != AV_NOPTS_VALUE)
+            sam->pts = pkt->dts * gCtx->audio_time_base;
+        else
+            sam->pts = 0;
+        samples_queue_push_head(sam);
+        end = av_gettime();
+        count++;
+        time += (end - bgn);
+        gCtx->avg_audio_decode_time = time / count;
+next:
+        free_AVPacket(pkt);
     }
 
     debug("ad thread exit");
@@ -84,7 +84,7 @@ static void* video_decode_thread(void* para) {
     int count;
     int fps, step;
     int64_t time, bgn, end;
-    int64_t temp[16];
+    int64_t temp[100];
     int show;
 
     set_thread_priority(10);
@@ -102,59 +102,59 @@ static void* video_decode_thread(void* para) {
             usleep(25 * 1000);
             continue;
         }
-        bgn = av_gettime();
         pkt = video_packet_queue_pop_tail();
-        if (pkt) {
-            show = -1;
-            pthread_mutex_lock(&gCtx->skip_mutex);
-            if (gCtx->skip_count > 0) {
-                gCtx->video_ctx->flags |= CODEC_FLAG_LOW_DELAY;
-                gCtx->video_ctx->skip_frame = gCtx->skip_level;
-                gCtx->video_ctx->skip_idct = gCtx->skip_level;
-                gCtx->video_ctx->skip_loop_filter = AVDISCARD_ALL;
-                gCtx->skip_count--;
-                if (gCtx->skip_level > AVDISCARD_NONREF)
-                    show = 0;
-            }
-            else {
-                gCtx->video_ctx->flags &= (~CODEC_FLAG_LOW_DELAY);
-                gCtx->video_ctx->skip_frame = AVDISCARD_DEFAULT;
-                gCtx->video_ctx->skip_idct = AVDISCARD_DEFAULT;
-                gCtx->video_ctx->skip_loop_filter = AVDISCARD_DEFAULT;
-                gCtx->skip_level = AVDISCARD_DEFAULT;
-                gCtx->skip_count = 0;
-            }
-            //debug("skip level %d skip count %d\n", gCtx->skip_level, gCtx->skip_count);
-            pthread_mutex_unlock(&gCtx->skip_mutex);
-            err = avcodec_decode_video2(gCtx->video_ctx, gCtx->frame, &got, pkt);
+        if (!pkt)
+            continue;
+        bgn = av_gettime();
+        show = -1;
+        pthread_mutex_lock(&gCtx->skip_mutex);
+        if (gCtx->skip_count > 0) {
+            gCtx->video_ctx->flags |= CODEC_FLAG_LOW_DELAY;
+            gCtx->video_ctx->skip_frame = gCtx->skip_level;
+            gCtx->video_ctx->skip_idct = gCtx->skip_level;
+            gCtx->video_ctx->skip_loop_filter = AVDISCARD_ALL;
+            gCtx->skip_count--;
+            if (gCtx->skip_level > AVDISCARD_NONREF)
+                show = 0;
+        }
+        else {
+            gCtx->video_ctx->flags &= (~CODEC_FLAG_LOW_DELAY);
+            gCtx->video_ctx->skip_frame = AVDISCARD_DEFAULT;
+            gCtx->video_ctx->skip_idct = AVDISCARD_DEFAULT;
+            gCtx->video_ctx->skip_loop_filter = AVDISCARD_DEFAULT;
+            gCtx->skip_level = AVDISCARD_DEFAULT;
+            gCtx->skip_count = 0;
+        }
+        //debug("skip level %d skip count %d\n", gCtx->skip_level, gCtx->skip_count);
+        pthread_mutex_unlock(&gCtx->skip_mutex);
+        err = avcodec_decode_video2(gCtx->video_ctx, gCtx->frame, &got, pkt);
+        if (err < 0) {
+            debug("avcodec_decode_video2 fail: %d\n", err);
+            goto next;
+        }
+        if (!show)
+            goto next;
+        if (got) {
+            pic = av_mallocz(sizeof(Picture));
+            if (!pic)
+                goto next;
+            err = avpicture_alloc(&pic->picture, gCtx->video_ctx->pix_fmt, gCtx->video_ctx->width, gCtx->video_ctx->height);
             if (err < 0) {
-                debug("avcodec_decode_video2 fail: %d\n", err);
+                av_free(pic);
                 goto next;
             }
-            if (!show)
-                goto next;
-            if (got) {
-                pic = av_mallocz(sizeof(Picture));
-                if (!pic)
-                    goto next;
-                err = avpicture_alloc(&pic->picture, gCtx->video_ctx->pix_fmt, gCtx->video_ctx->width, gCtx->video_ctx->height);
-                if (err < 0) {
-                    av_free(pic);
-                    goto next;
-                }
-                av_picture_copy(&pic->picture, (AVPicture*) gCtx->frame, gCtx->video_ctx->pix_fmt, gCtx->video_ctx->width, gCtx->video_ctx->height);
-                pic->width = gCtx->video_ctx->width;
-                pic->height = gCtx->video_ctx->height;
-                pic->format = gCtx->video_ctx->pix_fmt;
-                if (pkt->pts != AV_NOPTS_VALUE) {
-                    pic->pts = pkt->pts * gCtx->video_time_base;
-                } else if (pkt->dts != AV_NOPTS_VALUE) {
-                    pic->pts = pkt->dts * gCtx->video_time_base;
-                } else {
-                    pic->pts = 0;
-                }
-                picture_queue_push_head(pic);
+            av_picture_copy(&pic->picture, (AVPicture*) gCtx->frame, gCtx->video_ctx->pix_fmt, gCtx->video_ctx->width, gCtx->video_ctx->height);
+            pic->width = gCtx->video_ctx->width;
+            pic->height = gCtx->video_ctx->height;
+            pic->format = gCtx->video_ctx->pix_fmt;
+            if (pkt->pts != AV_NOPTS_VALUE) {
+                pic->pts = pkt->pts * gCtx->video_time_base;
+            } else if (pkt->dts != AV_NOPTS_VALUE) {
+                pic->pts = pkt->dts * gCtx->video_time_base;
+            } else {
+                pic->pts = 0;
             }
+            picture_queue_push_head(pic);
 next:
             end = av_gettime();
             count++;
