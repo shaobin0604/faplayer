@@ -154,7 +154,7 @@ static void* video_output_thread(void* para) {
 static void* synchronize_thread(void* para) {
     int idx, fps, step;
     int sched, etime, dtime;
-    double temp[16];
+    double temp[100];
     double diff, total, adif;
     double judge;
 
