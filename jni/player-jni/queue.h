@@ -58,8 +58,6 @@ void queue_free();
 void free_AVPacket(void* data);
 void free_Picture(void* data);
 void free_Samples(void* data);
-void free_AndroidVideo(void* data);
-void free_AndroidAudio(void* data);
 
 #define DECLARE_QUEUE(NAME, TYPE) \
     int NAME##_init(); \

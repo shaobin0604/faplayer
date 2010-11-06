@@ -48,7 +48,7 @@ static void* audio_output_thread(void* para) {
     int64_t cnt, total = 0;
     JNIEnv* env;
 
-    set_thread_priority(7);
+    set_thread_priority(8);
 
     pthread_mutex_lock(&gCtx->start_mutex);
     while (!gCtx->start)
@@ -94,7 +94,7 @@ static void* video_output_thread(void* para) {
     int err, count;
     int64_t vb, ve, vt, tm;
 
-    set_thread_priority(7);
+    set_thread_priority(8);
 
     pthread_mutex_lock(&gCtx->start_mutex);
     while (!gCtx->start)
@@ -166,7 +166,7 @@ static void* synchronize_thread(void* para) {
 
     pthread_mutex_lock(&gCtx->start_mutex);
     while ((gCtx->audio_enabled && (audio_frame_queue_size() + samples_queue_size() < step)) || (gCtx->video_enabled && (video_frame_queue_size() + picture_queue_size() < step)))
-        usleep(5 * 1000);
+        usleep(10 * 1000);
     gCtx->start = -1;
     pthread_cond_broadcast(&gCtx->start_condv);
     pthread_mutex_unlock(&gCtx->start_mutex);
@@ -191,19 +191,15 @@ static void* synchronize_thread(void* para) {
         temp[(idx - 1) % step] = diff;
         judge = (adif + diff * 4.0) / 5.0 + (double)(sched << 1) / (double)(fps);
         //debug("etime %d dtime %d sched %d diff %.3f adif %.3f judge %.3f\n", etime, dtime, sched, diff, adif, judge);
-        pthread_mutex_lock(&gCtx->skip_mutex);
         if (floor(judge) > 0) {
-            if (!gCtx->skip_count) {
-                gCtx->skip_level = AVDISCARD_NONREF;
-                gCtx->skip_count = ceil(judge);
-            }
+            gCtx->frame_skip = -1;
+            gCtx->frame_drop = (diff > 2.0) ? -1 : 0;
         }
         else {
-            gCtx->skip_level = AVDISCARD_DEFAULT;
-            gCtx->skip_count = 0;
+            gCtx->frame_skip = 0;
+            gCtx->frame_drop = 0;
         }        
-        pthread_mutex_unlock(&gCtx->skip_mutex);
-        usleep(1000 * 1000 / fps);
+        usleep(10 * 1000);
     }
 
 out:
@@ -219,7 +215,7 @@ static void* audio_convert_thread(void* para) {
     int err, is, os, cnt;
     void *cvt, *in, *out;
 
-    set_thread_priority(8);
+    set_thread_priority(9);
 
     for (;;) {
         if (stop)
@@ -283,7 +279,7 @@ static void* video_convert_thread(void* para) {
     void* buffer;
     Picture* picture;
 
-    set_thread_priority(8);
+    set_thread_priority(9);
 
     for (;;) {
         if (stop)

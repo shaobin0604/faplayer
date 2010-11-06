@@ -22,7 +22,7 @@ typedef struct {
     int preferred_video;
     int preferred_subtitle;
 
-    //
+    // auto dectect or user specify
     int audio_enabled;
     int video_enabled;
     int subtitle_enabled;
@@ -52,11 +52,6 @@ typedef struct {
 
     // runtime parameters
 
-    int start;
-    pthread_mutex_t start_mutex;
-    pthread_cond_t start_condv;
-    int pause;
-
     AVFormatContext* av_ctx;
     AVCodecContext* audio_ctx;
     AVCodec* audio_codec;
@@ -83,14 +78,19 @@ typedef struct {
 
     int64_t avg_video_display_time;
 
-    int skip_level;
-    int skip_count;
-    pthread_mutex_t skip_mutex;
+    // controls
+    int frame_skip;
+    int frame_drop;
 
     // 0 = centeral surface if possible
     // 1 = fit surface
     // 2 = full surface
     int mode;
+
+    int start;
+    pthread_mutex_t start_mutex;
+    pthread_cond_t start_condv;
+    int pause;
 
 }PlayerCtx;
 

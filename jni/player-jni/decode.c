@@ -25,7 +25,7 @@ static void* audio_decode_thread(void* para) {
     int count;
     int64_t time, bgn, end;
 
-    set_thread_priority(9);
+    set_thread_priority(10);
 
     count = 0;
     time = 0;
@@ -78,14 +78,14 @@ next:
 }
 
 static void* video_decode_thread(void* para) {
-    int err, got, has;
+    int err, got;
     AVPacket* pkt;
     Picture *pic;
     int count;
     int fps, step;
     int64_t time, bgn, end;
     int64_t temp[100];
-    int show;
+    double pts;
 
     set_thread_priority(10);
 
@@ -106,34 +106,27 @@ static void* video_decode_thread(void* para) {
         if (!pkt)
             continue;
         bgn = av_gettime();
-        show = -1;
-        pthread_mutex_lock(&gCtx->skip_mutex);
-        if (gCtx->skip_count > 0) {
-            gCtx->video_ctx->flags |= CODEC_FLAG_LOW_DELAY;
-            gCtx->video_ctx->skip_frame = gCtx->skip_level;
-            gCtx->video_ctx->skip_idct = gCtx->skip_level;
-            gCtx->video_ctx->skip_loop_filter = AVDISCARD_ALL;
-            gCtx->skip_count--;
-            if (gCtx->skip_level > AVDISCARD_NONREF)
-                show = 0;
-        }
-        else {
-            gCtx->video_ctx->flags &= (~CODEC_FLAG_LOW_DELAY);
-            gCtx->video_ctx->skip_frame = AVDISCARD_DEFAULT;
-            gCtx->video_ctx->skip_idct = AVDISCARD_DEFAULT;
-            gCtx->video_ctx->skip_loop_filter = AVDISCARD_DEFAULT;
-            gCtx->skip_level = AVDISCARD_DEFAULT;
-            gCtx->skip_count = 0;
-        }
-        //debug("skip level %d skip count %d\n", gCtx->skip_level, gCtx->skip_count);
-        pthread_mutex_unlock(&gCtx->skip_mutex);
+        gCtx->video_ctx->skip_frame = gCtx->frame_skip ? AVDISCARD_NONREF : AVDISCARD_DEFAULT;
+        gCtx->video_ctx->skip_idct = gCtx->frame_skip ? AVDISCARD_NONREF : AVDISCARD_DEFAULT;
+        gCtx->video_ctx->skip_loop_filter = gCtx->frame_skip ? AVDISCARD_ALL : AVDISCARD_DEFAULT;
         err = avcodec_decode_video2(gCtx->video_ctx, gCtx->frame, &got, pkt);
         if (err < 0) {
             debug("avcodec_decode_video2 fail: %d\n", err);
             goto next;
         }
-        if (!show)
+        if (pkt->pts != AV_NOPTS_VALUE) {
+            pts = pkt->pts * gCtx->video_time_base;
+        } else if (pkt->dts != AV_NOPTS_VALUE) {
+            pts = pkt->dts * gCtx->video_time_base;
+        } else {
+            pts = 0;
+        }
+        // not always drop :)
+        if (gCtx->frame_drop && av_gettime() % 3 == 0) {
+            if (picture_queue_size() + video_frame_queue_size() == 0)
+                gCtx->video_last_pts = pts;
             goto next;
+        }
         if (got) {
             pic = av_mallocz(sizeof(Picture));
             if (!pic)
@@ -147,13 +140,7 @@ static void* video_decode_thread(void* para) {
             pic->width = gCtx->video_ctx->width;
             pic->height = gCtx->video_ctx->height;
             pic->format = gCtx->video_ctx->pix_fmt;
-            if (pkt->pts != AV_NOPTS_VALUE) {
-                pic->pts = pkt->pts * gCtx->video_time_base;
-            } else if (pkt->dts != AV_NOPTS_VALUE) {
-                pic->pts = pkt->dts * gCtx->video_time_base;
-            } else {
-                pic->pts = 0;
-            }
+            pic->pts = pts;
             picture_queue_push_head(pic);
 next:
             end = av_gettime();

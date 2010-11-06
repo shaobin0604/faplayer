@@ -33,8 +33,8 @@ int player_is_playing();
 static void init_video_codec_ctx(AVCodecContext* ctx) {
     if (!ctx)
         return;
-    ctx->flags |= 0;
-    ctx->flags2 |= (CODEC_FLAG2_FAST | CODEC_FLAG2_FASTPSKIP);
+    ctx->flags |= CODEC_FLAG_LOW_DELAY;
+    ctx->flags2 |= CODEC_FLAG2_FAST;
 	ctx->thread_count = 2;
 	ctx->workaround_bugs = FF_BUG_AUTODETECT;
     ctx->error_recognition = FF_ER_CAREFUL;
@@ -104,7 +104,6 @@ void player_close() {
         input_free();
         output_free();
         queue_free();
-        pthread_mutex_destroy(&gCtx->skip_mutex);
         pthread_cond_destroy(&gCtx->start_condv);
         pthread_mutex_destroy(&gCtx->start_mutex);
         if (gCtx->audio_ctx)
@@ -229,7 +228,6 @@ int player_play(double start, int audio, int video, int subtitle) {
         debug("subtitle is enabled");
     pthread_mutex_init(&gCtx->start_mutex, 0);
     pthread_cond_init(&gCtx->start_condv, 0);
-    pthread_mutex_init(&gCtx->skip_mutex, 0);
     player_seek(start);
     gCtx->frame = avcodec_alloc_frame();
     if (!gCtx->frame) {
@@ -267,27 +265,32 @@ int player_seek(double time) {
 
     if (!gCtx)
         return -1;
-    if ((int64_t)(time / gCtx->audio_time_base) != AV_NOPTS_VALUE) {
-        gCtx->pause = -1;
+    if (gCtx->audio_enabled && ((int64_t)(time / gCtx->audio_time_base) != AV_NOPTS_VALUE))
         timestamp = (int64_t)(time / gCtx->audio_time_base);
-        if (gCtx->av_ctx->start_time != AV_NOPTS_VALUE)
-            timestamp += gCtx->av_ctx->start_time;
-        err = avformat_seek_file(gCtx->av_ctx, -1, INT64_MIN, timestamp, INT64_MAX, 0);
-        if (err < 0) {
-            debug("avformat_seek_file failed\n");
-            gCtx->pause = 0;
-            return -1;
-        }
-        audio_packet_queue_abort();
-        video_packet_queue_abort();
-        subtitle_packet_queue_abort();
-        samples_queue_abort();
-        picture_queue_abort();
-        audio_frame_queue_abort();
-        video_frame_queue_abort();
+    else if (gCtx->video_enabled && ((int64_t)(time / gCtx->video_time_base) != AV_NOPTS_VALUE))
+        timestamp = (int64_t)(time / gCtx->video_time_base);
+    else
+        return -1;
+    if (gCtx->av_ctx->start_time != AV_NOPTS_VALUE)
+        timestamp += gCtx->av_ctx->start_time;
+    gCtx->pause = -1;
+    err = avformat_seek_file(gCtx->av_ctx, -1, INT64_MIN, timestamp, INT64_MAX, 0);
+    if (err < 0) {
+        debug("avformat_seek_file failed\n");
         gCtx->pause = 0;
-        return 0;
+        return -1;
     }
+
+    audio_packet_queue_abort();
+    video_packet_queue_abort();
+    subtitle_packet_queue_abort();
+    samples_queue_abort();
+    picture_queue_abort();
+    audio_frame_queue_abort();
+    video_frame_queue_abort();
+
+    gCtx->pause = 0;
+
     return 0;
 }
 
@@ -306,7 +309,14 @@ int player_get_duration() {
 }
 
 double player_get_current_time() {
-    return gCtx ? gCtx->audio_last_pts * gCtx->audio_time_base : 0;
+    if (!gCtx)
+        return -1;
+    if (gCtx->audio_enabled)
+        return gCtx->audio_last_pts;
+    else if (gCtx->video_enabled)
+        return gCtx->video_last_pts;
+    else
+        return -1;
 }
 
 int player_set_video_mode(int mode) {
