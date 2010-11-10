@@ -25,14 +25,14 @@ static void* audio_decode_thread(void* para) {
     int count;
     int64_t time, bgn, end;
 
-    set_thread_priority(10);
+    set_thread_priority(9);
 
     count = 0;
     time = 0;
     for (;;) {
         if (stop)
             break;
-        if (samples_queue_size() >= MAX_SAMPLES) {
+        if (samples_queue_size() + audio_frame_queue_size() >= MAX_SAMPLES) {
             usleep(25 * 1000);
             continue;
         }
@@ -98,7 +98,7 @@ static void* video_decode_thread(void* para) {
     for (;;) {
         if (stop)
             break;
-        if (picture_queue_size() > MAX_PICTURE) {
+        if (picture_queue_size() + video_frame_queue_size() > MAX_PICTURE) {
             usleep(25 * 1000);
             continue;
         }
@@ -121,13 +121,13 @@ static void* video_decode_thread(void* para) {
         } else {
             pts = 0;
         }
-        // not always drop :)
-        if (gCtx->frame_drop && av_gettime() % 3 == 0) {
-            if (picture_queue_size() + video_frame_queue_size() == 0)
-                gCtx->video_last_pts = pts;
-            goto next;
-        }
         if (got) {
+            // not always drop :)
+            if (gCtx->frame_drop && count % gCtx->frame_drop == 0) {
+                if (picture_queue_size() + video_frame_queue_size() == 0)
+                    gCtx->video_last_pts = pts;
+                goto next;
+            }
             pic = av_mallocz(sizeof(Picture));
             if (!pic)
                 goto next;

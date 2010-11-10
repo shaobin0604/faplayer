@@ -48,7 +48,7 @@ static void* audio_output_thread(void* para) {
     int64_t cnt, total = 0;
     JNIEnv* env;
 
-    set_thread_priority(8);
+    //set_thread_priority(8);
 
     pthread_mutex_lock(&gCtx->start_mutex);
     while (!gCtx->start)
@@ -94,7 +94,7 @@ static void* video_output_thread(void* para) {
     int err, count;
     int64_t vb, ve, vt, tm;
 
-    set_thread_priority(8);
+    //set_thread_priority(8);
 
     pthread_mutex_lock(&gCtx->start_mutex);
     while (!gCtx->start)
@@ -193,7 +193,7 @@ static void* synchronize_thread(void* para) {
         //debug("etime %d dtime %d sched %d diff %.3f adif %.3f judge %.3f\n", etime, dtime, sched, diff, adif, judge);
         if (floor(judge) > 0) {
             gCtx->frame_skip = -1;
-            gCtx->frame_drop = (diff > 2.0) ? -1 : 0;
+            gCtx->frame_drop = (diff > 2.0) ? (diff > 4.0 ? 2 : (6 - (int)(diff))) : 0;
         }
         else {
             gCtx->frame_skip = 0;
@@ -215,7 +215,7 @@ static void* audio_convert_thread(void* para) {
     int err, is, os, cnt;
     void *cvt, *in, *out;
 
-    set_thread_priority(9);
+    //set_thread_priority(9);
 
     for (;;) {
         if (stop)
@@ -279,7 +279,7 @@ static void* video_convert_thread(void* para) {
     void* buffer;
     Picture* picture;
 
-    set_thread_priority(9);
+    set_thread_priority(8);
 
     for (;;) {
         if (stop)
@@ -297,7 +297,12 @@ static void* video_convert_thread(void* para) {
             free_Picture(picture);
             continue;
         }
-        err = sws_scale(video_cvt_ctx, (const uint8_t * const*) picture->picture.data, picture->picture.linesize, 0, picture->height, dest.data, dest.linesize);
+        //if (picture->format == PIX_FMT_YUV420P) {
+        //    err = yuv420p_to_rgb565(picture->picture.data[0], dest.data[0], picture->width, picture->height);
+        //}
+        //else {
+            err = sws_scale(video_cvt_ctx, (const uint8_t * const*) picture->picture.data, picture->picture.linesize, 0, picture->height, dest.data, dest.linesize);
+        //}
         if (err < 0) {
             avpicture_free(&dest);
             free_Picture(picture);
