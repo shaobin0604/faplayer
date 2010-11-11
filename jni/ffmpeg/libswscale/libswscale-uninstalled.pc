@@ -1,12 +1,12 @@
 prefix=
 exec_prefix=
 libdir=${pcfiledir}
-includedir=/home/luka/Workspace/-/DemoPlayer/jni/ffmpeg
+includedir=/home/luka/Workspace/faplayer/jni/ffmpeg
 
 Name: libswscale
 Description: FFmpeg image rescaling library
 Version: 0.12.0
-Requires: libavutil = 50.32.3
+Requires: libavutil = 50.33.0
 Conflicts:
 Libs: ${libdir}/libswscale.a 
 Cflags: -I${includedir}

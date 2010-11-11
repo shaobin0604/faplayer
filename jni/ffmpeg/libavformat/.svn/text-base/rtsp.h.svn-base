@@ -351,9 +351,6 @@ typedef struct RTSPStream {
 void ff_rtsp_parse_line(RTSPMessageHeader *reply, const char *buf,
                         HTTPAuthState *auth_state);
 
-#if LIBAVFORMAT_VERSION_INT < (53 << 16)
-extern int rtsp_default_protocols;
-#endif
 extern int rtsp_rtp_port_min;
 extern int rtsp_rtp_port_max;
 
@@ -470,5 +467,35 @@ void ff_rtsp_close_streams(AVFormatContext *s);
  * @param rt RTSP (de)muxer context
  */
 void ff_rtsp_close_connections(AVFormatContext *rt);
+
+/**
+ * Get the description of the stream and set up the RTSPStream child
+ * objects.
+ */
+int ff_rtsp_setup_input_streams(AVFormatContext *s, RTSPMessageHeader *reply);
+
+/**
+ * Announce the stream to the server and set up the RTSPStream child
+ * objects for each media stream.
+ */
+int ff_rtsp_setup_output_streams(AVFormatContext *s, const char *addr);
+
+/**
+ * Parse a SDP description of streams by populating an RTSPState struct
+ * within the AVFormatContext.
+ */
+int ff_sdp_parse(AVFormatContext *s, const char *content);
+
+/**
+ * Receive one RTP packet from an TCP interleaved RTSP stream.
+ */
+int ff_rtsp_tcp_read_packet(AVFormatContext *s, RTSPStream **prtsp_st,
+                            uint8_t *buf, int buf_size);
+
+/**
+ * Receive one packet from the RTSPStreams set up in the AVFormatContext
+ * (which should contain a RTSPState struct as priv_data).
+ */
+int ff_rtsp_fetch_packet(AVFormatContext *s, AVPacket *pkt);
 
 #endif /* AVFORMAT_RTSP_H */

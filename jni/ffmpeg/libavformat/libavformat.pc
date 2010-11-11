@@ -6,9 +6,9 @@ includedir=${prefix}/include
 Name: libavformat
 Description: FFmpeg container format library
 Version: 52.84.0
-Requires: libavcodec = 52.92.0
+Requires: libavcodec = 52.94.4
 Requires.private: 
 Conflicts:
-Libs: -L${libdir} -lavformat -lm -pthread
+Libs: -L${libdir} -lavformat -lm -pthread -lz
 Libs.private: 
 Cflags: -I${includedir}

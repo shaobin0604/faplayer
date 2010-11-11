@@ -5,8 +5,8 @@ includedir=${prefix}/include
 
 Name: libavcore
 Description: FFmpeg multimedia shared core utilities library
-Version: 0.9.1
-Requires: libavutil = 50.32.3
+Version: 0.12.1
+Requires: libavutil = 50.33.0
 Requires.private: 
 Conflicts:
 Libs: -L${libdir} -lavcore 

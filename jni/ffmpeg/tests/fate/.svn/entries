@@ -1,15 +1,15 @@
 10
 
 dir
-25530
+25719
 svn://svn.ffmpeg.org/ffmpeg/trunk/tests/fate
 svn://svn.ffmpeg.org/ffmpeg
 
 
 
-2010-08-23T14:46:59.586265Z
-24884
-vitor
+2010-11-04T21:48:54.044645Z
+25677
+reimar
 
 
 
@@ -168,11 +168,11 @@ file
 
 
 
-2010-08-19T01:41:41.171133Z
-70f82f1caa3a261ab6e1faecc74deeef
-2010-08-04T18:47:20.855113Z
-24697
-mru
+2010-11-11T05:10:06.474969Z
+ab0264d117040b0943f11745d5748b9b
+2010-11-04T21:48:54.044645Z
+25677
+reimar
 
 
 
@@ -194,7 +194,7 @@ mru
 
 
 
-30893
+31011
 
 aac.mak
 file

@@ -39,8 +39,8 @@
  * constants for 3GPP AAC psychoacoustic model
  * @{
  */
-#define PSY_3GPP_SPREAD_LOW  1.5f // spreading factor for ascending threshold spreading  (15 dB/Bark)
-#define PSY_3GPP_SPREAD_HI   3.0f // spreading factor for descending threshold spreading (30 dB/Bark)
+#define PSY_3GPP_SPREAD_HI   1.5f // spreading factor for ascending threshold spreading  (15 dB/Bark)
+#define PSY_3GPP_SPREAD_LOW  3.0f // spreading factor for descending threshold spreading (30 dB/Bark)
 
 #define PSY_3GPP_RPEMIN      0.01f
 #define PSY_3GPP_RPELEV      2.0f
@@ -195,7 +195,7 @@ static float lame_calc_attack_threshold(int bitrate)
  * LAME psy model specific initialization
  */
 static void lame_window_init(AacPsyContext *ctx, AVCodecContext *avctx) {
-    int i;
+    int i, j;
 
     for (i = 0; i < avctx->channels; i++) {
         AacPsyChannel *pch = &ctx->ch[i];
@@ -205,8 +205,8 @@ static void lame_window_init(AacPsyContext *ctx, AVCodecContext *avctx) {
         else
             pch->attack_threshold = lame_calc_attack_threshold(avctx->bit_rate / avctx->channels / 1000);
 
-        for (i = 0; i < AAC_NUM_BLOCKS_SHORT * PSY_LAME_NUM_SUBBLOCKS; i++)
-            pch->prev_energy_subshort[i] = 10.0f;
+        for (j = 0; j < AAC_NUM_BLOCKS_SHORT * PSY_LAME_NUM_SUBBLOCKS; j++)
+            pch->prev_energy_subshort[j] = 10.0f;
     }
 }
 
@@ -404,7 +404,6 @@ static void psy_3gpp_analyze(FFPsyContext *ctx, int channel,
             band->energy = 0.0f;
             for (i = 0; i < band_sizes[g]; i++)
                 band->energy += coefs[start+i] * coefs[start+i];
-            band->energy *= 1.0f / (512*512);
             band->thr     = band->energy * 0.001258925f;
             start        += band_sizes[g];
 
@@ -415,16 +414,14 @@ static void psy_3gpp_analyze(FFPsyContext *ctx, int channel,
     for (w = 0; w < wi->num_windows*16; w += 16) {
         AacPsyBand *band = &pch->band[w];
         for (g = 1; g < num_bands; g++)
-            band[g].thr = FFMAX(band[g].thr, band[g-1].thr * coeffs->spread_low[g-1]);
+            band[g].thr = FFMAX(band[g].thr, band[g-1].thr * coeffs->spread_hi [g]);
         for (g = num_bands - 2; g >= 0; g--)
-            band[g].thr = FFMAX(band[g].thr, band[g+1].thr * coeffs->spread_hi [g]);
+            band[g].thr = FFMAX(band[g].thr, band[g+1].thr * coeffs->spread_low[g]);
         for (g = 0; g < num_bands; g++) {
-            band[g].thr_quiet = FFMAX(band[g].thr, coeffs->ath[g]);
-            if (wi->num_windows != 8 && wi->window_type[1] != EIGHT_SHORT_SEQUENCE)
-                band[g].thr_quiet = FFMAX(PSY_3GPP_RPEMIN*band[g].thr_quiet,
-                                          FFMIN(band[g].thr_quiet,
-                                          PSY_3GPP_RPELEV*pch->prev_band[w+g].thr_quiet));
-            band[g].thr = FFMAX(band[g].thr, band[g].thr_quiet * 0.25);
+            band[g].thr_quiet = band[g].thr = FFMAX(band[g].thr, coeffs->ath[g]);
+            if (!(wi->window_type[0] == LONG_STOP_SEQUENCE || (wi->window_type[1] == LONG_START_SEQUENCE && !w)))
+                band[g].thr = FFMAX(PSY_3GPP_RPEMIN*band[g].thr, FFMIN(band[g].thr,
+                                    PSY_3GPP_RPELEV*pch->prev_band[w+g].thr_quiet));
 
             ctx->psy_bands[channel*PSY_MAX_BANDS+w+g].threshold = band[g].thr;
         }

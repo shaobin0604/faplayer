@@ -1,15 +1,15 @@
 10
 
 dir
-25530
+25719
 svn://svn.ffmpeg.org/ffmpeg/trunk/doc
 svn://svn.ffmpeg.org/ffmpeg
 
 
 
-2010-10-19T07:38:53.685943Z
-25527
-mstorsjo
+2010-11-08T14:27:16.636131Z
+25709
+stefano
 has-props
 
 
@@ -26,17 +26,18 @@ has-props
 
 9553f0bf-9b14-0410-a0b8-cfaf0461ba5b
 
-swscale.txt
+ffmpeg-doc.texi
 file
 
 
 
 
-2010-08-19T01:41:44.142327Z
-f6e19cf6c6cb9f6f04786ff6e969ae3c
-2010-03-05T08:34:31.628756Z
-22221
-benoit
+2010-11-11T05:10:06.762948Z
+f97584127d7e2eaf5848d004b875df38
+2010-11-08T14:27:16.636131Z
+25709
+stefano
+has-props
 
 
 
@@ -57,8 +58,7 @@ benoit
 
 
 
-
-4704
+28194
 
 faq.texi
 file
@@ -94,18 +94,17 @@ has-props
 
 18628
 
-ffmpeg-doc.texi
+swscale.txt
 file
 
 
 
 
-2010-10-20T10:14:21.272410Z
-38eae550baed521d560f4f5066618abc
-2010-10-18T21:47:15.884762Z
-25526
-stefano
-has-props
+2010-08-19T01:41:44.142327Z
+f6e19cf6c6cb9f6f04786ff6e969ae3c
+2010-03-05T08:34:31.628756Z
+22221
+benoit
 
 
 
@@ -126,7 +125,8 @@ has-props
 
 
 
-28146
+
+4704
 
 filters.texi
 file
@@ -134,10 +134,10 @@ file
 
 
 
-2010-10-20T10:14:21.272410Z
-b15c8f12c103cf5629d055067afc5c8e
-2010-10-18T21:29:37.676023Z
-25525
+2010-11-11T05:10:06.762948Z
+f850bb2a6fdb0db3b23915ece6d90782
+2010-11-02T22:40:31.185058Z
+25656
 stefano
 
 
@@ -160,41 +160,7 @@ stefano
 
 
 
-20736
-
-build_system.txt
-file
-
-
-
-
-2010-10-07T11:55:52.401721Z
-27b17d0360767ba240fc9ae75c15147b
-2010-10-06T17:53:02.485962Z
-25375
-michael
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1067
+21912
 
 issue_tracker.txt
 file
@@ -230,16 +196,16 @@ diego
 
 7512
 
-viterbi.txt
+build_system.txt
 file
 
 
 
 
-2010-08-19T01:41:44.150136Z
-bc54a487e91acca05f91df99094b0d04
-2009-03-03T15:35:20.089647Z
-17772
+2010-10-07T11:55:52.401721Z
+27b17d0360767ba240fc9ae75c15147b
+2010-10-06T17:53:02.485962Z
+25375
 michael
 
 
@@ -262,7 +228,7 @@ michael
 
 
 
-2761
+1067
 
 avutil.txt
 file
@@ -297,6 +263,40 @@ diego
 
 
 1423
+
+viterbi.txt
+file
+
+
+
+
+2010-08-19T01:41:44.150136Z
+bc54a487e91acca05f91df99094b0d04
+2009-03-03T15:35:20.089647Z
+17772
+michael
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2761
 
 general.texi
 file
@@ -366,6 +366,74 @@ michael
 
 2102
 
+bitstream_filters.texi
+file
+
+
+
+
+2010-11-11T05:10:06.766949Z
+f214f975bbe8daccea0ec52f1987e9b8
+2010-11-08T14:27:16.636131Z
+25709
+stefano
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1003
+
+ffplay-doc.texi
+file
+
+
+
+
+2010-11-11T05:10:06.766949Z
+50ac1a96bc4170c8e8959a5440338e80
+2010-11-03T19:43:55.744757Z
+25665
+stefano
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4312
+
 protocols.texi
 file
 
@@ -400,18 +468,17 @@ mstorsjo
 
 12469
 
-ffplay-doc.texi
+fftools-common-opts.texi
 file
 
 
 
 
 2010-08-19T01:41:44.154136Z
-cdf2cdbc43b22deacc67cd1735777f83
-2010-07-31T15:45:29.346829Z
-24616
+7e11b62438378b9669f2ed8b0e2ccaee
+2010-06-16T19:16:23.491741Z
+23633
 stefano
-has-props
 
 
 
@@ -432,41 +499,8 @@ has-props
 
 
 
-4293
-
-developer.texi
-file
 
-
-
-
-2010-10-11T09:50:13.385350Z
-758ac85944881b31a95b015624089e3f
-2010-10-08T23:45:06.725942Z
-25421
-stefano
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-17984
+2158
 
 ffserver-doc.texi
 file
@@ -502,17 +536,18 @@ has-props
 
 9826
 
-fftools-common-opts.texi
+developer.texi
 file
 
 
 
 
-2010-08-19T01:41:44.154136Z
-7e11b62438378b9669f2ed8b0e2ccaee
-2010-06-16T19:16:23.491741Z
-23633
+2010-10-11T09:50:13.385350Z
+758ac85944881b31a95b015624089e3f
+2010-10-08T23:45:06.725942Z
+25421
 stefano
+has-props
 
 
 
@@ -533,8 +568,7 @@ stefano
 
 
 
-
-2158
+17984
 
 ffprobe-doc.texi
 file
@@ -604,16 +638,16 @@ reimar
 
 2793
 
-indevs.texi
+eval.texi
 file
 
 
 
 
-2010-08-19T01:41:44.158148Z
-3e5d1b059dd2e90556881711a01cbcfe
-2010-08-07T21:06:43.125752Z
-24738
+2010-11-11T05:10:06.766949Z
+c8a90582c0abc0199feae04b409c1d92
+2010-11-03T19:44:00.534574Z
+25666
 stefano
 
 
@@ -636,7 +670,41 @@ stefano
 
 
 
-6240
+2993
+
+indevs.texi
+file
+
+
+
+
+2010-11-11T05:10:06.766949Z
+41d8af87bb7d57debd9024c734d9985b
+2010-10-23T02:12:04.224778Z
+25553
+ramiro
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6439
 
 outdevs.texi
 file
@@ -678,10 +746,10 @@ file
 
 
 
-2010-10-20T10:14:21.276423Z
-61e33ecfb8f0c29483be0afac8c1e1ba
-2010-10-16T10:20:53.821371Z
-25502
+2010-11-11T05:10:06.770948Z
+790f8f7c97f28d03f8e8f9cc3b7490cb
+2010-11-08T14:06:49.985827Z
+25708
 stefano
 
 
@@ -704,7 +772,7 @@ stefano
 
 
 
-17464
+19156
 
 soc.txt
 file
