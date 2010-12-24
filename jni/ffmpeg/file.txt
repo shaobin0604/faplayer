@@ -529,8 +529,7 @@
     libavformat/mms.c \
     libavformat/mmst.c \
     libavformat/md5proto.c \
-    libavformat/rtmpproto.c \
-    libavformat/rtmppkt.c \
+    libavformat/librtmp.c \
     libavformat/rtpproto.c \
     libavformat/tcp.c \
     libavformat/udp.c \

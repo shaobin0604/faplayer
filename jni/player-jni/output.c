@@ -139,7 +139,7 @@ static void* video_output_thread(void* para) {
         left = (int64_t)(1000 * 1000 / gCtx->fps) - end + bgn;
         factor = 1.0;
         diff = (gCtx->audio_enabled) ? (gCtx->audio_last_pts - gCtx->video_last_pts) : ((double)(tm - gCtx->video_first_time) / (double)(1000 * 1000) - gCtx->video_last_pts);
-        factor = (diff > 0) ? 0 : (1.0 - diff / 2);
+        factor = (diff > 0) ? 0 : (1.0 - diff * 0.75);
         //debug("cur a/v/d %.3f/%.3f/%.3f\n", gCtx->audio_last_pts, gCtx->video_last_pts, diff);
         if (left > 0 && factor > 0) {
             usleep((int64_t)(left * factor));
@@ -230,6 +230,7 @@ static void* audio_convert_thread(void* para) {
         flag = (fmt > SAMPLE_FMT_S16) || (chl > 2);
         if (!flag) {
             audio_frame_queue_push_head(samples);
+            actid = 0;
             break;
         }
         fmt = samples->format > SAMPLE_FMT_S16 ? SAMPLE_FMT_S16 : samples->format;
@@ -366,29 +367,31 @@ int output_init() {
 
 void output_free() {
     stop = -1;
+    if (actid) {
+        samples_queue_wake();
+        pthread_join(actid, 0);
+        actid = 0;
+    }
+    if (vctid) {
+        picture_queue_wake();
+        pthread_join(vctid, 0);
+        vctid = 0;
+    }
     if (aotid) {
         samples_queue_wake();
+        audio_frame_queue_wake();
         pthread_join(aotid, 0);
         aotid = 0;
     }
     if (votid) {
         picture_queue_wake();
+        video_frame_queue_wake();
         pthread_join(votid, 0);
         votid = 0;
     }
     if (sytid) {
         pthread_join(sytid, 0);
         sytid = 0;
-    }
-    if (actid) {
-        audio_frame_queue_wake();
-        pthread_join(actid, 0);
-        actid = 0;
-    }
-    if (vctid) {
-        video_frame_queue_wake();
-        pthread_join(vctid, 0);
-        vctid = 0;
     }
     if (ao) {
         ao->free();

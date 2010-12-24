@@ -9,6 +9,6 @@ Version: 1.60.0
 Requires: libavcore = 0.12.1
 Requires.private: 
 Conflicts:
-Libs: -L${libdir} -lavfilter -lm -pthread -lz
+Libs: -L${libdir} -lavfilter -lm -lz
 Libs.private: 
 Cflags: -I${includedir}

@@ -5,6 +5,7 @@ import android.view.Surface;
 class NativePlayer4 implements NativePlayer {
 
 	static {
+		System.loadLibrary("rtmp");
 		System.loadLibrary("ffmpeg");
 		System.loadLibrary("player-4");
 	}

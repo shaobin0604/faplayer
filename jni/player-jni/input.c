@@ -6,7 +6,7 @@
 #include <pthread.h>
 #include <libavcodec/avcodec.h>
 
-#define MAX_PACKET_QUEUE_SIZE 256
+#define MAX_PACKET_QUEUE_SIZE 2048
 
 static int stop = 0;
 
@@ -31,6 +31,7 @@ static void* input_thread(void* para) {
         if ((gCtx->audio_enabled && !gCtx->video_enabled && aq > MAX_PACKET_QUEUE_SIZE) ||
             (gCtx->video_enabled && !gCtx->audio_enabled && vq > MAX_PACKET_QUEUE_SIZE) ||
             (gCtx->audio_enabled && gCtx->video_enabled && (aq > MAX_PACKET_QUEUE_SIZE >> 2) && (vq) && (aq + vq > MAX_PACKET_QUEUE_SIZE))) {
+            debug("input suspend for 25ms");
             usleep(25 * 1000);
             continue;
         }

@@ -15,9 +15,10 @@ LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/libavfilter \
     $(LOCAL_PATH)/libavformat \
     $(LOCAL_PATH)/libavutil \
-    $(LOCAL_PATH)/libswscale
+    $(LOCAL_PATH)/libswscale \
+    $(LOCAL_PATH)/..
 
-LOCAL_CFLAGS += -DHAVE_AV_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+LOCAL_CFLAGS += -DHAVE_AV_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DRTMPDUMP_VERSION=\"v2.3\" -DNO_CRYPTO
 
 LOCAL_SRC_FILES := \
     libavcodec/allcodecs.c \
@@ -551,8 +552,7 @@ LOCAL_SRC_FILES := \
     libavformat/mms.c \
     libavformat/mmst.c \
     libavformat/md5proto.c \
-    libavformat/rtmpproto.c \
-    libavformat/rtmppkt.c \
+    libavformat/librtmp.c \
     libavformat/rtpproto.c \
     libavformat/tcp.c \
     libavformat/udp.c \
@@ -591,6 +591,7 @@ LOCAL_SRC_FILES := \
     libswscale/yuv2rgb.c
 
 LOCAL_LDLIBS := -lc -lm -lz -llog
+LOCAL_SHARED_LIBRARIES += librtmp
 
 include $(BUILD_SHARED_LIBRARY)
 

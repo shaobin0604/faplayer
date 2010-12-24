@@ -8,5 +8,5 @@ Description: FFmpeg video filtering library
 Version: 1.60.0
 Requires: libavcore = 0.12.1
 Conflicts:
-Libs: ${libdir}/libavfilter.a -lm -pthread -lz 
+Libs: ${libdir}/libavfilter.a  -lm -lz 
 Cflags: -I${includedir}

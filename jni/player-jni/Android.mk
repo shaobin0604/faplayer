@@ -6,7 +6,7 @@ LOCAL_ARM_MODE := arm
 
 LOCAL_MODULE := player-4
 
-AOSP := /opt/google/aosp-d
+AOSP := /srv/android/aosp-d
 
 LOCAL_C_INCLUDES += \
     $(AOSP)/hardware/libhardware/include \
@@ -44,7 +44,7 @@ LOCAL_ARM_MODE := arm
 
 LOCAL_MODULE := player-8
 
-AOSP := /opt/google/aosp-f
+AOSP := /srv/android/aosp-f
 
 LOCAL_C_INCLUDES += \
     $(AOSP)/hardware/libhardware/include \

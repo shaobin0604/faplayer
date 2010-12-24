@@ -11,6 +11,7 @@
 
 extern JavaVM* jvm;
 
+// todo: fix java leak here
 int set_thread_priority(int prio) {
     int err = 0;
     JNIEnv* env;

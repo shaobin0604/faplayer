@@ -1,1 +1,1 @@
-config:arm:armv6:arm1136j-s:linux:gcc 4.4.1 (Sourcery G++ Lite 2010q1-202):--disable-bsfs --disable-devices --disable-encoders --disable-muxers --enable-cross-compile --cross-prefix=arm-none-linux-gnueabi- --arch=armv6j --cpu=arm1136j-s --target-os=linux --enable-pic
+config:arm:armv6:arm1136j-s:linux:gcc 4.4.3 (GCC):--disable-bsfs --disable-devices --disable-encoders --disable-muxers --enable-cross-compile --cross-prefix=arm-linux-androideabi- --arch=armv6j --cpu=arm1136j-s --target-os=linux --enable-pic --enable-librtmp

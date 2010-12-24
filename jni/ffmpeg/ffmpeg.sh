@@ -4,8 +4,9 @@
 --disable-encoders \
 --disable-muxers \
 --enable-cross-compile \
---cross-prefix=arm-none-linux-gnueabi- \
+--cross-prefix=arm-linux-androideabi- \
 --arch=armv6j \
 --cpu=arm1136j-s \
 --target-os=linux \
---enable-pic
+--enable-pic \
+--enable-librtmp
