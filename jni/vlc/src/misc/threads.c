@@ -42,8 +42,19 @@
 # include <sched.h>
 #endif
 
+#if defined( ANDROID )
+
+#include <jni.h>
+
+extern JavaVM *gJVM;
+
+#endif
+
 struct vlc_thread_boot
 {
+#if defined( ANDROID )
+    int priority;
+#endif
     void * (*entry) (vlc_object_t *);
     vlc_object_t *object;
 };
@@ -52,7 +63,34 @@ static void *thread_entry (void *data)
 {
     vlc_object_t *obj = ((struct vlc_thread_boot *)data)->object;
     void *(*func) (vlc_object_t *) = ((struct vlc_thread_boot *)data)->entry;
+#if defined( ANDROID )
+    int err = 0;
+    int priority = ((struct vlc_thread_boot *)data)->priority / 5 + 6;
+    jclass clz;
+    jmethodID mid;
+    jobject cur;
+    JNIEnv *env = NULL;
 
+    if (gJVM) {
+        msg_Dbg(obj, "call java.lang.Thread.setPriority(%d)", priority);
+        err = (*gJVM)->AttachCurrentThread(gJVM, &env, NULL);
+        if (err)
+            goto bail;
+        clz = (*env)->FindClass(env, "java/lang/Thread");
+        mid = (*env)->GetStaticMethodID(env, clz, "currentThread", "()Ljava/lang/Thread;");
+        cur = (*env)->CallStaticObjectMethod(env, clz, mid);
+        mid = (*env)->GetMethodID(env, clz, "setPriority", "(I)V");
+        if (priority > 10)
+            priority = 10;
+        if (priority < 1)
+            priority = 1;
+        (*env)->CallVoidMethod(env, cur, mid, priority);
+        (*env)->DeleteLocalRef(env, cur);
+        (*env)->DeleteLocalRef(env, clz);
+        (*gJVM)->DetachCurrentThread(gJVM);
+    }
+bail:
+#endif
     free (data);
     msg_Dbg (obj, "thread started");
     func (obj);
@@ -78,6 +116,9 @@ int vlc_thread_create( vlc_object_t *p_this, const char * psz_file, int i_line,
     struct vlc_thread_boot *boot = malloc (sizeof (*boot));
     if (boot == NULL)
         return errno;
+#if defined( ANDROID )
+    boot->priority = i_priority;
+#endif
     boot->entry = func;
     boot->object = p_this;
 

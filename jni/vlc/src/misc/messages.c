@@ -55,6 +55,10 @@
 #include <vlc_charset.h>
 #include "../libvlc.h"
 
+#if defined (ANDROID)
+#include "utility.h"
+#endif
+
 typedef struct
 {
     int i_code;
@@ -492,10 +496,10 @@ static void PrintMsg ( vlc_object_t * p_this, msg_item_t * p_item )
             if( priv->i_verbose < 0 ) return;
             break;
         case VLC_MSG_WARN:
-            if( priv->i_verbose < 1 ) return;
+            if( priv->i_verbose < 0 ) return;
             break;
         case VLC_MSG_DBG:
-            if( priv->i_verbose < 2 ) return;
+            if( priv->i_verbose < 0 ) return;
             break;
     }
 
@@ -520,7 +524,7 @@ static void PrintMsg ( vlc_object_t * p_this, msg_item_t * p_item )
 
     int canc = vlc_savecancel ();
     /* Send the message to stderr */
-    utf8_fprintf( stderr, "[%s%p%s] %s%s%s %s%s: %s%s%s\n",
+    debug( "[%s%p%s] %s%s%s %s%s: %s%s%s\n",
                   priv->b_color ? GREEN : "",
                   (void *)p_item->i_object_id,
                   priv->b_color ? GRAY : "",

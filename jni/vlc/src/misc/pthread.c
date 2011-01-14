@@ -69,8 +69,11 @@ static inline unsigned long vlc_threadid (void)
 {
 #if defined (__linux__)
      /* glibc does not provide a call for this */
+#if defined (ANDROID)
+     return syscall (__NR_gettid);
+#else
      return syscall (SYS_gettid);
-
+#endif
 #else
      union { pthread_t th; unsigned long int i; } v = { };
      v.th = pthread_self ();
@@ -108,6 +111,9 @@ vlc_thread_fatal (const char *action, int error,
     {
         case 0:
             msg = buf;
+            break;
+        case ERANGE: /* should never happen */
+            msg = "unknwon (too big to display)";
             break;
         case ERANGE: /* should never happen */
             msg = "unknwon (too big to display)";
@@ -642,6 +648,11 @@ int vlc_clone (vlc_thread_t *p_handle, void * (*entry) (void *), void *data,
     ret = pthread_create (p_handle, &attr, entry, data);
     pthread_sigmask (SIG_SETMASK, &oldset, NULL);
     pthread_attr_destroy (&attr);
+#if defined (ANDROID)
+    if (!ret) {
+        pthread_register(*p_handle);
+    }
+#endif
     return ret;
 }
 
@@ -927,3 +938,4 @@ unsigned vlc_timer_getoverrun (vlc_timer_t timer)
     vlc_mutex_unlock (&timer->lock);
     return ret;
 }
+

@@ -44,9 +44,12 @@
 #   define _APPLE_C_SOURCE    1 /* Proper pthread semantics on OSX */
 
 #   include <unistd.h> /* _POSIX_SPIN_LOCKS */
+#if defined ( ANDROID )
+#   include "pthread-compat.h"
+#else
 #   include <pthread.h>
+#endif
 #   include <semaphore.h>
-
 #endif
 
 /*****************************************************************************

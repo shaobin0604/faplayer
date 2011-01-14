@@ -185,7 +185,7 @@ int module_Load( vlc_object_t *p_this, const char *psz_file,
 # endif
     char *path = ToLocale( psz_file );
 
-    handle = dlopen( path, flags );
+    handle = dlopen( path, 0 );
     if( handle == NULL )
     {
         msg_Warn( p_this, "cannot load module `%s' (%s)", path, dlerror() );
