@@ -396,17 +396,3 @@ vlm_t *vlm_New (vlc_object_t *obj)
 }
 #endif /* !ENABLE_VLM */
 
-#ifdef ANDROID
-
-#include <jni.h>
-
-JavaVM *gJVM = NULL;
-
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved) {
-    gJVM = vm;
-
-    return JNI_VERSION_1_4;
-}
-
-#endif
-

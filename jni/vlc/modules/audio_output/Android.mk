@@ -13,7 +13,7 @@ LOCAL_CFLAGS += \
     -DHAVE_CONFIG_H \
     -DNDEBUG \
     -D__PLUGIN__ \
-    -DMODULE_STRING=\"aout_android\"
+    -DMODULE_STRING=\"aout_android-3\"
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-3/include \
@@ -44,7 +44,7 @@ LOCAL_CFLAGS += \
     -DHAVE_CONFIG_H \
     -DNDEBUG \
     -D__PLUGIN__ \
-    -DMODULE_STRING=\"aout_android\"
+    -DMODULE_STRING=\"aout_android-4\"
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-4/include \
@@ -75,7 +75,7 @@ LOCAL_CFLAGS += \
     -DHAVE_CONFIG_H \
     -DNDEBUG \
     -D__PLUGIN__ \
-    -DMODULE_STRING=\"aout_android\"
+    -DMODULE_STRING=\"aout_android-5\"
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-5/include \
@@ -106,7 +106,7 @@ LOCAL_CFLAGS += \
     -DHAVE_CONFIG_H \
     -DNDEBUG \
     -D__PLUGIN__ \
-    -DMODULE_STRING=\"aout_android\"
+    -DMODULE_STRING=\"aout_android-8\"
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-8/include \
@@ -137,7 +137,7 @@ LOCAL_CFLAGS += \
     -DHAVE_CONFIG_H \
     -DNDEBUG \
     -D__PLUGIN__ \
-    -DMODULE_STRING=\"aout_android\"
+    -DMODULE_STRING=\"aout_android-9\"
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-9/include \

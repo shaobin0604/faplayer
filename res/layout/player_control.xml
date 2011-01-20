@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_gravity="bottom"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+	<LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+		<SeekBar
+            android:id="@+id/seek"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dip"
+            android:layout_marginTop="4dip"
+            android:layout_marginRight="24dip"
+            android:layout_marginBottom="4dip" />
+
+	</LinearLayout>
+
+	<LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+		<ImageButton
+            android:id="@+id/prev"
+            android:background="@drawable/prev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:layout_marginTop="4dip"
+            android:layout_marginRight="8dip"
+            android:layout_marginBottom="4dip" />
+
+		<ImageButton
+            android:id="@+id/backward"
+            android:background="@drawable/backward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:layout_marginTop="4dip"
+            android:layout_marginRight="8dip"
+            android:layout_marginBottom="4dip" />
+
+		<ImageButton
+            android:id="@+id/stop"
+            android:background="@drawable/stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:layout_marginTop="4dip"
+            android:layout_marginRight="8dip"
+            android:layout_marginBottom="4dip" />
+
+		<ImageButton
+            android:id="@+id/play"
+            android:background="@drawable/play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:layout_marginTop="4dip"
+            android:layout_marginRight="8dip"
+            android:layout_marginBottom="4dip" />
+
+		<ImageButton
+            android:id="@+id/forward"
+            android:background="@drawable/forward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:layout_marginTop="4dip"
+            android:layout_marginRight="8dip"
+            android:layout_marginBottom="4dip" />
+
+		<ImageButton
+            android:id="@+id/next"
+            android:background="@drawable/next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:layout_marginTop="4dip"
+            android:layout_marginRight="8dip"
+            android:layout_marginBottom="4dip" />
+
+	</LinearLayout>
+
+</LinearLayout>

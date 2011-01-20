@@ -56,7 +56,7 @@
 #include "../libvlc.h"
 
 #if defined (ANDROID)
-#include "utility.h"
+#include "debug.h"
 #endif
 
 typedef struct

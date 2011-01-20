@@ -27,6 +27,7 @@ LOCAL_C_INCLUDES += \
 
 LOCAL_SRC_FILES := \
     compat/getdelim.c \
+    src/jni.c \
     src/libvlc.c \
     src/libvlc-module.c \
     src/missing.c \
@@ -91,6 +92,7 @@ LOCAL_SRC_FILES := \
     src/misc/action.c \
     src/misc/block.c \
     src/misc/cpu.c \
+    src/misc/debug.c \
     src/misc/epg.c \
     src/misc/error.c \
     src/misc/es_format.c \
