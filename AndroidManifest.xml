@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="org.stagex.player"
+      package="org.stagex"
       android:versionCode="1"
       android:versionName="1.0">
-    <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name=".FileListActivity"
+    <application android:debuggable="true"  android:name=".Danmaku" android:icon="@drawable/icon" android:label="@string/app_name">
+        <activity android:name=".activity.FileListActivity"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PlayerActivity"
-                  android:label="@string/app_name" android:configChanges="keyboardHidden|orientation">
+        <activity android:name=".activity.PlayerActivity"
+                  android:label="@string/app_name"
+                  android:configChanges="keyboardHidden|orientation"
+                  android:screenOrientation="landscape"
+                  android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
         </activity>
     </application>
 
