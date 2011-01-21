@@ -16,10 +16,10 @@ LOCAL_CFLAGS += \
     -DMODULE_STRING=\"bandlimited_resampler\"
 
 LOCAL_C_INCLUDES += \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     bandlimited.c

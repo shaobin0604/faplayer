@@ -16,10 +16,10 @@ LOCAL_CFLAGS += \
     -DMODULE_STRING=\"oldrc\"
 
 LOCAL_C_INCLUDES += \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     rc.c
@@ -43,10 +43,10 @@ LOCAL_CFLAGS += \
     -DMODULE_STRING=\"oldtelnet\"
 
 LOCAL_C_INCLUDES += \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     telnet.c

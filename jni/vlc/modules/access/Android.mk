@@ -16,10 +16,10 @@ LOCAL_CFLAGS += \
     -DMODULE_STRING=\"access_avio\"
 
 LOCAL_C_INCLUDES += \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
     $(VLCROOT)/src \
-    $(EXTROOT)/compat \
     $(EXTROOT)/ffmpeg
 
 LOCAL_SRC_FILES := \
@@ -44,10 +44,10 @@ LOCAL_CFLAGS += \
     -DMODULE_STRING=\"filesystem\"
 
 LOCAL_C_INCLUDES += \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
     $(VLCROOT)/src \
-    $(EXTROOT)/compat
 
 LOCAL_SRC_FILES := \
     directory.c \

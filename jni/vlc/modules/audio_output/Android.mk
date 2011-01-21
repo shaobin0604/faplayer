@@ -17,10 +17,10 @@ LOCAL_CFLAGS += \
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-3/include \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     android_AudioTrack.cpp
@@ -48,10 +48,10 @@ LOCAL_CFLAGS += \
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-4/include \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     android_AudioTrack.cpp
@@ -79,10 +79,10 @@ LOCAL_CFLAGS += \
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-5/include \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     android_AudioTrack.cpp
@@ -110,10 +110,10 @@ LOCAL_CFLAGS += \
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-8/include \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     android_AudioTrack.cpp
@@ -141,10 +141,10 @@ LOCAL_CFLAGS += \
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-9/include \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     android_AudioTrack.cpp

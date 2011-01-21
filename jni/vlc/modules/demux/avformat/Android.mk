@@ -16,17 +16,17 @@ LOCAL_CFLAGS += \
     -DMODULE_STRING=\"avformat\"
 
 LOCAL_C_INCLUDES += \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
     $(VLCROOT)/src \
-    $(EXTROOT)/compat \
     $(EXTROOT)/ffmpeg
 
 LOCAL_SRC_FILES := \
     avformat.c \
     demux.c \
-    ../../codec/avcodec/chroma.c \
-    ../../codec/avcodec/fourcc.c
+    chroma.c \
+    fourcc.c
 
 LOCAL_SHARED_LIBRARIES += vlccore ffmpeg
 

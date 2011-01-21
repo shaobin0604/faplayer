@@ -1,33 +1,6 @@
 
 LOCAL_PATH := $(call my-dir)
 
-#libvout_wrapper_plugin.so
-
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := vout_wrapper_plugin
-
-LOCAL_CFLAGS += \
-    -std=c99 \
-    -D__THROW= \
-    -DHAVE_CONFIG_H \
-    -DNDEBUG \
-    -D__PLUGIN__ \
-    -DMODULE_STRING=\"vout_wrapper\"
-
-LOCAL_C_INCLUDES += \
-    $(VLCROOT) \
-    $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
-
-LOCAL_SRC_FILES := \
-    wrapper.c
-
-LOCAL_SHARED_LIBRARIES += vlccore
-
-include $(BUILD_SHARED_LIBRARY)
-
 #libvout_android-3_plugin.so
 
 include $(CLEAR_VARS)
@@ -44,10 +17,10 @@ LOCAL_CFLAGS += \
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-3/include \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     android_Surface.cpp
@@ -75,10 +48,10 @@ LOCAL_CFLAGS += \
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-4/include \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     android_Surface.cpp
@@ -106,10 +79,10 @@ LOCAL_CFLAGS += \
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-5/include \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     android_Surface.cpp
@@ -137,10 +110,10 @@ LOCAL_CFLAGS += \
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-8/include \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     android_Surface.cpp
@@ -168,16 +141,43 @@ LOCAL_CFLAGS += \
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-9/include \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     android_Surface.cpp
 
 LOCAL_LDFLAGS += -L$(DEPROOT)/android-9/lib
 LOCAL_LDLIBS += -lsurfaceflinger_client
+
+LOCAL_SHARED_LIBRARIES += vlccore
+
+include $(BUILD_SHARED_LIBRARY)
+
+#libvout_wrapper_plugin.so
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := vout_wrapper_plugin
+
+LOCAL_CFLAGS += \
+    -std=c99 \
+    -D__THROW= \
+    -DHAVE_CONFIG_H \
+    -DNDEBUG \
+    -D__PLUGIN__ \
+    -DMODULE_STRING=\"vout_wrapper\"
+
+LOCAL_C_INCLUDES += \
+    $(VLCROOT)/compat \
+    $(VLCROOT) \
+    $(VLCROOT)/include \
+    $(VLCROOT)/src
+
+LOCAL_SRC_FILES := \
+    wrapper.c
 
 LOCAL_SHARED_LIBRARIES += vlccore
 

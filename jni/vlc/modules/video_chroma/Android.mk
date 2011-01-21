@@ -19,10 +19,10 @@ LOCAL_CFLAGS += \
     -DMODULE_NAME_IS_i420_rgb
 
 LOCAL_C_INCLUDES += \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     i420_rgb.c \
@@ -50,10 +50,10 @@ LOCAL_CFLAGS += \
     -DMODULE_STRING=\"i422_i420\"
 
 LOCAL_C_INCLUDES += \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     i422_i420.c
@@ -79,10 +79,10 @@ LOCAL_CFLAGS += \
     -DMODULE_STRING=\"yuy2_i420\"
 
 LOCAL_C_INCLUDES += \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/compat
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     yuy2_i420.c

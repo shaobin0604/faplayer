@@ -7,6 +7,7 @@ LOCAL_ARM_MODE := arm
 LOCAL_MODULE := compat
 
 LOCAL_CFLAGS += \
+    -Drestrict=__restrict \
     -DANDROID_SMP=0 \
     -D__LIBC_HIDDEN__="__attribute__ ((visibility (\"hidden\")))" \
     -D__THROW= \
@@ -30,6 +31,9 @@ LOCAL_SRC_FILES += \
     hsearch.c \
     hsearch_r.c \
     tsearch.c
+
+LOCAL_SRC_FILES += \
+    getdelim.c
 
 include $(BUILD_STATIC_LIBRARY)
 

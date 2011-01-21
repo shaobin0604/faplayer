@@ -16,10 +16,10 @@ LOCAL_CFLAGS += \
     -DMODULE_STRING=\"avcodec\"
 
 LOCAL_C_INCLUDES += \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
     $(VLCROOT)/src \
-    $(EXTROOT)/compat \
     $(EXTROOT)/ffmpeg
 
 LOCAL_SRC_FILES := \

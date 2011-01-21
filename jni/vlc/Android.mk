@@ -19,14 +19,12 @@ LOCAL_CFLAGS += \
     -D__LIBVLC__
 
 LOCAL_C_INCLUDES += \
-    $(EXTROOT)/compat \
+    $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/utility
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
-    compat/getdelim.c \
     src/jni.c \
     src/libvlc.c \
     src/libvlc-module.c \
@@ -167,7 +165,7 @@ LOCAL_SRC_FILES := \
 
 LOCAL_LDLIBS += -llog
 
-LOCAL_STATIC_LIBRARIES += compat utility
+LOCAL_STATIC_LIBRARIES += compat
 
 include $(BUILD_SHARED_LIBRARY)
 
