@@ -1,34 +1,6 @@
 
 LOCAL_PATH := $(call my-dir)
 
-# libaccess_avio_plugin.so
-
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := access_avio_plugin
-
-LOCAL_CFLAGS += \
-    -std=c99 \
-    -D__THROW= \
-    -DHAVE_CONFIG_H \
-    -DNDEBUG \
-    -D__PLUGIN__ \
-    -DMODULE_STRING=\"access_avio\"
-
-LOCAL_C_INCLUDES += \
-    $(VLCROOT)/compat \
-    $(VLCROOT) \
-    $(VLCROOT)/include \
-    $(VLCROOT)/src \
-    $(EXTROOT)/ffmpeg
-
-LOCAL_SRC_FILES := \
-    avio.c
-
-LOCAL_SHARED_LIBRARIES += vlccore ffmpeg
-
-include $(BUILD_SHARED_LIBRARY)
-
 # libfilesystem_plugin.so
 
 include $(CLEAR_VARS)

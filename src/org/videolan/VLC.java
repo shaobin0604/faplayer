@@ -1,11 +1,15 @@
 package org.videolan;
 
+import org.stagex.helper.SystemUtility;
+
 import android.view.Surface;
 
 public class VLC {
 
 	static {
-		System.loadLibrary("ffmpeg");
+		int arch = SystemUtility.getArmArchitecture();
+		String ffmpeg = String.format("ffmpeg-%d", arch);
+		System.loadLibrary(ffmpeg);
 		System.loadLibrary("vlccore");
 	}
 

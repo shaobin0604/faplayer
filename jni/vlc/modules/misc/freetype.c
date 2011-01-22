@@ -66,6 +66,9 @@
 #elif defined( HAVE_MAEMO )
 #define DEFAULT_FONT "/usr/share/fonts/nokia/nosnb.ttf"
 #define FC_DEFAULT_FONT "Nokia Sans Bold"
+#elif defined( ANDROID )
+#define DEFAULT_FONT "/system/fonts/DroidSansFallBack.ttf"
+#define FC_DEFAULT_FONT "Droid Sans Fallback"
 #else
 #define DEFAULT_FONT "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf"
 #define FC_DEFAULT_FONT "Serif Bold"

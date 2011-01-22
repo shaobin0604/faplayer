@@ -72,7 +72,7 @@ public class Danmaku extends Application {
 		String conf = String.format("%s/etc/vlc.conf", root);
 		// attention: SO_MAX is 96
 		String libd = String.format("%s/lib", root);
-		String intf = "oldrc";
+		String intf = "rc";
 		String host = "127.0.0.1:21178";
 		int code = SystemUtility.getSDKVersionCode();
 		if (code == 6 || code == 7)

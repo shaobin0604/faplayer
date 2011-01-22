@@ -1,13 +1,7 @@
 
 LOCAL_PATH:= $(call my-dir)
 
-include $(CLEAR_VARS)
-
-LOCAL_ARM_MODE := arm
-
-LOCAL_MODULE := ffmpeg
-
-LOCAL_C_INCLUDES += \
+FF_INCLUDE := \
     $(LOCAL_PATH) \
     $(LOCAL_PATH)/libavcodec \
     $(LOCAL_PATH)/libavcore \
@@ -17,9 +11,7 @@ LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/libavutil \
     $(LOCAL_PATH)/libswscale
 
-LOCAL_CFLAGS += -DHAVE_AV_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
-
-LOCAL_SRC_FILES := \
+FF_COMMON_SRC := \
     libavcodec/allcodecs.c \
     libavcodec/audioconvert.c \
     libavcodec/avpacket.c \
@@ -343,9 +335,6 @@ LOCAL_SRC_FILES := \
     libavcodec/arm/mpegvideo_armv5te.c \
     libavcodec/arm/mpegvideo_armv5te_s.S \
     libavcodec/arm/simple_idct_armv5te.S \
-    libavcodec/arm/dsputil_init_armv6.c \
-    libavcodec/arm/dsputil_armv6.S \
-    libavcodec/arm/simple_idct_armv6.S \
     libavcore/imgutils.c \
     libavcore/parseutils.c \
     libavcore/samplefmt.c \
@@ -589,6 +578,74 @@ LOCAL_SRC_FILES := \
     libswscale/swscale.c \
     libswscale/utils.c \
     libswscale/yuv2rgb.c
+
+FF_ARM_V6_SRC := \
+    libavcodec/arm/dsputil_armv6.S \
+    libavcodec/arm/dsputil_init_armv6.c \
+    libavcodec/arm/simple_idct_armv6.S
+
+FF_ARM_VFP_SRC := \
+    libavcodec/arm/dsputil_init_vfp.c \
+    libavcodec/arm/dsputil_vfp.S
+
+FF_ARM_NEON_SRC := \
+    libavcodec/arm/dsputil_init_neon.c \
+    libavcodec/arm/dsputil_neon.S \
+    libavcodec/arm/int_neon.S \
+    libavcodec/arm/mpegvideo_neon.S \
+    libavcodec/arm/simple_idct_neon.S \
+    libavcodec/arm/fft_neon.S \
+    libavcodec/arm/mdct_neon.S \
+    libavcodec/arm/rdft_neon.S \
+    libavcodec/arm/h264dsp_neon.S \
+    libavcodec/arm/h264idct_neon.S \
+    libavcodec/arm/h264pred_neon.S \
+    libavcodec/arm/dcadsp_neon.S \
+    libavcodec/arm/synth_filter_neon.S \
+    libavcodec/arm/vp3dsp_neon.S \
+    libavcodec/arm/vp56dsp_neon.S
+
+FF_CFLAGS := -DHAVE_AV_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+
+include $(CLEAR_VARS)
+
+LOCAL_ARM_MODE := arm
+
+LOCAL_MODULE := ffmpeg-6
+
+LOCAL_C_INCLUDES += $(FF_INCLUDE)
+
+LOCAL_CFLAGS += $(FF_CFLAGS)
+
+LOCAL_CFLAGS += -DHAVE_ARMVFP=0 -DHAVE_NEON=0 -march=armv6j -mtune=arm1136j-s -msoft-float
+
+LOCAL_SRC_FILES := \
+    $(FF_COMMON_SRC) \
+    $(FF_ARM_V6_SRC)
+
+LOCAL_LDLIBS := -lc -lm -lz -llog
+
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_ARM_MODE := arm
+
+LOCAL_MODULE := ffmpeg-7
+
+LOCAL_C_INCLUDES += $(FF_INCLUDE)
+
+LOCAL_CFLAGS += $(FF_CFLAGS)
+
+LOCAL_CFLAGS += -DHAVE_ARMVFP=1 -DHAVE_NEON=1 -march=armv7-a -mtune=cortex-a8 -mfloat-abi=softfp -mfpu=neon
+
+LOCAL_LDFLAGS += -Wl,--fix-cortex-a8
+
+LOCAL_SRC_FILES := \
+    $(FF_COMMON_SRC) \
+    $(FF_ARM_V6_SRC) \
+    $(FF_ARM_VFP_SRC) \
+    $(FF_ARM_NEON_SRC)
 
 LOCAL_LDLIBS := -lc -lm -lz -llog
 

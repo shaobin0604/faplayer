@@ -1,11 +1,11 @@
 
 LOCAL_PATH := $(call my-dir)
 
-# liboldrc_plugin.so
+# librc_plugin.so
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := oldrc_plugin
+LOCAL_MODULE := rc_plugin
 
 LOCAL_CFLAGS += \
     -std=c99 \
@@ -13,7 +13,7 @@ LOCAL_CFLAGS += \
     -DHAVE_CONFIG_H \
     -DNDEBUG \
     -D__PLUGIN__ \
-    -DMODULE_STRING=\"oldrc\"
+    -DMODULE_STRING=\"rc\"
 
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \
@@ -28,11 +28,11 @@ LOCAL_SHARED_LIBRARIES += vlccore
 
 include $(BUILD_SHARED_LIBRARY)
 
-# liboldtelnet_plugin.so
+# libtelnet_plugin.so
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := oldtelnet_plugin
+LOCAL_MODULE := telnet_plugin
 
 LOCAL_CFLAGS += \
     -std=c99 \
@@ -40,7 +40,7 @@ LOCAL_CFLAGS += \
     -DHAVE_CONFIG_H \
     -DNDEBUG \
     -D__PLUGIN__ \
-    -DMODULE_STRING=\"oldtelnet\"
+    -DMODULE_STRING=\"telnet\"
 
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \
