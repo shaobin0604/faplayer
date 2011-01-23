@@ -120,8 +120,8 @@ public class FileListAdapter extends BaseAdapter implements
 				list.add(path);
 			}
 			Bundle bundle = new Bundle();
-			bundle.putInt("index", position - mTop.size() + 1);
-			bundle.putStringArrayList("playlist", list);
+			bundle.putStringArrayList("list", list);
+			bundle.putInt("index", position - mTop.size());
 			intent.putExtra("playlist", bundle);
 			mContext.startActivity(intent);
 		}

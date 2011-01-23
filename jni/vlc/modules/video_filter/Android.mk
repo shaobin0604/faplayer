@@ -28,11 +28,11 @@ LOCAL_SHARED_LIBRARIES += vlccore
 
 include $(BUILD_SHARED_LIBRARY)
 
-# libchain_plugin.so
+# libswscale_plugin-6.so
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := chain_plugin
+LOCAL_MODULE := swscale_plugin-6
 
 LOCAL_CFLAGS += \
     -std=c99 \
@@ -40,26 +40,29 @@ LOCAL_CFLAGS += \
     -DHAVE_CONFIG_H \
     -DNDEBUG \
     -D__PLUGIN__ \
-    -DMODULE_STRING=\"chain\"
+    -DMODULE_STRING=\"swscale\"
 
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src
+    $(VLCROOT)/src \
+    $(EXTROOT)/ffmpeg \
+    $(VLCROOT)/modules/codec/avcodec
 
 LOCAL_SRC_FILES := \
-    chain.c
+    chroma.c \
+    swscale.c
 
-LOCAL_SHARED_LIBRARIES += vlccore
+LOCAL_SHARED_LIBRARIES += vlccore ffmpeg-6
 
 include $(BUILD_SHARED_LIBRARY)
 
-# libcrop_plugin.so
+# libswscale_plugin-7.so
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := crop_plugin
+LOCAL_MODULE := swscale_plugin-7
 
 LOCAL_CFLAGS += \
     -std=c99 \
@@ -67,45 +70,21 @@ LOCAL_CFLAGS += \
     -DHAVE_CONFIG_H \
     -DNDEBUG \
     -D__PLUGIN__ \
-    -DMODULE_STRING=\"crop\"
+    -DMODULE_STRING=\"swscale\"
 
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src
+    $(VLCROOT)/src \
+    $(EXTROOT)/ffmpeg \
+    $(VLCROOT)/modules/codec/avcodec
 
 LOCAL_SRC_FILES := \
-    crop.c
+    chroma.c \
+    swscale.c
 
-LOCAL_SHARED_LIBRARIES += vlccore
-
-include $(BUILD_SHARED_LIBRARY)
-
-# libcropadd_plugin.so
-
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := croppadd_plugin
-
-LOCAL_CFLAGS += \
-    -std=c99 \
-    -D__THROW= \
-    -DHAVE_CONFIG_H \
-    -DNDEBUG \
-    -D__PLUGIN__ \
-    -DMODULE_STRING=\"croppadd\"
-
-LOCAL_C_INCLUDES += \
-    $(VLCROOT)/compat \
-    $(VLCROOT) \
-    $(VLCROOT)/include \
-    $(VLCROOT)/src
-
-LOCAL_SRC_FILES := \
-    croppadd.c
-
-LOCAL_SHARED_LIBRARIES += vlccore
+LOCAL_SHARED_LIBRARIES += vlccore ffmpeg-7
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -135,5 +114,4 @@ LOCAL_SRC_FILES := \
 LOCAL_SHARED_LIBRARIES += vlccore
 
 include $(BUILD_SHARED_LIBRARY)
-
 

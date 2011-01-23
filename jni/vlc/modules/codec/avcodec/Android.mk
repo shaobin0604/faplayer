@@ -1,11 +1,11 @@
 
 LOCAL_PATH := $(call my-dir)
 
-# libavcodec-6_plugin.so
+# libavcodec_plugin-6.so
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := avcodec-6_plugin
+LOCAL_MODULE := avcodec_plugin-6
 
 LOCAL_CFLAGS += \
     -std=c99 \
@@ -38,11 +38,11 @@ LOCAL_SHARED_LIBRARIES += vlccore ffmpeg-6
 
 include $(BUILD_SHARED_LIBRARY)
 
-# libavcodec-7_plugin.so
+# libavcodec_plugin-7.so
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := avcodec-7_plugin
+LOCAL_MODULE := avcodec_plugin-7
 
 LOCAL_CFLAGS += \
     -std=c99 \

@@ -106,7 +106,17 @@ public class VLM {
 		line = "play\n";
 		writeBytes(line);
 	}
-	
+
+	public void playMRL(String mrl) {
+		String line;
+		line = "clear\n";
+		writeBytes(line);
+		line = String.format("enqueue %s\n", mrl);
+		writeBytes(line);
+		line = "goto 1\n";
+		writeBytes(line);
+	}
+
 	public void stop() {
 		String line;
 		line = "stop\n";

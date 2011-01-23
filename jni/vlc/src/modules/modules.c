@@ -60,6 +60,8 @@
 
 #include "modules/modules.h"
 
+#include "cpu-features.h"
+
 static module_bank_t *p_module_bank = NULL;
 static vlc_mutex_t module_lock = VLC_STATIC_MUTEX;
 
@@ -905,11 +907,16 @@ static void AllocatePluginDir( vlc_object_t *p_this, module_bank_t *p_bank,
         else
         if (S_ISREG (st.st_mode)
          && strncmp (path, "lib", 3)
-         && ((size_t)pathlen >= sizeof ("_plugin"LIBEXT))
-         && !strncasecmp (path + pathlen - strlen ("_plugin"LIBEXT),
-                          "_plugin"LIBEXT, strlen ("_plugni"LIBEXT)))
+         && ((size_t)pathlen >= sizeof ("_plugin"LIBEXT))) {
+            int arch = android_getCpuFamily() & ANDROID_CPU_ARM_FEATURE_ARMv7 ? 7 : 6;
+            char suffix[16];
+            sprintf(suffix, "_plugin-%d", arch);
+            if (!strncasecmp (path + pathlen - strlen ("_plugin"LIBEXT),
+                          "_plugin"LIBEXT, strlen ("_plugin"LIBEXT))
+              || !strncasecmp (path + pathlen - strlen ("_plugin-#"LIBEXT), suffix, strlen(suffix)))
             /* ^^ We only load files matching "lib*_plugin"LIBEXT */
             AllocatePluginFile (p_this, p_bank, path, st.st_mtime, st.st_size);
+        }
 
         free (path);
     }

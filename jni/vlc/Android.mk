@@ -22,7 +22,8 @@ LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src
+    $(VLCROOT)/src \
+    $(EXTROOT)/cpufeatures
 
 LOCAL_SRC_FILES := \
     src/jni.c \
@@ -165,7 +166,7 @@ LOCAL_SRC_FILES := \
 
 LOCAL_LDLIBS += -llog
 
-LOCAL_STATIC_LIBRARIES += compat
+LOCAL_STATIC_LIBRARIES += compat cpufeatures
 
 include $(BUILD_SHARED_LIBRARY)
 

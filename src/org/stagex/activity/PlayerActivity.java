@@ -16,6 +16,9 @@ public class PlayerActivity extends Activity {
 	private SurfaceView mSurfaceView;
 	private SurfaceHolder mSurfaceHolder;
 
+	private ArrayList<String> mPlayList;
+	private int mCurrentIndex;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,11 +37,7 @@ public class PlayerActivity extends Activity {
 			@Override
 			public void surfaceCreated(SurfaceHolder holder) {
 				VLC.attachVideoOutput(holder.getSurface());
-				Bundle bundle = getIntent().getExtras().getBundle("playlist");
-				ArrayList<String> list = bundle.getStringArrayList("playlist");
-				VLM.getInstance().setPlayList(list);
-				int index = bundle.getInt("index");
-				VLM.getInstance().play(index);
+				VLM.getInstance().playMRL(mPlayList.get(mCurrentIndex));
 			}
 
 			@Override
@@ -47,6 +46,11 @@ public class PlayerActivity extends Activity {
 				VLC.attachVideoOutput(holder.getSurface());
 			}
 		});
+
+		Bundle bundle = getIntent().getExtras().getBundle("playlist");
+		mPlayList = bundle.getStringArrayList("list");
+		mCurrentIndex = bundle.getInt("index");
+
 	}
 
 	@Override
@@ -62,7 +66,7 @@ public class PlayerActivity extends Activity {
 	@Override
 	public void onStop() {
 		super.onStop();
-		
+
 		VLM.getInstance().stop();
 
 	}

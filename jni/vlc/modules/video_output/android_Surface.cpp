@@ -103,9 +103,9 @@ static int Open(vlc_object_t *object) {
     sys->width = info.w;
     sys->height = info.h;
 #if __PLATFORM__ < 5
-    sys->stride = 0;
+    sys->stride = info.w << 1;
 #else
-    sys->stride = info.s;
+    sys->stride = info.s << 1;
 #endif
     sys->bits = info.bits;
     sys->picture = NULL;
@@ -118,8 +118,8 @@ static int Open(vlc_object_t *object) {
     vd->display = Display;
     vd->control = Control;
     vd->manage  = Manage;
-    vout_display_SendEventFullscreen(vd, false);
-    vout_display_SendEventDisplaySize(vd, sys->width, sys->height, false);
+    vout_display_SendEventFullscreen(vd, true);
+    vout_display_SendEventDisplaySize(vd, sys->width, sys->height, true);
     return VLC_SUCCESS;
 }
 
@@ -143,12 +143,13 @@ static picture_pool_t *Pool(vout_display_t *vd, unsigned count) {
         if (!sys->picture) {
             memset(&rsc, 0, sizeof(rsc));
             rsc.p[0].p_pixels = (uint8_t*)(sys->bits);
-            rsc.p[0].i_pitch  = sys->stride ? sys->stride : sys->width;
-            rsc.p[0].i_lines  = vd->fmt.i_height;
+            rsc.p[0].i_pitch  = sys->stride;
+            rsc.p[0].i_lines  = sys->height;
             sys->picture = picture_NewFromResource(&vd->fmt, &rsc);
             if (!sys->picture)
                 return NULL;
         }
+        //sys->pool = picture_pool_New(1, &sys->picture);
         sys->pool = picture_pool_NewFromFormat(&vd->fmt, count);
     }
     return sys->pool;
@@ -166,9 +167,20 @@ static void Display(vout_display_t *vd, picture_t *picture) {
 }
 
 static int Control(vout_display_t *vd, int query, va_list args) {
-    VLC_UNUSED(vd);
-    VLC_UNUSED(query);
-    VLC_UNUSED(args);
+
+    switch (query) {
+    case VOUT_DISPLAY_CHANGE_FULLSCREEN: {
+        vout_display_cfg_t cfg = *va_arg(args, const vout_display_cfg_t *);
+        if (!cfg.is_fullscreen) {
+            cfg.is_fullscreen = true;
+            return VLC_SUCCESS;
+        }
+        else
+            return VLC_EGENERIC;
+    }
+    default:
+        break;
+    }
 
     return VLC_EGENERIC;
 }
