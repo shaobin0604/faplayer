@@ -48,12 +48,20 @@ JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved) {
 JNIEXPORT void JNICALL NAME(attachVideoOutput)(JNIEnv *env, jclass klz, jobject surf) {
     jclass clz;
     jfieldID fid;
+    jthrowable exp;
 
     vlc_mutex_lock(&vout_android_lock);
     //vout_android_ref = (*env)->NewGlobalRef(env, surf);
     clz = (*env)->GetObjectClass(env, surf);
-    // TODO: mNativeSurface in android-9
     fid = (*env)->GetFieldID(env, clz, "mSurface", "I");
+    if (fid == NULL) {
+        exp = (*env)->ExceptionOccurred(env);
+        if (exp) {
+            (*env)->DeleteLocalRef(env, exp);
+            (*env)->ExceptionClear(env);
+        }
+        fid = (*env)->GetFieldID(env, clz, "mNativeSurface", "I");
+    }
     vout_android_surf = (void*)(*env)->GetIntField(env, surf, fid);
     (*env)->DeleteLocalRef(env, clz);
     vlc_mutex_unlock(&vout_android_lock);
