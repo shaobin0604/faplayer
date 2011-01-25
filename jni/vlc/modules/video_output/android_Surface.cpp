@@ -103,15 +103,18 @@ static int Open(vlc_object_t *object) {
     sys->width = info.w;
     sys->height = info.h;
 #if __PLATFORM__ < 5
-    sys->stride = info.w << 1;
+    sys->stride = info.w;
 #else
-    sys->stride = info.s << 1;
+    sys->stride = info.s;
 #endif
     sys->bits = info.bits;
     sys->picture = NULL;
     sys->pool = NULL;
     vd->sys = sys;
     vd->info.has_hide_mouse = true;
+    vd->info.is_slow = true;
+    // uncomment to disable dr
+    //vd->info.has_pictures_invalid = true;
     vd->fmt = fmt;
     vd->pool = Pool;
     vd->prepare = NULL;
@@ -143,13 +146,12 @@ static picture_pool_t *Pool(vout_display_t *vd, unsigned count) {
         if (!sys->picture) {
             memset(&rsc, 0, sizeof(rsc));
             rsc.p[0].p_pixels = (uint8_t*)(sys->bits);
-            rsc.p[0].i_pitch  = sys->stride;
+            rsc.p[0].i_pitch  = sys->stride << 1;
             rsc.p[0].i_lines  = sys->height;
             sys->picture = picture_NewFromResource(&vd->fmt, &rsc);
             if (!sys->picture)
                 return NULL;
         }
-        //sys->pool = picture_pool_New(1, &sys->picture);
         sys->pool = picture_pool_NewFromFormat(&vd->fmt, count);
     }
     return sys->pool;

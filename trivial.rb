@@ -14,7 +14,9 @@ list.each { |l|
             next if ((ln =~ /^LOCAL_MODULE/) == nil)
             temp = ln.scan(/\s*LOCAL_MODULE\s*:=\s*([^\s]+)/)
             next if temp == nil || temp.size == 0
-            n = 'lib' + temp[0][0].to_s + '.so'
+            name = temp[0][0].to_s
+            name = name[3..-1] if (name =~ /^lib/) != nil
+            n = 'lib' + name + '.so'
             all[t].push(n)
         end
     }
