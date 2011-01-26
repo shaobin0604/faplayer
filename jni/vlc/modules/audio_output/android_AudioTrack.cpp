@@ -31,7 +31,7 @@ static void Play(aout_instance_t *);
 static void *AudioTrackThread(vlc_object_t *);
 
 vlc_module_begin ()
-    set_shortname("Android")
+    set_shortname("AndroidAudioTrack")
     set_description(N_("Android AudioTrack audio output"))
     set_capability("audio output", __PLATFORM__)
     set_category(CAT_AUDIO)

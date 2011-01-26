@@ -26,7 +26,7 @@ static int Open (vlc_object_t *);
 static void Close(vlc_object_t *);
 
 vlc_module_begin()
-    set_shortname("Android")
+    set_shortname("AndroidSurface")
     set_category(CAT_VIDEO)
     set_subcategory(SUBCAT_VIDEO_VOUT)
     set_description(N_("Android Surface video output"))
@@ -41,12 +41,14 @@ static int Control(vout_display_t *, int, va_list);
 static void Manage(vout_display_t *);
 
 struct vout_display_sys_t {
-    void *surface;
     int format;
     int width;
     int height;
+#if __PLATFORM__ > 4
     int stride;
-    void *bits;
+#endif
+    int mode;
+    int x, y;
     picture_t *picture;
     picture_pool_t *pool;
 };
@@ -98,21 +100,16 @@ static int Open(vlc_object_t *object) {
     sys = (struct vout_display_sys_t*)malloc(sizeof(struct vout_display_sys_t));
     if (!sys)
         return VLC_ENOMEM;
-    sys->surface = surf;
     sys->format = info.format;
     sys->width = info.w;
     sys->height = info.h;
-#if __PLATFORM__ < 5
-    sys->stride = info.w;
-#else
+#if __PLATFORM__ > 4
     sys->stride = info.s;
 #endif
-    sys->bits = info.bits;
-    sys->picture = NULL;
     sys->pool = NULL;
     vd->sys = sys;
     vd->info.has_hide_mouse = true;
-    vd->info.is_slow = true;
+    //vd->info.is_slow = true;
     // uncomment to disable dr
     //vd->info.has_pictures_invalid = true;
     vd->fmt = fmt;
@@ -121,7 +118,7 @@ static int Open(vlc_object_t *object) {
     vd->display = Display;
     vd->control = Control;
     vd->manage  = Manage;
-    vout_display_SendEventFullscreen(vd, true);
+    //vout_display_SendEventFullscreen(vd, true);
     vout_display_SendEventDisplaySize(vd, sys->width, sys->height, true);
     return VLC_SUCCESS;
 }
@@ -130,8 +127,6 @@ static void Close(vlc_object_t *object) {
     vout_display_t *vd = (vout_display_t *)object;
     vout_display_sys_t *sys = vd->sys;
 
-    if (sys->picture)
-        picture_Release(sys->picture);
     if (sys->pool)
         picture_pool_Delete(sys->pool);
     free(sys);
@@ -143,15 +138,6 @@ static picture_pool_t *Pool(vout_display_t *vd, unsigned count) {
     picture_resource_t rsc;
 
     if (!sys->pool) {
-        if (!sys->picture) {
-            memset(&rsc, 0, sizeof(rsc));
-            rsc.p[0].p_pixels = (uint8_t*)(sys->bits);
-            rsc.p[0].i_pitch  = sys->stride << 1;
-            rsc.p[0].i_lines  = sys->height;
-            sys->picture = picture_NewFromResource(&vd->fmt, &rsc);
-            if (!sys->picture)
-                return NULL;
-        }
         sys->pool = picture_pool_NewFromFormat(&vd->fmt, count);
     }
     return sys->pool;
@@ -159,31 +145,49 @@ static picture_pool_t *Pool(vout_display_t *vd, unsigned count) {
 
 static void Display(vout_display_t *vd, picture_t *picture) {
     vout_display_sys_t *sys = vd->sys;
-    Surface *surf = (Surface*)(sys->surface);
+    Surface *surf = (Surface*)(getSurface());
     Surface::SurfaceInfo info;
 
-    surf->lock(&info);
-    picture_Copy(sys->picture, picture);
-    surf->unlockAndPost();
+    if (surf) {
+        surf->lock(&info);
+        if (sys->format != info.format ||
+            sys->width != info.w ||
+#if __PLATFORM__ > 4
+            sys->height != info.h ||
+            sys->stride != info.s)
+#else
+            sys->height != info.h)
+#endif
+            goto bail;
+        switch (info.format) {
+        case PIXEL_FORMAT_RGB_565: {
+                picture_t surface;
+
+                memset(&surface, 0, sizeof(surface));
+                surface.i_planes = 1;
+                surface.p[0].p_pixels = (uint8_t*)(info.bits);
+                surface.p[0].i_lines = info.h;
+#if __PLATFORM__ > 4
+                surface.p[0].i_pitch = info.s << 1;
+#else
+                surface.p[0].i_pitch = info.w << 1;
+#endif
+                surface.p[0].i_pixel_pitch = 1;
+                surface.p[0].i_visible_lines = info.h;
+                surface.p[0].i_visible_lines = info.w << 1;
+                picture_CopyPixels(&surface, picture);
+            }
+        default:
+            break;
+        }
+bail:
+        surf->unlockAndPost();
+    }
+
     picture_Release(picture);
 }
 
 static int Control(vout_display_t *vd, int query, va_list args) {
-
-    switch (query) {
-    case VOUT_DISPLAY_CHANGE_FULLSCREEN: {
-        vout_display_cfg_t cfg = *va_arg(args, const vout_display_cfg_t *);
-        if (!cfg.is_fullscreen) {
-            cfg.is_fullscreen = true;
-            return VLC_SUCCESS;
-        }
-        else
-            return VLC_EGENERIC;
-    }
-    default:
-        break;
-    }
-
     return VLC_EGENERIC;
 }
 
