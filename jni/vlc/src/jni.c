@@ -25,13 +25,16 @@ static jobject vout_android_ref = NULL;
 static void *vout_android_surf = NULL;
 static vlc_mutex_t vout_android_lock;
 
-void *getSurface() {
-    void *ret;
-
+void LockSurface() {
     vlc_mutex_lock(&vout_android_lock);
-    ret = vout_android_surf;
+}
+
+void UnlockSurface() {
     vlc_mutex_unlock(&vout_android_lock);
-    return ret;
+}
+
+void *GetSurface() {
+    return vout_android_surf;
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved) {

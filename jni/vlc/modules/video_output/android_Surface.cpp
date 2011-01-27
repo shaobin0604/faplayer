@@ -20,7 +20,9 @@
 
 using namespace android;
 
-extern "C" void *getSurface();
+extern "C" void LockSurface();
+extern "C" void UnlockSurface();
+extern "C" void *GetSurface();
 
 static int Open (vlc_object_t *);
 static void Close(vlc_object_t *);
@@ -58,14 +60,17 @@ static int Open(vlc_object_t *object) {
     vout_display_sys_t *sys;
 
     // get surface infomation
-    Surface *surf = (Surface*) getSurface();
+    LockSurface();
+    Surface *surf = (Surface*) GetSurface();
     if (!surf) {
+        UnlockSurface();
         msg_Err(vd, "android surface is not ready");
         return VLC_EGENERIC;
     }
     Surface::SurfaceInfo info;
     surf->lock(&info);
     surf->unlockAndPost();
+    UnlockSurface();
     video_format_t fmt = vd->fmt;
     fmt.i_width  = info.w;
     fmt.i_height = info.h;
@@ -145,9 +150,11 @@ static picture_pool_t *Pool(vout_display_t *vd, unsigned count) {
 
 static void Display(vout_display_t *vd, picture_t *picture) {
     vout_display_sys_t *sys = vd->sys;
-    Surface *surf = (Surface*)(getSurface());
+    Surface *surf;
     Surface::SurfaceInfo info;
 
+    LockSurface();
+    surf = (Surface*)(GetSurface());
     if (surf) {
         surf->lock(&info);
         if (sys->format != info.format ||
@@ -183,6 +190,7 @@ static void Display(vout_display_t *vd, picture_t *picture) {
 bail:
         surf->unlockAndPost();
     }
+    UnlockSurface();
 
     picture_Release(picture);
 }
