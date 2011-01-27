@@ -16,6 +16,7 @@ LOCAL_CFLAGS += \
     -DSYSCONFDIR=\"/sdcard/.vlc/etc\" \
     -DDATA_PATH=\"/sdcard/.vlc/share\" \
     -DPKGLIBDIR=\"/sdcard/.vlc/lib\" \
+    -DPACKAGENAME=\"org.stagex\" \
     -D__LIBVLC__
 
 LOCAL_C_INCLUDES += \

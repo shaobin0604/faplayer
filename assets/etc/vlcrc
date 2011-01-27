@@ -1,0 +1,48 @@
+﻿###
+###  vlc 1.1.5
+###
+
+###
+### lines beginning with a '#' character are comments
+###
+
+[avcodec] # FFmpeg audio/video decoder
+
+# Direct rendering (boolean)
+#ffmpeg-dr=1
+
+# Error resilience (integer)
+#ffmpeg-error-resilience=1
+
+# Workaround bugs (integer)
+#ffmpeg-workaround-bugs=1
+
+# Hurry up (boolean)
+#ffmpeg-hurry-up=1
+
+# Skip frame (default=0) (integer)
+ffmpeg-skip-frame=0
+
+# Skip idct (default=0) (integer)
+ffmpeg-skip-idct=0
+
+# Visualize motion vectors (integer)
+#ffmpeg-vismv=0
+
+# Low resolution decoding (integer)
+#ffmpeg-lowres=0
+
+# Allow speed tricks (boolean)
+ffmpeg-fast=1
+
+# Skip the loop filter for H.264 decoding (integer)
+ffmpeg-skiploopfilter=1
+
+# Debug mask (integer)
+#ffmpeg-debug=0
+
+[swscale] # Video scaling filter
+
+# Scaling mode (integer)
+swscale-mode=0
+

@@ -821,12 +821,14 @@ static void AllocateAllPlugins( vlc_object_t *p_this, module_bank_t *p_bank )
     vlc_array_t *arraypaths = vlc_array_new();
     const bool b_reset = var_InheritBool( p_this, "reset-plugins-cache" );
 
+#if !defined (ANDROID)
     /* Contruct the special search path for system that have a relocatable
      * executable. Set it to <vlc path>/plugins. */
     assert( vlcpath );
 
     if( asprintf( &path, "%s" DIR_SEP "plugins", vlcpath ) != -1 )
         vlc_array_append( arraypaths, path );
+#endif
 
     /* If the user provided a plugin path, we add it to the list */
     char *userpaths = var_InheritString( p_this, "plugin-path" );

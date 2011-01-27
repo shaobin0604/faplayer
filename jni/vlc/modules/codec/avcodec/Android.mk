@@ -13,7 +13,7 @@ LOCAL_CFLAGS += \
     -DHAVE_CONFIG_H \
     -DNDEBUG \
     -D__PLUGIN__ \
-    -DMODULE_STRING=\"avcodec-6\"
+    -DMODULE_STRING=\"avcodec\"
 
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \
@@ -50,7 +50,7 @@ LOCAL_CFLAGS += \
     -DHAVE_CONFIG_H \
     -DNDEBUG \
     -D__PLUGIN__ \
-    -DMODULE_STRING=\"avcodec-7\"
+    -DMODULE_STRING=\"avcodec\"
 
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \

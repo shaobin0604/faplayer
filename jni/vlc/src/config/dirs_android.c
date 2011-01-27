@@ -65,7 +65,7 @@ const char *config_GetConfDir( void )
 
 static char *config_GetHomeDir (void)
 {
-    return strdup("/sdcard/vlc");
+    return strdup("/sdcard");
 }
 
 static char *config_GetAppDir (const char *xdg_name, const char *xdg_default)
@@ -75,7 +75,7 @@ static char *config_GetAppDir (const char *xdg_name, const char *xdg_default)
     ret = (char*) malloc(260);
     if (!ret)
         return ret;
-    sprintf(ret, "/sdcard/.vlc/%s", xdg_default);
+    sprintf(ret, "/data/data/%s/cache/%s", PACKAGENAME, xdg_default);
     return ret;
 }
 
@@ -86,7 +86,7 @@ static char *config_GetTypeDir (const char *xdg_name)
     ret = (char*) malloc(260);
     if (!ret)
         return ret;
-    sprintf(ret, "/sdcard/vlc/%s", xdg_name);
+    sprintf(ret, "/sdcard/%s", xdg_name);
     return ret;
 }
 
@@ -98,28 +98,28 @@ char *config_GetUserDir (vlc_userdir_t type)
         case VLC_HOME_DIR:
             break;
         case VLC_CONFIG_DIR:
-            return config_GetAppDir ("CONFIG", ".config");
+            return config_GetAppDir (NULL, "etc");
         case VLC_DATA_DIR:
-            return config_GetAppDir ("DATA", ".share");
+            return config_GetAppDir (NULL, "share");
         case VLC_CACHE_DIR:
-            return config_GetAppDir ("CACHE", ".cache");
+            return config_GetAppDir (NULL, "cache");
 
         case VLC_DESKTOP_DIR:
             return config_GetTypeDir ("DESKTOP");
         case VLC_DOWNLOAD_DIR:
             return config_GetTypeDir ("DOWNLOAD");
         case VLC_TEMPLATES_DIR:
-            return config_GetTypeDir ("TEMPLATES");
+            return config_GetTypeDir ("TEMPLATE");
         case VLC_PUBLICSHARE_DIR:
-            return config_GetTypeDir ("PUBLICSHARE");
+            return config_GetTypeDir ("PUBLIC");
         case VLC_DOCUMENTS_DIR:
-            return config_GetTypeDir ("DOCUMENTS");
+            return config_GetTypeDir ("DOCUMENT");
         case VLC_MUSIC_DIR:
             return config_GetTypeDir ("MUSIC");
         case VLC_PICTURES_DIR:
-            return config_GetTypeDir ("PICTURES");
+            return config_GetTypeDir ("PICTURE");
         case VLC_VIDEOS_DIR:
-            return config_GetTypeDir ("VIDEOS");
+            return config_GetTypeDir ("VIDEO");
     }
     return config_GetHomeDir ();
 }
