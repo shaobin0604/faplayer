@@ -28,3 +28,4 @@ lib/audio_mixer/libtrivial_mixer_plugin.so
 lib/audio_mixer/libfloat32_mixer_plugin.so
 lib/demux/libavformat_plugin-7.so
 lib/demux/libavformat_plugin-6.so
+etc/vlcrc
