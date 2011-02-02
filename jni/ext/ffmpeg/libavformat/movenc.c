@@ -314,6 +314,16 @@ static int mov_pcm_le_gt16(enum CodecID codec_id)
            codec_id == CODEC_ID_PCM_F64LE;
 }
 
+static int mov_write_ms_tag(ByteIOContext *pb, MOVTrack *track)
+{
+    int64_t pos = url_ftell(pb);
+    put_be32(pb, 0);
+    put_le32(pb, track->tag); // store it byteswapped
+    track->enc->codec_tag = av_bswap16(track->tag >> 16);
+    ff_put_wav_header(pb, track->enc);
+    return updateSize(pb, pos);
+}
+
 static int mov_write_wave_tag(ByteIOContext *pb, MOVTrack *track)
 {
     int64_t pos = url_ftell(pb);
@@ -339,6 +349,9 @@ static int mov_write_wave_tag(ByteIOContext *pb, MOVTrack *track)
         mov_write_ac3_tag(pb, track);
     } else if (track->enc->codec_id == CODEC_ID_ALAC) {
         mov_write_extradata_tag(pb, track);
+    } else if (track->enc->codec_id == CODEC_ID_ADPCM_MS ||
+               track->enc->codec_id == CODEC_ID_ADPCM_IMA_WAV) {
+        mov_write_ms_tag(pb, track);
     }
 
     put_be32(pb, 8);     /* size */
@@ -395,7 +408,9 @@ static int mov_write_audio_tag(ByteIOContext *pb, MOVTrack *track)
             if (mov_get_lpcm_flags(track->enc->codec_id))
                 tag = AV_RL32("lpcm");
             version = 2;
-        } else if (track->audio_vbr || mov_pcm_le_gt16(track->enc->codec_id)) {
+        } else if (track->audio_vbr || mov_pcm_le_gt16(track->enc->codec_id) ||
+                   track->enc->codec_id == CODEC_ID_ADPCM_MS ||
+                   track->enc->codec_id == CODEC_ID_ADPCM_IMA_WAV) {
             version = 1;
         }
     }
@@ -457,6 +472,8 @@ static int mov_write_audio_tag(ByteIOContext *pb, MOVTrack *track)
         track->enc->codec_id == CODEC_ID_AC3 ||
         track->enc->codec_id == CODEC_ID_AMR_NB ||
         track->enc->codec_id == CODEC_ID_ALAC ||
+        track->enc->codec_id == CODEC_ID_ADPCM_MS ||
+        track->enc->codec_id == CODEC_ID_ADPCM_IMA_WAV ||
         mov_pcm_le_gt16(track->enc->codec_id)))
         mov_write_wave_tag(pb, track);
     else if(track->tag == MKTAG('m','p','4','a'))
@@ -657,8 +674,9 @@ static int mov_get_codec_tag(AVFormatContext *s, MOVTrack *track)
     int tag = track->enc->codec_tag;
 
     if (!tag || (track->enc->strict_std_compliance >= FF_COMPLIANCE_NORMAL &&
-                 (tag == MKTAG('d','v','c','p') ||
+                 (track->enc->codec_id == CODEC_ID_DVVIDEO ||
                   track->enc->codec_id == CODEC_ID_RAWVIDEO ||
+                  track->enc->codec_id == CODEC_ID_H263 ||
                   av_get_bits_per_sample(track->enc->codec_id)))) { // pcm audio
         if (track->enc->codec_id == CODEC_ID_DVVIDEO)
             tag = mov_get_dv_codec_tag(s, track);
@@ -1908,6 +1926,9 @@ int ff_mov_write_packet(AVFormatContext *s, AVPacket *pkt)
             av_log(s, AV_LOG_ERROR, "fatal error, input is not a single packet, implement a AVParser for it\n");
             return -1;
         }
+    } else if (enc->codec_id == CODEC_ID_ADPCM_MS ||
+               enc->codec_id == CODEC_ID_ADPCM_IMA_WAV) {
+        samplesInChunk = enc->frame_size;
     } else if (trk->sampleSize)
         samplesInChunk = size/trk->sampleSize;
     else
@@ -2107,6 +2128,13 @@ static int mov_write_header(AVFormatContext *s)
             if(!st->codec->frame_size && !av_get_bits_per_sample(st->codec->codec_id)) {
                 av_log(s, AV_LOG_ERROR, "track %d: codec frame size is not set\n", i);
                 goto error;
+            }else if(st->codec->codec_id == CODEC_ID_ADPCM_MS ||
+                     st->codec->codec_id == CODEC_ID_ADPCM_IMA_WAV){
+                if (!st->codec->block_align) {
+                    av_log(s, AV_LOG_ERROR, "track %d: codec block align is not set for adpcm\n", i);
+                    goto error;
+                }
+                track->sampleSize = st->codec->block_align;
             }else if(st->codec->frame_size > 1){ /* assume compressed audio */
                 track->audio_vbr = 1;
             }else{
@@ -2204,7 +2232,7 @@ static int mov_write_trailer(AVFormatContext *s)
 }
 
 #if CONFIG_MOV_MUXER
-AVOutputFormat mov_muxer = {
+AVOutputFormat ff_mov_muxer = {
     "mov",
     NULL_IF_CONFIG_SMALL("MOV format"),
     NULL,
@@ -2215,12 +2243,12 @@ AVOutputFormat mov_muxer = {
     mov_write_header,
     ff_mov_write_packet,
     mov_write_trailer,
-    .flags = AVFMT_GLOBALHEADER | AVFMT_VARIABLE_FPS,
+    .flags = AVFMT_GLOBALHEADER,
     .codec_tag = (const AVCodecTag* const []){codec_movvideo_tags, codec_movaudio_tags, 0},
 };
 #endif
 #if CONFIG_TGP_MUXER
-AVOutputFormat tgp_muxer = {
+AVOutputFormat ff_tgp_muxer = {
     "3gp",
     NULL_IF_CONFIG_SMALL("3GP format"),
     NULL,
@@ -2236,7 +2264,7 @@ AVOutputFormat tgp_muxer = {
 };
 #endif
 #if CONFIG_MP4_MUXER
-AVOutputFormat mp4_muxer = {
+AVOutputFormat ff_mp4_muxer = {
     "mp4",
     NULL_IF_CONFIG_SMALL("MP4 format"),
     "application/mp4",
@@ -2247,12 +2275,12 @@ AVOutputFormat mp4_muxer = {
     mov_write_header,
     ff_mov_write_packet,
     mov_write_trailer,
-    .flags = AVFMT_GLOBALHEADER | AVFMT_VARIABLE_FPS,
+    .flags = AVFMT_GLOBALHEADER,
     .codec_tag = (const AVCodecTag* const []){ff_mp4_obj_type, 0},
 };
 #endif
 #if CONFIG_PSP_MUXER
-AVOutputFormat psp_muxer = {
+AVOutputFormat ff_psp_muxer = {
     "psp",
     NULL_IF_CONFIG_SMALL("PSP MP4 format"),
     NULL,
@@ -2268,7 +2296,7 @@ AVOutputFormat psp_muxer = {
 };
 #endif
 #if CONFIG_TG2_MUXER
-AVOutputFormat tg2_muxer = {
+AVOutputFormat ff_tg2_muxer = {
     "3g2",
     NULL_IF_CONFIG_SMALL("3GP2 format"),
     NULL,
@@ -2284,7 +2312,7 @@ AVOutputFormat tg2_muxer = {
 };
 #endif
 #if CONFIG_IPOD_MUXER
-AVOutputFormat ipod_muxer = {
+AVOutputFormat ff_ipod_muxer = {
     "ipod",
     NULL_IF_CONFIG_SMALL("iPod H.264 MP4 format"),
     "application/mp4",

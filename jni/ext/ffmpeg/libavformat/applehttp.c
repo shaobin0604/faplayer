@@ -181,7 +181,7 @@ struct variant_info {
 static void handle_variant_args(struct variant_info *info, const char *key,
                                 int key_len, char **dest, int *dest_len)
 {
-    if (strncmp(key, "BANDWIDTH", key_len)) {
+    if (!strncmp(key, "BANDWIDTH=", key_len)) {
         *dest     =        info->bandwidth;
         *dest_len = sizeof(info->bandwidth);
     }
@@ -306,7 +306,7 @@ static int applehttp_read_header(AVFormatContext *s, AVFormatParameters *ap)
     /* If this isn't a live stream, calculate the total duration of the
      * stream. */
     if (c->finished) {
-        int duration = 0;
+        int64_t duration = 0;
         for (i = 0; i < c->variants[0]->n_segments; i++)
             duration += c->variants[0]->segments[i]->duration;
         s->duration = duration * AV_TIME_BASE;
@@ -579,7 +579,7 @@ static int applehttp_probe(AVProbeData *p)
     return 0;
 }
 
-AVInputFormat applehttp_demuxer = {
+AVInputFormat ff_applehttp_demuxer = {
     "applehttp",
     NULL_IF_CONFIG_SMALL("Apple HTTP Live Streaming format"),
     sizeof(AppleHTTPContext),

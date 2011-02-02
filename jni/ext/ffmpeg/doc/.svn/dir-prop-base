@@ -1,8 +1,0 @@
-K 10
-svn:ignore
-V 17
-*.1
-*.html
-*.pod
-
-END

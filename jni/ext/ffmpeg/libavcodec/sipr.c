@@ -493,7 +493,7 @@ static av_cold int sipr_decoder_init(AVCodecContext * avctx)
     for (i = 0; i < 4; i++)
         ctx->energy_history[i] = -14;
 
-    avctx->sample_fmt = SAMPLE_FMT_FLT;
+    avctx->sample_fmt = AV_SAMPLE_FMT_FLT;
 
     dsputil_init(&ctx->dsp, avctx);
 
@@ -549,7 +549,7 @@ static int sipr_decode_frame(AVCodecContext *avctx, void *datap,
     return mode_par->bits_per_frame >> 3;
 }
 
-AVCodec sipr_decoder = {
+AVCodec ff_sipr_decoder = {
     "sipr",
     AVMEDIA_TYPE_AUDIO,
     CODEC_ID_SIPR,

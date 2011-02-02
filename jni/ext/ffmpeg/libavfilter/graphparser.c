@@ -1,7 +1,7 @@
 /*
  * filter graph parser
- * copyright (c) 2008 Vitor Sessak
- * copyright (c) 2007 Bobby Bingham
+ * Copyright (c) 2008 Vitor Sessak
+ * Copyright (c) 2007 Bobby Bingham
  *
  * This file is part of FFmpeg.
  *
@@ -26,7 +26,6 @@
 #include "libavutil/avstring.h"
 #include "avfilter.h"
 #include "avfiltergraph.h"
-#include "parseutils.h"
 
 #define WHITESPACES " \n\t"
 
@@ -100,7 +99,7 @@ static int create_filter(AVFilterContext **filt_ctx, AVFilterGraph *ctx, int ind
     char tmp_args[256];
     int ret;
 
-    snprintf(inst_name, sizeof(inst_name), "Filter %d %s", index, filt_name);
+    snprintf(inst_name, sizeof(inst_name), "Parsed filter %d %s", index, filt_name);
 
     filt = avfilter_get_by_name(filt_name);
 
@@ -294,6 +293,12 @@ static int parse_outputs(const char **buf, AVFilterInOut **curr_inputs,
         AVFilterInOut *match;
 
         AVFilterInOut *input = *curr_inputs;
+        if (!input) {
+            av_log(log_ctx, AV_LOG_ERROR,
+                   "No output pad can be associated to link label '%s'.\n",
+                   name);
+            return AVERROR(EINVAL);
+        }
         *curr_inputs = (*curr_inputs)->next;
 
         if (!name)
@@ -333,6 +338,7 @@ int avfilter_graph_parse(AVFilterGraph *graph, const char *filters,
 
     do {
         AVFilterContext *filter;
+        const char *filterchain = filters;
         filters += strspn(filters, WHITESPACES);
 
         if ((ret = parse_inputs(&filters, &curr_inputs, &open_outputs, log_ctx)) < 0)
@@ -360,8 +366,8 @@ int avfilter_graph_parse(AVFilterGraph *graph, const char *filters,
 
         if (chr == ';' && curr_inputs) {
             av_log(log_ctx, AV_LOG_ERROR,
-                   "Could not find a output to link when parsing \"%s\"\n",
-                   filters - 1);
+                   "Invalid filterchain containing an unlabelled output pad: \"%s\"\n",
+                   filterchain);
             ret = AVERROR(EINVAL);
             goto fail;
         }

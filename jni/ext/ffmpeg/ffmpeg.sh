@@ -5,7 +5,7 @@
 --disable-muxers \
 --enable-cross-compile \
 --cross-prefix=arm-none-linux-gnueabi- \
---arch=armv6j \
---cpu=arm1136j-s \
+--arch=armv7-a \
+--cpu=cortex-a8 \
 --target-os=linux \
 --enable-pic

@@ -1,6 +1,0 @@
-after configuration, following changes should apply to config.h if android toolchain is not used for generating config.h
-1. android cross compiler does not understand "restrict"
-2. no log2 and log2f in bionic libm.so
-3. soundcard.h is located in linux/soundcard.h
-4. no posix_memalign
-

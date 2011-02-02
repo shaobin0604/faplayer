@@ -53,6 +53,27 @@ version <next>:
 - single stream LATM/LOAS decoder
 - setpts filter added
 - Win64 support for optimized asm functions
+- MJPEG/AVI1 to JPEG/JFIF bitstream filter
+- ASS subtitle encoder and decoder
+- IEC 61937 encapsulation for E-AC3 and TrueHD (for HDMI passthrough)
+- overlay filter added
+- rename aspect filter to setdar, and pixelaspect to setsar
+- IEC 61937 demuxer
+- Mobotix .mxg demuxer
+- frei0r source added
+- hqdn3d filter added
+- RTP depacketization of QCELP
+- FLAC parser added
+- gradfun filter added
+- AMR-WB decoder
+- replace the ocv_smooth filter with a more generic ocv filter
+- Windows Televison (WTV) demuxer
+- FFmpeg metadata format muxer and demuxer
+- SubRip (srt) subtitle decoder
+- floating-point AC-3 encoder added
+- Lagarith decoder
+- ffmpeg -copytb option added
+- IVF muxer added
 
 
 version 0.6:

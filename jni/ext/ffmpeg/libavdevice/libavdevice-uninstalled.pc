@@ -1,12 +1,12 @@
 prefix=
 exec_prefix=
 libdir=${pcfiledir}
-includedir=/home/luka/Workspace/faplayer/jni/ffmpeg
+includedir=/home/luka/Workspace/faplayer/jni/ext/ffmpeg
 
 Name: libavdevice
 Description: FFmpeg device handling library
-Version: 52.2.2
-Requires: libavformat = 52.84.0
+Version: 52.2.3
+Requires: libavformat = 52.94.0
 Conflicts:
 Libs: ${libdir}/libavdevice.a -lm -pthread -lz 
 Cflags: -I${includedir}

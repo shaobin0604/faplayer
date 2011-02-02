@@ -1,5 +1,8 @@
-VLC-1.1.5 is on the road!
+VLC-1.1.7 is on the road!
+
 Any questions please contact tewilove@gmail.com.
+But first please try to solve them by yourself, this is a personal port.
+Push request is welcomed.
 
 Build steps:
 1. run ndk-build

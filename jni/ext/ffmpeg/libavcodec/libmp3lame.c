@@ -213,7 +213,7 @@ static av_cold int MP3lame_encode_close(AVCodecContext *avctx)
 }
 
 
-AVCodec libmp3lame_encoder = {
+AVCodec ff_libmp3lame_encoder = {
     "libmp3lame",
     AVMEDIA_TYPE_AUDIO,
     CODEC_ID_MP3,
@@ -222,7 +222,7 @@ AVCodec libmp3lame_encoder = {
     MP3lame_encode_frame,
     MP3lame_encode_close,
     .capabilities= CODEC_CAP_DELAY,
-    .sample_fmts = (const enum SampleFormat[]){SAMPLE_FMT_S16,SAMPLE_FMT_NONE},
+    .sample_fmts = (const enum AVSampleFormat[]){AV_SAMPLE_FMT_S16,AV_SAMPLE_FMT_NONE},
     .supported_samplerates= sSampleRates,
     .long_name= NULL_IF_CONFIG_SMALL("libmp3lame MP3 (MPEG audio layer 3)"),
 };

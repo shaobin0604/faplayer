@@ -40,7 +40,7 @@ do_image_formats()
 do_audio_only()
 {
     file=${outfile}lavf.$1
-    do_ffmpeg $file -t 1 -qscale 10 -f s16le -i $pcm_src
+    do_ffmpeg $file -t 1 -qscale 10 $2 -f s16le -i $pcm_src $3
     do_ffmpeg_crc $file -i $target_path/$file
 }
 
@@ -57,7 +57,7 @@ fi
 
 if [ -n "$do_rm" ] ; then
 file=${outfile}lavf.rm
-do_ffmpeg $file -t 1 -qscale 10 -f image2 -vcodec pgmyuv -i $raw_src -f s16le -i $pcm_src
+do_ffmpeg $file -t 1 -qscale 10 -f image2 -vcodec pgmyuv -i $raw_src -f s16le -i $pcm_src -acodec ac3_fixed
 # broken
 #do_ffmpeg_crc $file -i $target_path/$file
 fi
@@ -204,6 +204,10 @@ fi
 
 if [ -n "$do_voc" ] ; then
 do_audio_only voc
+fi
+
+if [ -n "$do_voc_s16" ] ; then
+do_audio_only s16.voc "-ac 2" "-acodec pcm_s16le"
 fi
 
 if [ -n "$do_ogg" ] ; then

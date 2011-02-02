@@ -1,6 +1,6 @@
 /*
  * Filter layer - default implementations
- * copyright (c) 2007 Bobby Bingham
+ * Copyright (c) 2007 Bobby Bingham
  *
  * This file is part of FFmpeg.
  *
@@ -19,13 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "libavcore/audioconvert.h"
 #include "libavcore/imgutils.h"
 #include "libavcore/samplefmt.h"
-#include "libavcodec/audioconvert.h"
 #include "avfilter.h"
+#include "internal.h"
 
 /* TODO: buffer pool.  see comment for avfilter_default_get_video_buffer() */
-static void avfilter_default_free_buffer(AVFilterBuffer *ptr)
+void ff_avfilter_default_free_buffer(AVFilterBuffer *ptr)
 {
     av_free(ptr->data[0]);
     av_free(ptr);
@@ -36,53 +37,26 @@ static void avfilter_default_free_buffer(AVFilterBuffer *ptr)
  * alloc & free cycle currently implemented. */
 AVFilterBufferRef *avfilter_default_get_video_buffer(AVFilterLink *link, int perms, int w, int h)
 {
-    AVFilterBuffer *pic = av_mallocz(sizeof(AVFilterBuffer));
-    AVFilterBufferRef *ref = NULL;
-    int i, tempsize;
-    char *buf = NULL;
+    int linesize[4];
+    uint8_t *data[4];
+    AVFilterBufferRef *picref = NULL;
 
-    if (!pic || !(ref = av_mallocz(sizeof(AVFilterBufferRef))))
-        goto fail;
+    // +2 is needed for swscaler, +16 to be SIMD-friendly
+    if (av_image_alloc(data, linesize, w, h, link->format, 16) < 0)
+        return NULL;
 
-    ref->buf         = pic;
-    ref->video       = av_mallocz(sizeof(AVFilterBufferRefVideoProps));
-    ref->video->w    = w;
-    ref->video->h    = h;
+    picref = avfilter_get_video_buffer_ref_from_arrays(data, linesize,
+                                                       perms, w, h, link->format);
+    if (!picref) {
+        av_free(data[0]);
+        return NULL;
+    }
 
-    /* make sure the buffer gets read permission or it's useless for output */
-    ref->perms = perms | AV_PERM_READ;
-
-    pic->refcount = 1;
-    ref->format   = link->format;
-    pic->free     = avfilter_default_free_buffer;
-    av_image_fill_linesizes(pic->linesize, ref->format, ref->video->w);
-
-    for (i = 0; i < 4; i++)
-        pic->linesize[i] = FFALIGN(pic->linesize[i], 16);
-
-    tempsize = av_image_fill_pointers(pic->data, ref->format, ref->video->h, NULL, pic->linesize);
-    buf = av_malloc(tempsize + 16); // +2 is needed for swscaler, +16 to be
-                                    // SIMD-friendly
-    if (!buf)
-        goto fail;
-    av_image_fill_pointers(pic->data, ref->format, ref->video->h, buf, pic->linesize);
-
-    memcpy(ref->data,     pic->data,     sizeof(ref->data));
-    memcpy(ref->linesize, pic->linesize, sizeof(ref->linesize));
-
-    return ref;
-
-fail:
-    av_free(buf);
-    if (ref && ref->video)
-        av_free(ref->video);
-    av_free(ref);
-    av_free(pic);
-    return NULL;
+    return picref;
 }
 
 AVFilterBufferRef *avfilter_default_get_audio_buffer(AVFilterLink *link, int perms,
-                                                     enum SampleFormat sample_fmt, int size,
+                                                     enum AVSampleFormat sample_fmt, int size,
                                                      int64_t channel_layout, int planar)
 {
     AVFilterBuffer *samples = av_mallocz(sizeof(AVFilterBuffer));
@@ -108,13 +82,13 @@ AVFilterBufferRef *avfilter_default_get_audio_buffer(AVFilterLink *link, int per
     ref->perms = perms | AV_PERM_READ;
 
     samples->refcount   = 1;
-    samples->free       = avfilter_default_free_buffer;
+    samples->free       = ff_avfilter_default_free_buffer;
 
     sample_size = av_get_bits_per_sample_fmt(sample_fmt) >>3;
-    chans_nb = avcodec_channel_layout_num_channels(channel_layout);
+    chans_nb = av_get_channel_layout_nb_channels(channel_layout);
 
     per_channel_size = size/chans_nb;
-    ref->audio->samples_nb = per_channel_size/sample_size;
+    ref->audio->nb_samples = per_channel_size/sample_size;
 
     /* Set the number of bytes to traverse to reach next sample of a particular channel:
      * For planar, this is simply the sample size.
@@ -152,7 +126,6 @@ AVFilterBufferRef *avfilter_default_get_audio_buffer(AVFilterLink *link, int per
     return ref;
 
 fail:
-    av_free(buf);
     if (ref && ref->audio)
         av_free(ref->audio);
     av_free(ref);
@@ -318,7 +291,7 @@ AVFilterBufferRef *avfilter_null_get_video_buffer(AVFilterLink *link, int perms,
 }
 
 AVFilterBufferRef *avfilter_null_get_audio_buffer(AVFilterLink *link, int perms,
-                                                  enum SampleFormat sample_fmt, int size,
+                                                  enum AVSampleFormat sample_fmt, int size,
                                                   int64_t channel_layout, int packed)
 {
     return avfilter_get_audio_buffer(link->dst->outputs[0], perms, sample_fmt,

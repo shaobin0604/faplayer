@@ -27,6 +27,7 @@
 #include "mpegts.h"
 
 #include <unistd.h>
+#include <strings.h>
 #include "network.h"
 
 #include "rtpdec.h"
@@ -43,8 +44,14 @@
          'url_open_dyn_packet_buf')
 */
 
+static RTPDynamicProtocolHandler ff_realmedia_mp3_dynamic_handler = {
+    .enc_name           = "X-MP3-draft-00",
+    .codec_type         = AVMEDIA_TYPE_AUDIO,
+    .codec_id           = CODEC_ID_MP3ADU,
+};
+
 /* statistics functions */
-RTPDynamicProtocolHandler *RTPFirstDynamicPayloadHandler= NULL;
+static RTPDynamicProtocolHandler *RTPFirstDynamicPayloadHandler= NULL;
 
 void ff_register_dynamic_payload_handler(RTPDynamicProtocolHandler *handler)
 {
@@ -67,6 +74,8 @@ void av_register_rtp_dynamic_payload_handlers(void)
     ff_register_dynamic_payload_handler(&ff_svq3_dynamic_handler);
     ff_register_dynamic_payload_handler(&ff_mp4a_latm_dynamic_handler);
     ff_register_dynamic_payload_handler(&ff_vp8_dynamic_handler);
+    ff_register_dynamic_payload_handler(&ff_qcelp_dynamic_handler);
+    ff_register_dynamic_payload_handler(&ff_realmedia_mp3_dynamic_handler);
 
     ff_register_dynamic_payload_handler(&ff_ms_rtp_asf_pfv_handler);
     ff_register_dynamic_payload_handler(&ff_ms_rtp_asf_pfa_handler);
@@ -75,6 +84,30 @@ void av_register_rtp_dynamic_payload_handlers(void)
     ff_register_dynamic_payload_handler(&ff_qt_rtp_vid_handler);
     ff_register_dynamic_payload_handler(&ff_quicktime_rtp_aud_handler);
     ff_register_dynamic_payload_handler(&ff_quicktime_rtp_vid_handler);
+}
+
+RTPDynamicProtocolHandler *ff_rtp_handler_find_by_name(const char *name,
+                                                  enum AVMediaType codec_type)
+{
+    RTPDynamicProtocolHandler *handler;
+    for (handler = RTPFirstDynamicPayloadHandler;
+         handler; handler = handler->next)
+        if (!strcasecmp(name, handler->enc_name) &&
+            codec_type == handler->codec_type)
+            return handler;
+    return NULL;
+}
+
+RTPDynamicProtocolHandler *ff_rtp_handler_find_by_id(int id,
+                                                enum AVMediaType codec_type)
+{
+    RTPDynamicProtocolHandler *handler;
+    for (handler = RTPFirstDynamicPayloadHandler;
+         handler; handler = handler->next)
+        if (handler->static_payload_id && handler->static_payload_id == id &&
+            codec_type == handler->codec_type)
+            return handler;
+    return NULL;
 }
 
 static int rtcp_parse_packet(RTPDemuxContext *s, const unsigned char *buf, int len)
@@ -90,9 +123,13 @@ static int rtcp_parse_packet(RTPDemuxContext *s, const unsigned char *buf, int l
             payload_len = (AV_RB16(buf + 2) + 1) * 4;
 
             s->last_rtcp_ntp_time = AV_RB64(buf + 8);
-            if (s->first_rtcp_ntp_time == AV_NOPTS_VALUE)
-                s->first_rtcp_ntp_time = s->last_rtcp_ntp_time;
             s->last_rtcp_timestamp = AV_RB32(buf + 16);
+            if (s->first_rtcp_ntp_time == AV_NOPTS_VALUE) {
+                s->first_rtcp_ntp_time = s->last_rtcp_ntp_time;
+                if (!s->base_timestamp)
+                    s->base_timestamp = s->last_rtcp_timestamp;
+                s->rtcp_ts_offset = s->last_rtcp_timestamp - s->base_timestamp;
+            }
 
             buf += payload_len;
             len -= payload_len;
@@ -287,9 +324,9 @@ int rtp_check_and_send_back_rr(RTPDemuxContext *s, int count)
     len = url_close_dyn_buf(pb, &buf);
     if ((len > 0) && buf) {
         int result;
-        dprintf(s->ic, "sending %d bytes of RR\n", len);
+        av_dlog(s->ic, "sending %d bytes of RR\n", len);
         result= url_write(s->rtp_ctx, buf, len);
-        dprintf(s->ic, "result from url_write: %d\n", result);
+        av_dlog(s->ic, "result from url_write: %d\n", result);
         av_free(buf);
     }
     return 0;
@@ -360,7 +397,6 @@ RTPDemuxContext *rtp_parse_open(AVFormatContext *s1, AVStream *st, URLContext *r
             return NULL;
         }
     } else {
-        av_set_pts_info(st, 32, 1, 90000);
         switch(st->codec->codec_id) {
         case CODEC_ID_MPEG1VIDEO:
         case CODEC_ID_MPEG2VIDEO:
@@ -372,16 +408,12 @@ RTPDemuxContext *rtp_parse_open(AVFormatContext *s1, AVStream *st, URLContext *r
             st->need_parsing = AVSTREAM_PARSE_FULL;
             break;
         case CODEC_ID_ADPCM_G722:
-            av_set_pts_info(st, 32, 1, st->codec->sample_rate);
             /* According to RFC 3551, the stream clock rate is 8000
              * even if the sample rate is 16000. */
             if (st->codec->sample_rate == 8000)
                 st->codec->sample_rate = 16000;
             break;
         default:
-            if (st->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
-                av_set_pts_info(st, 32, 1, st->codec->sample_rate);
-            }
             break;
         }
     }
@@ -404,6 +436,8 @@ rtp_parse_set_dynamic_protocol(RTPDemuxContext *s, PayloadContext *ctx,
  */
 static void finalize_packet(RTPDemuxContext *s, AVPacket *pkt, uint32_t timestamp)
 {
+    if (pkt->pts != AV_NOPTS_VALUE || pkt->dts != AV_NOPTS_VALUE)
+        return; /* Timestamp already set by depacketizer */
     if (s->last_rtcp_ntp_time != AV_NOPTS_VALUE && timestamp != RTP_NOTS_VALUE) {
         int64_t addend;
         int delta_timestamp;
@@ -412,8 +446,15 @@ static void finalize_packet(RTPDemuxContext *s, AVPacket *pkt, uint32_t timestam
         delta_timestamp = timestamp - s->last_rtcp_timestamp;
         /* convert to the PTS timebase */
         addend = av_rescale(s->last_rtcp_ntp_time - s->first_rtcp_ntp_time, s->st->time_base.den, (uint64_t)s->st->time_base.num << 32);
-        pkt->pts = s->range_start_offset + addend + delta_timestamp;
+        pkt->pts = s->range_start_offset + s->rtcp_ts_offset + addend +
+                   delta_timestamp;
+        return;
     }
+    if (timestamp == RTP_NOTS_VALUE)
+        return;
+    if (!s->base_timestamp)
+        s->base_timestamp = timestamp;
+    pkt->pts = s->range_start_offset + timestamp - s->base_timestamp;
 }
 
 static int rtp_parse_packet_internal(RTPDemuxContext *s, AVPacket *pkt,
@@ -447,6 +488,12 @@ static int rtp_parse_packet_internal(RTPDemuxContext *s, AVPacket *pkt,
         av_log(st?st->codec:NULL, AV_LOG_ERROR, "RTP: PT=%02x: bad cseq %04x expected=%04x\n",
                payload_type, seq, ((s->seq + 1) & 0xffff));
         return -1;
+    }
+
+    if (buf[0] & 0x20) {
+        int padding = buf[len - 1];
+        if (len >= 12 + padding)
+            len -= padding;
     }
 
     s->seq = seq;

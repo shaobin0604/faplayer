@@ -13,6 +13,103 @@ libavutil:   2009-03-08
 
 API changes, most recent first:
 
+2011-01-15 - r26374 - lavfi 1.74.0 - AVFilterBufferRefAudioProps
+  Rename AVFilterBufferRefAudioProps.samples_nb to nb_samples.
+
+2011-01-14 - r26330 - lavf 52.93.0 - av_metadata_copy()
+  Add av_metadata_copy() in avformat.h.
+
+2011-01-07 - r26262 - lavc 52.107.0 - deprecate reordered_opaque
+  Deprecate reordered_opaque in favor of pkt_pts/dts.
+
+2011-01-07 - r26261 - lavc 52.106.0 - pkt_dts
+  Add pkt_dts to AVFrame, this will in the future allow multithreading decoders
+  to not mess up dts.
+
+2011-01-07 - r26260 - lavc 52.105.0 - pkt_pts
+  Add pkt_pts to AVFrame.
+
+2011-01-07 - r26259 - lavc 52.104.0 - av_get_profile_name()
+  Add av_get_profile_name to libavcodec/avcodec.h.
+
+2010-12-27 - r26108 - lavfi 1.71.0 - AV_PERM_NEG_LINESIZES
+  Add AV_PERM_NEG_LINESIZES in avfilter.h.
+
+2010-12-27 - r26104 - lavf 52.91.0 - av_find_best_stream()
+  Add av_find_best_stream to libavformat/avformat.h.
+
+2010-12-27 - r26103 - lavf 52.90.0
+  Add AVFMT_NOSTREAMS flag for formats with no streams,
+  like e.g. text metadata.
+
+2010-12-22 - r26073 - lavu 50.36.0 - file.h
+  Add functions av_file_map() and av_file_unmap() in file.h.
+
+2010-12-19 - r26056 - lavu 50.35.0 - error.h
+  Add "not found" error codes:
+  AVERROR_DEMUXER_NOT_FOUND
+  AVERROR_MUXER_NOT_FOUND
+  AVERROR_DECODER_NOT_FOUND
+  AVERROR_ENCODER_NOT_FOUND
+  AVERROR_PROTOCOL_NOT_FOUND
+  AVERROR_FILTER_NOT_FOUND
+  AVERROR_BSF_NOT_FOUND
+  AVERROR_STREAM_NOT_FOUND
+
+2010-12-09 - r25923 - lavcore 0.16.0 - avcore.h
+  Move AV_NOPTS_VALUE, AV_TIME_BASE, AV_TIME_BASE_Q symbols from
+  avcodec.h to avcore.h.
+
+2010-12-04 - r25886 - lavc 52.98.0 - CODEC_CAP_NEG_LINESIZES
+  Add CODEC_CAP_NEG_LINESIZES codec capability flag in avcodec.h.
+
+2010-12-04 - r25879 - lavu 50.34.0 - av_get_pix_fmt_string()
+  Deprecate avcodec_pix_fmt_string() in favor of
+  pixdesc.h/av_get_pix_fmt_string().
+
+2010-12-04 - r25878 - lavcore 0.15.0 - av_image_alloc()
+  Add av_image_alloc() to libavcore/imgutils.h.
+
+2010-12-02 - r25862 - lavfi 1.67.0 - avfilter_graph_create_filter()
+  Add function avfilter_graph_create_filter() in avfiltergraph.h.
+
+2010-11-25 - r25826 - lavfi 1.65.0 - avfilter_get_video_buffer_ref_from_arrays()
+  Add function avfilter_get_video_buffer_ref_from_arrays() in
+  avfilter.h.
+
+2010-11-21 - r25787 - lavcore 0.14.0 - audioconvert.h
+  Add a public audio channel API in audioconvert.h, and deprecate the
+  corresponding functions in libavcodec:
+  avcodec_get_channel_name()
+  avcodec_get_channel_layout()
+  avcodec_get_channel_layout_string()
+  avcodec_channel_layout_num_channels()
+  and the CH_* macros defined in libavcodec/avcodec.h.
+
+2010-11-21 - r25777 - lavf 52.85.0 - avformat.h
+  Add av_append_packet().
+
+2010-11-21 - r25776 - lavc 52.97.0 - avcodec.h
+  Add av_grow_packet().
+
+2010-11-17 - r25761 - lavcore 0.13.0 - parseutils.h
+  Add av_parse_color() declared in libavcore/parseutils.h.
+
+2010-11-13 - r25745 - lavc 52.95.0 - AVCodecContext
+  Add AVCodecContext.subtitle_header and AVCodecContext.subtitle_header_size
+  fields.
+
+2010-11-13 - r25740 - lavfi 1.62.0 - avfiltergraph.h
+  Make avfiltergraph.h public.
+
+2010-11-13 - r25737 - lavfi 1.61.0 - avfiltergraph.h
+  Remove declarations from avfiltergraph.h for the functions:
+  avfilter_graph_check_validity()
+  avfilter_graph_config_links()
+  avfilter_graph_config_formats()
+  which are now internal.
+  Use avfilter_graph_config() instead.
+
 2010-11-08 - r25708 - lavu 50.33.0 - eval.h
   Deprecate functions:
   av_parse_and_eval_expr(),

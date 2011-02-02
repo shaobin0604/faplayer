@@ -49,23 +49,28 @@ const char *avcodec_get_sample_fmt_name(int sample_fmt);
  * @deprecated Use av_get_sample_fmt() instead.
  */
 attribute_deprecated
-enum SampleFormat avcodec_get_sample_fmt(const char* name);
+enum AVSampleFormat avcodec_get_sample_fmt(const char* name);
 #endif
 
+#if FF_API_OLD_AUDIOCONVERT
 /**
- * @return NULL on error
+ * @deprecated Use av_get_channel_layout() instead.
  */
-const char *avcodec_get_channel_name(int channel_id);
-
-/**
- * @return channel layout that matches name, 0 if no match
- */
+attribute_deprecated
 int64_t avcodec_get_channel_layout(const char *name);
 
 /**
- * Return description of channel layout
+ * @deprecated Use av_get_channel_layout_string() instead.
  */
+attribute_deprecated
 void avcodec_get_channel_layout_string(char *buf, int buf_size, int nb_channels, int64_t channel_layout);
+
+/**
+ * @deprecated Use av_get_channel_layout_nb_channels() instead.
+ */
+attribute_deprecated
+int avcodec_channel_layout_num_channels(int64_t channel_layout);
+#endif
 
 /**
  * Guess the channel layout
@@ -75,11 +80,6 @@ void avcodec_get_channel_layout_string(char *buf, int buf_size, int nb_channels,
  * @return Channel layout mask
  */
 int64_t avcodec_guess_channel_layout(int nb_channels, enum CodecID codec_id, const char *fmt_name);
-
-/**
- * @return the number of channels in the channel layout.
- */
-int avcodec_channel_layout_num_channels(int64_t channel_layout);
 
 struct AVAudioConvert;
 typedef struct AVAudioConvert AVAudioConvert;
@@ -94,8 +94,8 @@ typedef struct AVAudioConvert AVAudioConvert;
  * @param flags See AV_CPU_FLAG_xx
  * @return NULL on error
  */
-AVAudioConvert *av_audio_convert_alloc(enum SampleFormat out_fmt, int out_channels,
-                                       enum SampleFormat in_fmt, int in_channels,
+AVAudioConvert *av_audio_convert_alloc(enum AVSampleFormat out_fmt, int out_channels,
+                                       enum AVSampleFormat in_fmt, int in_channels,
                                        const float *matrix, int flags);
 
 /**

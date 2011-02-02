@@ -1,49 +1,0 @@
-10
-
-dir
-25719
-svn://svn.ffmpeg.org/ffmpeg/trunk/tests/ref
-svn://svn.ffmpeg.org/ffmpeg
-
-
-
-2010-11-04T21:48:54.044645Z
-25677
-reimar
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-9553f0bf-9b14-0410-a0b8-cfaf0461ba5b
-
-fate
-dir
-
-lavfi
-dir
-
-seek
-dir
-
-lavf
-dir
-
-vsynth1
-dir
-
-vsynth2
-dir
-
-acodec
-dir
-

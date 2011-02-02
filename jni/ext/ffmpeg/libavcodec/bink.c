@@ -119,7 +119,7 @@ static void init_lengths(BinkContext *c, int width, int bw)
 
     c->bundle[BINK_SRC_SUB_BLOCK_TYPES].len = av_log2((width >> 4) + 511) + 1;
 
-    c->bundle[BINK_SRC_COLORS].len = av_log2((width >> 3)*64 + 511) + 1;
+    c->bundle[BINK_SRC_COLORS].len = av_log2(bw*64 + 511) + 1;
 
     c->bundle[BINK_SRC_INTRA_DC].len =
     c->bundle[BINK_SRC_INTER_DC].len =
@@ -128,7 +128,7 @@ static void init_lengths(BinkContext *c, int width, int bw)
 
     c->bundle[BINK_SRC_PATTERN].len = av_log2((bw << 3) + 511) + 1;
 
-    c->bundle[BINK_SRC_RUN].len = av_log2((width >> 3)*48 + 511) + 1;
+    c->bundle[BINK_SRC_RUN].len = av_log2(bw*48 + 511) + 1;
 }
 
 /**
@@ -1000,7 +1000,7 @@ static av_cold int decode_end(AVCodecContext *avctx)
     return 0;
 }
 
-AVCodec bink_decoder = {
+AVCodec ff_bink_decoder = {
     "binkvideo",
     AVMEDIA_TYPE_VIDEO,
     CODEC_ID_BINKVIDEO,

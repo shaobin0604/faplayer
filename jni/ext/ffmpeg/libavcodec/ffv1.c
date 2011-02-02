@@ -1073,7 +1073,7 @@ static av_cold int encode_init(AVCodecContext *avctx)
 
 #define STATS_OUT_SIZE 1024*1024*6
     if(avctx->flags & CODEC_FLAG_PASS1){
-    avctx->stats_out= av_mallocz(STATS_OUT_SIZE);
+        avctx->stats_out= av_mallocz(STATS_OUT_SIZE);
         for(i=0; i<s->quant_table_count; i++){
             for(j=0; j<s->slice_count; j++){
                 FFV1Context *sf= s->slice_context[j];
@@ -1786,7 +1786,7 @@ static int decode_frame(AVCodecContext *avctx, void *data, int *data_size, AVPac
     return buf_size;
 }
 
-AVCodec ffv1_decoder = {
+AVCodec ff_ffv1_decoder = {
     "ffv1",
     AVMEDIA_TYPE_VIDEO,
     CODEC_ID_FFV1,
@@ -1801,7 +1801,7 @@ AVCodec ffv1_decoder = {
 };
 
 #if CONFIG_FFV1_ENCODER
-AVCodec ffv1_encoder = {
+AVCodec ff_ffv1_encoder = {
     "ffv1",
     AVMEDIA_TYPE_VIDEO,
     CODEC_ID_FFV1,

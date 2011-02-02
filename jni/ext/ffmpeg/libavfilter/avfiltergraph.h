@@ -53,37 +53,33 @@ AVFilterContext *avfilter_graph_get_filter(AVFilterGraph *graph, char *name);
 int avfilter_graph_add_filter(AVFilterGraph *graphctx, AVFilterContext *filter);
 
 /**
- * Check for the validity of graph.
+ * Create and add a filter instance into an existing graph.
+ * The filter instance is created from the filter filt and inited
+ * with the parameters args and opaque.
  *
- * A graph is considered valid if all its input and output pads are
- * connected.
+ * In case of success put in *filt_ctx the pointer to the created
+ * filter instance, otherwise set *filt_ctx to NULL.
  *
- * @return 0 in case of success, a negative value otherwise
+ * @param name the instance name to give to the created filter instance
+ * @param graph_ctx the filter graph
+ * @return a negative AVERROR error code in case of failure, a non
+ * negative value otherwise
  */
-int avfilter_graph_check_validity(AVFilterGraph *graphctx, AVClass *log_ctx);
-
-/**
- * Configure all the links of graphctx.
- *
- * @return 0 in case of success, a negative value otherwise
- */
-int avfilter_graph_config_links(AVFilterGraph *graphctx, AVClass *log_ctx);
-
-/**
- * Configure the formats of all the links in the graph.
- */
-int avfilter_graph_config_formats(AVFilterGraph *graphctx, AVClass *log_ctx);
+int avfilter_graph_create_filter(AVFilterContext **filt_ctx, AVFilter *filt,
+                                 const char *name, const char *args, void *opaque,
+                                 AVFilterGraph *graph_ctx);
 
 /**
  * Check validity and configure all the links and formats in the graph.
  *
- * @see avfilter_graph_check_validity(), avfilter_graph_config_links(),
- * avfilter_graph_config_formats()
+ * @param graphctx the filter graph
+ * @param log_ctx context used for logging
+ * @return 0 in case of success, a negative AVERROR code otherwise
  */
 int avfilter_graph_config(AVFilterGraph *graphctx, AVClass *log_ctx);
 
 /**
- * Free a graph and destroy its links.
+ * Free a graph and destroy its links, graph may be NULL.
  */
 void avfilter_graph_free(AVFilterGraph *graph);
 

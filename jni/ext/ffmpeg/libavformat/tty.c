@@ -28,7 +28,6 @@
 #include "libavutil/avstring.h"
 #include "avformat.h"
 #include "sauce.h"
-#include <strings.h>
 
 #define LINE_RATE 6000 /* characters per second */
 
@@ -125,7 +124,7 @@ static int read_packet(AVFormatContext *avctx, AVPacket *pkt)
     return 0;
 }
 
-AVInputFormat tty_demuxer = {
+AVInputFormat ff_tty_demuxer = {
     .name           = "tty",
     .long_name      = NULL_IF_CONFIG_SMALL("Tele-typewriter"),
     .priv_data_size = sizeof(TtyDemuxContext),

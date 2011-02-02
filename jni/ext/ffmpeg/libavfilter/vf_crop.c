@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2007 Bobby Bingham
+ * Copyright (c) 2007 Bobby Bingham
  *
  * This file is part of FFmpeg.
  *
@@ -22,6 +22,8 @@
  * @file
  * video crop filter
  */
+
+/* #define DEBUG */
 
 #include "avfilter.h"
 #include "libavutil/eval.h"
@@ -200,6 +202,9 @@ static int config_input(AVFilterLink *link)
                              NULL, NULL, NULL, NULL, 0, ctx)) < 0)
         return AVERROR(EINVAL);
 
+    av_log(ctx, AV_LOG_INFO, "w:%d h:%d -> w:%d h:%d\n",
+           link->w, link->h, crop->w, crop->h);
+
     if (crop->w <= 0 || crop->h <= 0 ||
         crop->w > link->w || crop->h > link->h) {
         av_log(ctx, AV_LOG_ERROR,
@@ -234,11 +239,12 @@ static void start_frame(AVFilterLink *link, AVFilterBufferRef *picref)
 {
     AVFilterContext *ctx = link->dst;
     CropContext *crop = ctx->priv;
-    AVFilterBufferRef *ref2 = avfilter_ref_buffer(picref, ~0);
+    AVFilterBufferRef *ref2;
     int i;
 
-    picref->video->w = crop->w;
-    picref->video->h = crop->h;
+    ref2 = avfilter_ref_buffer(picref, ~0);
+    ref2->video->w = crop->w;
+    ref2->video->h = crop->h;
 
     crop->var_values[VAR_T] = picref->pts == AV_NOPTS_VALUE ?
         NAN : picref->pts * av_q2d(link->time_base);
@@ -257,9 +263,11 @@ static void start_frame(AVFilterLink *link, AVFilterBufferRef *picref)
     crop->x &= ~((1 << crop->hsub) - 1);
     crop->y &= ~((1 << crop->vsub) - 1);
 
+#ifdef DEBUG
     av_log(ctx, AV_LOG_DEBUG,
            "n:%d t:%f x:%d y:%d x+w:%d y+h:%d\n",
            (int)crop->var_values[VAR_N], crop->var_values[VAR_T], crop->x, crop->y, crop->x+crop->w, crop->y+crop->h);
+#endif
 
     ref2->data[0] += crop->y * ref2->linesize[0];
     ref2->data[0] += crop->x * crop->max_step[0];

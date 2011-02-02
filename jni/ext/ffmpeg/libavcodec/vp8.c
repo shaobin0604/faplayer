@@ -983,14 +983,91 @@ void xchg_mb_border(uint8_t *top_border, uint8_t *src_y, uint8_t *src_cb, uint8_
 }
 
 static av_always_inline
-int check_intra_pred_mode(int mode, int mb_x, int mb_y)
+int check_dc_pred8x8_mode(int mode, int mb_x, int mb_y)
+{
+    if (!mb_x) {
+        return mb_y ? TOP_DC_PRED8x8 : DC_128_PRED8x8;
+    } else {
+        return mb_y ? mode : LEFT_DC_PRED8x8;
+    }
+}
+
+static av_always_inline
+int check_tm_pred8x8_mode(int mode, int mb_x, int mb_y)
+{
+    if (!mb_x) {
+        return mb_y ? VERT_PRED8x8 : DC_129_PRED8x8;
+    } else {
+        return mb_y ? mode : HOR_PRED8x8;
+    }
+}
+
+static av_always_inline
+int check_intra_pred8x8_mode(int mode, int mb_x, int mb_y)
 {
     if (mode == DC_PRED8x8) {
-        if (!mb_x) {
-            mode = mb_y ? TOP_DC_PRED8x8 : DC_128_PRED8x8;
-        } else if (!mb_y) {
-            mode = LEFT_DC_PRED8x8;
+        return check_dc_pred8x8_mode(mode, mb_x, mb_y);
+    } else {
+        return mode;
+    }
+}
+
+static av_always_inline
+int check_intra_pred8x8_mode_emuedge(int mode, int mb_x, int mb_y)
+{
+    switch (mode) {
+    case DC_PRED8x8:
+        return check_dc_pred8x8_mode(mode, mb_x, mb_y);
+    case VERT_PRED8x8:
+        return !mb_y ? DC_127_PRED8x8 : mode;
+    case HOR_PRED8x8:
+        return !mb_x ? DC_129_PRED8x8 : mode;
+    case PLANE_PRED8x8 /*TM*/:
+        return check_tm_pred8x8_mode(mode, mb_x, mb_y);
+    }
+    return mode;
+}
+
+static av_always_inline
+int check_tm_pred4x4_mode(int mode, int mb_x, int mb_y)
+{
+    if (!mb_x) {
+        return mb_y ? VERT_VP8_PRED : DC_129_PRED;
+    } else {
+        return mb_y ? mode : HOR_VP8_PRED;
+    }
+}
+
+static av_always_inline
+int check_intra_pred4x4_mode_emuedge(int mode, int mb_x, int mb_y, int *copy_buf)
+{
+    switch (mode) {
+    case VERT_PRED:
+        if (!mb_x && mb_y) {
+            *copy_buf = 1;
+            return mode;
         }
+        /* fall-through */
+    case DIAG_DOWN_LEFT_PRED:
+    case VERT_LEFT_PRED:
+        return !mb_y ? DC_127_PRED : mode;
+    case HOR_PRED:
+        if (!mb_y) {
+            *copy_buf = 1;
+            return mode;
+        }
+        /* fall-through */
+    case HOR_UP_PRED:
+        return !mb_x ? DC_129_PRED : mode;
+    case TM_VP8_PRED:
+        return check_tm_pred4x4_mode(mode, mb_x, mb_y);
+    case DC_PRED: // 4x4 DC doesn't use the same "H.264-style" exceptions as 16x16/8x8 DC
+    case DIAG_DOWN_RIGHT_PRED:
+    case VERT_RIGHT_PRED:
+    case HOR_DOWN_PRED:
+        if (!mb_y || !mb_x)
+            *copy_buf = 1;
+        return mode;
     }
     return mode;
 }
@@ -999,21 +1076,27 @@ static av_always_inline
 void intra_predict(VP8Context *s, uint8_t *dst[3], VP8Macroblock *mb,
                    int mb_x, int mb_y)
 {
+    AVCodecContext *avctx = s->avctx;
     int x, y, mode, nnz, tr;
 
     // for the first row, we need to run xchg_mb_border to init the top edge to 127
     // otherwise, skip it if we aren't going to deblock
-    if (s->deblock_filter || !mb_y)
+    if (!(avctx->flags & CODEC_FLAG_EMU_EDGE && !mb_y) && (s->deblock_filter || !mb_y))
         xchg_mb_border(s->top_border[mb_x+1], dst[0], dst[1], dst[2],
                        s->linesize, s->uvlinesize, mb_x, mb_y, s->mb_width,
                        s->filter.simple, 1);
 
     if (mb->mode < MODE_I4x4) {
-        mode = check_intra_pred_mode(mb->mode, mb_x, mb_y);
+        if (avctx->flags & CODEC_FLAG_EMU_EDGE) { // tested
+            mode = check_intra_pred8x8_mode_emuedge(mb->mode, mb_x, mb_y);
+        } else {
+            mode = check_intra_pred8x8_mode(mb->mode, mb_x, mb_y);
+        }
         s->hpc.pred16x16[mode](dst[0], s->linesize);
     } else {
         uint8_t *ptr = dst[0];
         uint8_t *intra4x4 = s->intra4x4_pred_mode_mb;
+        uint8_t tr_top[4] = { 127, 127, 127, 127 };
 
         // all blocks on the right edge of the macroblock use bottom edge
         // the top macroblock for their topright edge
@@ -1021,7 +1104,8 @@ void intra_predict(VP8Context *s, uint8_t *dst[3], VP8Macroblock *mb,
 
         // if we're on the right edge of the frame, said edge is extended
         // from the top macroblock
-        if (mb_x == s->mb_width-1) {
+        if (!(!mb_y && avctx->flags & CODEC_FLAG_EMU_EDGE) &&
+            mb_x == s->mb_width-1) {
             tr = tr_right[-1]*0x01010101;
             tr_right = (uint8_t *)&tr;
         }
@@ -1032,10 +1116,53 @@ void intra_predict(VP8Context *s, uint8_t *dst[3], VP8Macroblock *mb,
         for (y = 0; y < 4; y++) {
             uint8_t *topright = ptr + 4 - s->linesize;
             for (x = 0; x < 4; x++) {
-                if (x == 3)
+                int copy = 0, linesize = s->linesize;
+                uint8_t *dst = ptr+4*x;
+                DECLARE_ALIGNED(4, uint8_t, copy_dst)[5*8];
+
+                if ((y == 0 || x == 3) && mb_y == 0 && avctx->flags & CODEC_FLAG_EMU_EDGE) {
+                    topright = tr_top;
+                } else if (x == 3)
                     topright = tr_right;
 
-                s->hpc.pred4x4[intra4x4[x]](ptr+4*x, topright, s->linesize);
+                if (avctx->flags & CODEC_FLAG_EMU_EDGE) { // mb_x+x or mb_y+y is a hack but works
+                    mode = check_intra_pred4x4_mode_emuedge(intra4x4[x], mb_x + x, mb_y + y, &copy);
+                    if (copy) {
+                        dst = copy_dst + 12;
+                        linesize = 8;
+                        if (!(mb_y + y)) {
+                            copy_dst[3] = 127U;
+                            AV_WN32A(copy_dst+4, 127U * 0x01010101U);
+                        } else {
+                            AV_COPY32(copy_dst+4, ptr+4*x-s->linesize);
+                            if (!(mb_x + x)) {
+                                copy_dst[3] = 129U;
+                            } else {
+                                copy_dst[3] = ptr[4*x-s->linesize-1];
+                            }
+                        }
+                        if (!(mb_x + x)) {
+                            copy_dst[11] =
+                            copy_dst[19] =
+                            copy_dst[27] =
+                            copy_dst[35] = 129U;
+                        } else {
+                            copy_dst[11] = ptr[4*x              -1];
+                            copy_dst[19] = ptr[4*x+s->linesize  -1];
+                            copy_dst[27] = ptr[4*x+s->linesize*2-1];
+                            copy_dst[35] = ptr[4*x+s->linesize*3-1];
+                        }
+                    }
+                } else {
+                    mode = intra4x4[x];
+                }
+                s->hpc.pred4x4[mode](dst, topright, linesize);
+                if (copy) {
+                    AV_COPY32(ptr+4*x              , copy_dst+12);
+                    AV_COPY32(ptr+4*x+s->linesize  , copy_dst+20);
+                    AV_COPY32(ptr+4*x+s->linesize*2, copy_dst+28);
+                    AV_COPY32(ptr+4*x+s->linesize*3, copy_dst+36);
+                }
 
                 nnz = s->non_zero_count_cache[y][x];
                 if (nnz) {
@@ -1052,15 +1179,26 @@ void intra_predict(VP8Context *s, uint8_t *dst[3], VP8Macroblock *mb,
         }
     }
 
-    mode = check_intra_pred_mode(s->chroma_pred_mode, mb_x, mb_y);
+    if (avctx->flags & CODEC_FLAG_EMU_EDGE) {
+        mode = check_intra_pred8x8_mode_emuedge(s->chroma_pred_mode, mb_x, mb_y);
+    } else {
+        mode = check_intra_pred8x8_mode(s->chroma_pred_mode, mb_x, mb_y);
+    }
     s->hpc.pred8x8[mode](dst[1], s->uvlinesize);
     s->hpc.pred8x8[mode](dst[2], s->uvlinesize);
 
-    if (s->deblock_filter || !mb_y)
+    if (!(avctx->flags & CODEC_FLAG_EMU_EDGE && !mb_y) && (s->deblock_filter || !mb_y))
         xchg_mb_border(s->top_border[mb_x+1], dst[0], dst[1], dst[2],
                        s->linesize, s->uvlinesize, mb_x, mb_y, s->mb_width,
                        s->filter.simple, 0);
 }
+
+static const uint8_t subpel_idx[3][8] = {
+    { 0, 1, 2, 1, 2, 1, 2, 1 }, // nr. of left extra pixels,
+                                // also function pointer index
+    { 0, 3, 5, 3, 5, 3, 5, 3 }, // nr. of extra pixels required
+    { 0, 2, 3, 2, 3, 2, 3, 2 }, // nr. of right extra pixels
+};
 
 /**
  * Generic MC function.
@@ -1080,32 +1218,70 @@ void intra_predict(VP8Context *s, uint8_t *dst[3], VP8Macroblock *mb,
  * @param mc_func motion compensation function pointers (bilinear or sixtap MC)
  */
 static av_always_inline
-void vp8_mc(VP8Context *s, int luma,
-            uint8_t *dst, uint8_t *src, const VP56mv *mv,
-            int x_off, int y_off, int block_w, int block_h,
-            int width, int height, int linesize,
-            vp8_mc_func mc_func[3][3])
+void vp8_mc_luma(VP8Context *s, uint8_t *dst, uint8_t *src, const VP56mv *mv,
+                 int x_off, int y_off, int block_w, int block_h,
+                 int width, int height, int linesize,
+                 vp8_mc_func mc_func[3][3])
 {
     if (AV_RN32A(mv)) {
-        static const uint8_t idx[8] = { 0, 1, 2, 1, 2, 1, 2, 1 };
-        int mx = (mv->x << luma)&7, mx_idx = idx[mx];
-        int my = (mv->y << luma)&7, my_idx = idx[my];
 
-        x_off += mv->x >> (3 - luma);
-        y_off += mv->y >> (3 - luma);
+        int mx = (mv->x << 1)&7, mx_idx = subpel_idx[0][mx];
+        int my = (mv->y << 1)&7, my_idx = subpel_idx[0][my];
+
+        x_off += mv->x >> 2;
+        y_off += mv->y >> 2;
 
         // edge emulation
         src += y_off * linesize + x_off;
-        if (x_off < 2 || x_off >= width  - block_w - 3 ||
-            y_off < 2 || y_off >= height - block_h - 3) {
-            ff_emulated_edge_mc(s->edge_emu_buffer, src - 2 * linesize - 2, linesize,
-                                block_w + 5, block_h + 5,
-                                x_off - 2, y_off - 2, width, height);
-            src = s->edge_emu_buffer + 2 + linesize * 2;
+        if (x_off < mx_idx || x_off >= width  - block_w - subpel_idx[2][mx] ||
+            y_off < my_idx || y_off >= height - block_h - subpel_idx[2][my]) {
+            s->dsp.emulated_edge_mc(s->edge_emu_buffer, src - my_idx * linesize - mx_idx, linesize,
+                                    block_w + subpel_idx[1][mx], block_h + subpel_idx[1][my],
+                                    x_off - mx_idx, y_off - my_idx, width, height);
+            src = s->edge_emu_buffer + mx_idx + linesize * my_idx;
         }
         mc_func[my_idx][mx_idx](dst, linesize, src, linesize, block_h, mx, my);
     } else
         mc_func[0][0](dst, linesize, src + y_off * linesize + x_off, linesize, block_h, 0, 0);
+}
+
+static av_always_inline
+void vp8_mc_chroma(VP8Context *s, uint8_t *dst1, uint8_t *dst2, uint8_t *src1,
+                   uint8_t *src2, const VP56mv *mv, int x_off, int y_off,
+                   int block_w, int block_h, int width, int height, int linesize,
+                   vp8_mc_func mc_func[3][3])
+{
+    if (AV_RN32A(mv)) {
+        int mx = mv->x&7, mx_idx = subpel_idx[0][mx];
+        int my = mv->y&7, my_idx = subpel_idx[0][my];
+
+        x_off += mv->x >> 3;
+        y_off += mv->y >> 3;
+
+        // edge emulation
+        src1 += y_off * linesize + x_off;
+        src2 += y_off * linesize + x_off;
+        if (x_off < mx_idx || x_off >= width  - block_w - subpel_idx[2][mx] ||
+            y_off < my_idx || y_off >= height - block_h - subpel_idx[2][my]) {
+            s->dsp.emulated_edge_mc(s->edge_emu_buffer, src1 - my_idx * linesize - mx_idx, linesize,
+                                    block_w + subpel_idx[1][mx], block_h + subpel_idx[1][my],
+                                    x_off - mx_idx, y_off - my_idx, width, height);
+            src1 = s->edge_emu_buffer + mx_idx + linesize * my_idx;
+            mc_func[my_idx][mx_idx](dst1, linesize, src1, linesize, block_h, mx, my);
+
+            s->dsp.emulated_edge_mc(s->edge_emu_buffer, src2 - my_idx * linesize - mx_idx, linesize,
+                                    block_w + subpel_idx[1][mx], block_h + subpel_idx[1][my],
+                                    x_off - mx_idx, y_off - my_idx, width, height);
+            src2 = s->edge_emu_buffer + mx_idx + linesize * my_idx;
+            mc_func[my_idx][mx_idx](dst2, linesize, src2, linesize, block_h, mx, my);
+        } else {
+            mc_func[my_idx][mx_idx](dst1, linesize, src1, linesize, block_h, mx, my);
+            mc_func[my_idx][mx_idx](dst2, linesize, src2, linesize, block_h, mx, my);
+        }
+    } else {
+        mc_func[0][0](dst1, linesize, src1 + y_off * linesize + x_off, linesize, block_h, 0, 0);
+        mc_func[0][0](dst2, linesize, src2 + y_off * linesize + x_off, linesize, block_h, 0, 0);
+    }
 }
 
 static av_always_inline
@@ -1118,10 +1294,10 @@ void vp8_mc_part(VP8Context *s, uint8_t *dst[3],
     VP56mv uvmv = *mv;
 
     /* Y */
-    vp8_mc(s, 1, dst[0] + by_off * s->linesize + bx_off,
-           ref_frame->data[0], mv, x_off + bx_off, y_off + by_off,
-           block_w, block_h, width, height, s->linesize,
-           s->put_pixels_tab[block_w == 8]);
+    vp8_mc_luma(s, dst[0] + by_off * s->linesize + bx_off,
+                ref_frame->data[0], mv, x_off + bx_off, y_off + by_off,
+                block_w, block_h, width, height, s->linesize,
+                s->put_pixels_tab[block_w == 8]);
 
     /* U/V */
     if (s->profile == 3) {
@@ -1132,14 +1308,11 @@ void vp8_mc_part(VP8Context *s, uint8_t *dst[3],
     bx_off  >>= 1; by_off  >>= 1;
     width   >>= 1; height  >>= 1;
     block_w >>= 1; block_h >>= 1;
-    vp8_mc(s, 0, dst[1] + by_off * s->uvlinesize + bx_off,
-           ref_frame->data[1], &uvmv, x_off + bx_off, y_off + by_off,
-           block_w, block_h, width, height, s->uvlinesize,
-           s->put_pixels_tab[1 + (block_w == 4)]);
-    vp8_mc(s, 0, dst[2] + by_off * s->uvlinesize + bx_off,
-           ref_frame->data[2], &uvmv, x_off + bx_off, y_off + by_off,
-           block_w, block_h, width, height, s->uvlinesize,
-           s->put_pixels_tab[1 + (block_w == 4)]);
+    vp8_mc_chroma(s, dst[1] + by_off * s->uvlinesize + bx_off,
+                  dst[2] + by_off * s->uvlinesize + bx_off, ref_frame->data[1],
+                  ref_frame->data[2], &uvmv, x_off + bx_off, y_off + by_off,
+                  block_w, block_h, width, height, s->uvlinesize,
+                  s->put_pixels_tab[1 + (block_w == 4)]);
 }
 
 /* Fetch pixels for estimated mv 4 macroblocks ahead.
@@ -1171,10 +1344,11 @@ void inter_predict(VP8Context *s, uint8_t *dst[3], VP8Macroblock *mb,
     AVFrame *ref = s->framep[mb->ref_frame];
     VP56mv *bmv = mb->bmv;
 
-    if (mb->mode < VP8_MVMODE_SPLIT) {
+    switch (mb->partitioning) {
+    case VP8_SPLITMVMODE_NONE:
         vp8_mc_part(s, dst, ref, x_off, y_off,
                     0, 0, 16, 16, width, height, &mb->mv);
-    } else switch (mb->partitioning) {
+        break;
     case VP8_SPLITMVMODE_4x4: {
         int x, y;
         VP56mv uvmv;
@@ -1182,11 +1356,11 @@ void inter_predict(VP8Context *s, uint8_t *dst[3], VP8Macroblock *mb,
         /* Y */
         for (y = 0; y < 4; y++) {
             for (x = 0; x < 4; x++) {
-                vp8_mc(s, 1, dst[0] + 4*y*s->linesize + x*4,
-                       ref->data[0], &bmv[4*y + x],
-                       4*x + x_off, 4*y + y_off, 4, 4,
-                       width, height, s->linesize,
-                       s->put_pixels_tab[2]);
+                vp8_mc_luma(s, dst[0] + 4*y*s->linesize + x*4,
+                            ref->data[0], &bmv[4*y + x],
+                            4*x + x_off, 4*y + y_off, 4, 4,
+                            width, height, s->linesize,
+                            s->put_pixels_tab[2]);
             }
         }
 
@@ -1208,16 +1382,12 @@ void inter_predict(VP8Context *s, uint8_t *dst[3], VP8Macroblock *mb,
                     uvmv.x &= ~7;
                     uvmv.y &= ~7;
                 }
-                vp8_mc(s, 0, dst[1] + 4*y*s->uvlinesize + x*4,
-                       ref->data[1], &uvmv,
-                       4*x + x_off, 4*y + y_off, 4, 4,
-                       width, height, s->uvlinesize,
-                       s->put_pixels_tab[2]);
-                vp8_mc(s, 0, dst[2] + 4*y*s->uvlinesize + x*4,
-                       ref->data[2], &uvmv,
-                       4*x + x_off, 4*y + y_off, 4, 4,
-                       width, height, s->uvlinesize,
-                       s->put_pixels_tab[2]);
+                vp8_mc_chroma(s, dst[1] + 4*y*s->uvlinesize + x*4,
+                              dst[2] + 4*y*s->uvlinesize + x*4,
+                              ref->data[1], ref->data[2], &uvmv,
+                              4*x + x_off, 4*y + y_off, 4, 4,
+                              width, height, s->uvlinesize,
+                              s->put_pixels_tab[2]);
             }
         }
         break;
@@ -1533,7 +1703,10 @@ static int vp8_decode_frame(AVCodecContext *avctx, void *data, int *data_size,
     memset(s->macroblocks + s->mb_height*2 - 1, 0, (s->mb_width+1)*sizeof(*s->macroblocks));
 
     // top edge of 127 for intra prediction
-    memset(s->top_border, 127, (s->mb_width+1)*sizeof(*s->top_border));
+    if (!(avctx->flags & CODEC_FLAG_EMU_EDGE)) {
+        s->top_border[0][15] = s->top_border[0][23] = 127;
+        memset(s->top_border[1]-1, 127, s->mb_width*sizeof(*s->top_border)+1);
+    }
     memset(s->ref_count, 0, sizeof(s->ref_count));
     if (s->keyframe)
         memset(s->intra4x4_pred_mode_top, DC_PRED, s->mb_width*4);
@@ -1553,12 +1726,13 @@ static int vp8_decode_frame(AVCodecContext *avctx, void *data, int *data_size,
         AV_WN32A(s->intra4x4_pred_mode_left, DC_PRED*0x01010101);
 
         // left edge of 129 for intra prediction
-        if (!(avctx->flags & CODEC_FLAG_EMU_EDGE))
+        if (!(avctx->flags & CODEC_FLAG_EMU_EDGE)) {
             for (i = 0; i < 3; i++)
                 for (y = 0; y < 16>>!!i; y++)
                     dst[i][y*curframe->linesize[i]-1] = 129;
-        if (mb_y)
-            memset(s->top_border, 129, sizeof(*s->top_border));
+            if (mb_y == 1) // top left edge is also 129
+                s->top_border[0][15] = s->top_border[0][23] = s->top_border[0][31] = 129;
+        }
 
         for (mb_x = 0; mb_x < s->mb_width; mb_x++, mb_xy++, mb++) {
             /* Prefetch the current frame, 4 MBs ahead */
@@ -1658,12 +1832,6 @@ static av_cold int vp8_decode_init(AVCodecContext *avctx)
     ff_h264_pred_init(&s->hpc, CODEC_ID_VP8);
     ff_vp8dsp_init(&s->vp8dsp);
 
-    // intra pred needs edge emulation among other things
-    if (avctx->flags&CODEC_FLAG_EMU_EDGE) {
-        av_log(avctx, AV_LOG_ERROR, "Edge emulation not supported\n");
-        return AVERROR_PATCHWELCOME;
-    }
-
     return 0;
 }
 
@@ -1673,7 +1841,7 @@ static av_cold int vp8_decode_free(AVCodecContext *avctx)
     return 0;
 }
 
-AVCodec vp8_decoder = {
+AVCodec ff_vp8_decoder = {
     "vp8",
     AVMEDIA_TYPE_VIDEO,
     CODEC_ID_VP8,

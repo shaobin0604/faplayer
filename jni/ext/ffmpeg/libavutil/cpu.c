@@ -37,6 +37,7 @@ int av_get_cpu_flags(void)
 #ifdef TEST
 
 #undef printf
+#include <stdio.h>
 
 int main(void)
 {

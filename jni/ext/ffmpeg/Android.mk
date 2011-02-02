@@ -19,6 +19,7 @@ FF_COMMON_SRC := \
     libavcodec/bitstream_filter.c \
     libavcodec/dsputil.c \
     libavcodec/faanidct.c \
+    libavcodec/fmtconvert.c \
     libavcodec/imgconvert.c \
     libavcodec/jrevdct.c \
     libavcodec/opt.c \
@@ -62,6 +63,7 @@ FF_COMMON_SRC := \
     libavcodec/acelp_filters.c \
     libavcodec/acelp_vectors.c \
     libavcodec/acelp_pitch_delay.c \
+    libavcodec/amrwbdec.c \
     libavcodec/sp5xdec.c \
     libavcodec/mjpegdec.c \
     libavcodec/mjpeg.c \
@@ -69,6 +71,8 @@ FF_COMMON_SRC := \
     libavcodec/ansi.c \
     libavcodec/cga_data.c \
     libavcodec/apedec.c \
+    libavcodec/assdec.c \
+    libavcodec/ass.c \
     libavcodec/asv1.c \
     libavcodec/mpeg12data.c \
     libavcodec/atrac1.c \
@@ -167,6 +171,8 @@ FF_COMMON_SRC := \
     libavcodec/jpegls.c \
     libavcodec/kgv1dec.c \
     libavcodec/kmvc.c \
+    libavcodec/lagarith.c \
+    libavcodec/lagarithrac.c \
     libavcodec/loco.c \
     libavcodec/mace.c \
     libavcodec/mdec.c \
@@ -229,6 +235,7 @@ FF_COMMON_SRC := \
     libavcodec/smc.c \
     libavcodec/snow.c \
     libavcodec/sonic.c \
+    libavcodec/srtdec.c \
     libavcodec/sunrast.c \
     libavcodec/svq1dec.c \
     libavcodec/svq1.c \
@@ -305,6 +312,7 @@ FF_COMMON_SRC := \
     libavcodec/dnxhd_parser.c \
     libavcodec/dvbsub_parser.c \
     libavcodec/dvdsub_parser.c \
+    libavcodec/flac_parser.c \
     libavcodec/h261_parser.c \
     libavcodec/h263_parser.c \
     libavcodec/h264_parser.c \
@@ -320,10 +328,10 @@ FF_COMMON_SRC := \
     libavcodec/vp3_parser.c \
     libavcodec/vp8_parser.c \
     libavcodec/pthread.c \
-    libavcodec/inverse.c \
     libavcodec/arm/dsputil_init_arm.c \
     libavcodec/arm/dsputil_arm.S \
     libavcodec/arm/fft_init_arm.c \
+    libavcodec/arm/fmtconvert_init_arm.c \
     libavcodec/arm/jrevdct_arm.S \
     libavcodec/arm/mpegvideo_arm.c \
     libavcodec/arm/simple_idct_arm.S \
@@ -335,6 +343,7 @@ FF_COMMON_SRC := \
     libavcodec/arm/mpegvideo_armv5te.c \
     libavcodec/arm/mpegvideo_armv5te_s.S \
     libavcodec/arm/simple_idct_armv5te.S \
+    libavcore/audioconvert.c \
     libavcore/imgutils.c \
     libavcore/parseutils.c \
     libavcore/samplefmt.c \
@@ -347,20 +356,22 @@ FF_COMMON_SRC := \
     libavfilter/defaults.c \
     libavfilter/formats.c \
     libavfilter/graphparser.c \
-    libavfilter/parseutils.c \
     libavfilter/af_anull.c \
     libavfilter/asrc_anullsrc.c \
     libavfilter/asink_anullsink.c \
-    libavfilter/vf_aspect.c \
+    libavfilter/vf_copy.c \
     libavfilter/vf_crop.c \
     libavfilter/vf_drawbox.c \
     libavfilter/vf_fifo.c \
     libavfilter/vf_format.c \
+    libavfilter/vf_gradfun.c \
     libavfilter/vf_hflip.c \
     libavfilter/vf_null.c \
+    libavfilter/vf_overlay.c \
     libavfilter/vf_pad.c \
     libavfilter/vf_pixdesctest.c \
     libavfilter/vf_scale.c \
+    libavfilter/vf_aspect.c \
     libavfilter/vf_setpts.c \
     libavfilter/vf_settb.c \
     libavfilter/vf_slicify.c \
@@ -427,6 +438,7 @@ FF_COMMON_SRC := \
     libavformat/eacdata.c \
     libavformat/electronicarts.c \
     libavformat/ffmdec.c \
+    libavformat/ffmetadec.c \
     libavformat/filmstripdec.c \
     libavformat/flacdec.c \
     libavformat/oggparsevorbis.c \
@@ -455,7 +467,7 @@ FF_COMMON_SRC := \
     libavformat/rm.c \
     libavformat/mm.c \
     libavformat/mmf.c \
-    libavformat/mp3.c \
+    libavformat/mp3dec.c \
     libavformat/mpc.c \
     libavformat/mpc8.c \
     libavformat/mpeg.c \
@@ -466,6 +478,7 @@ FF_COMMON_SRC := \
     libavformat/mvi.c \
     libavformat/mxfdec.c \
     libavformat/mxf.c \
+    libavformat/mxg.c \
     libavformat/ncdec.c \
     libavformat/nsvdec.c \
     libavformat/nutdec.c \
@@ -498,6 +511,7 @@ FF_COMMON_SRC := \
     libavformat/rtpdec_h264.c \
     libavformat/rtpdec_latm.c \
     libavformat/rtpdec_mpeg4.c \
+    libavformat/rtpdec_qcelp.c \
     libavformat/rtpdec_qdm2.c \
     libavformat/rtpdec_qt.c \
     libavformat/rtpdec_svq3.c \
@@ -512,6 +526,8 @@ FF_COMMON_SRC := \
     libavformat/smacker.c \
     libavformat/sol.c \
     libavformat/soxdec.c \
+    libavformat/spdif.c \
+    libavformat/spdifdec.c \
     libavformat/srtdec.c \
     libavformat/psxstr.c \
     libavformat/swfdec.c \
@@ -528,6 +544,7 @@ FF_COMMON_SRC := \
     libavformat/wav.c \
     libavformat/wc3movie.c \
     libavformat/westwood.c \
+    libavformat/wtv.c \
     libavformat/wv.c \
     libavformat/xa.c \
     libavformat/yop.c \
@@ -555,6 +572,7 @@ FF_COMMON_SRC := \
     libavutil/error.c \
     libavutil/eval.c \
     libavutil/fifo.c \
+    libavutil/file.c \
     libavutil/intfloat_readwrite.c \
     libavutil/inverse.c \
     libavutil/lfg.c \
@@ -580,17 +598,14 @@ FF_COMMON_SRC := \
     libswscale/yuv2rgb.c
 
 FF_ARM_V6_SRC := \
-    libavcodec/arm/dsputil_armv6.S \
     libavcodec/arm/dsputil_init_armv6.c \
+    libavcodec/arm/dsputil_armv6.S \
     libavcodec/arm/simple_idct_armv6.S
-
-FF_ARM_VFP_SRC := \
-    libavcodec/arm/dsputil_init_vfp.c \
-    libavcodec/arm/dsputil_vfp.S
 
 FF_ARM_NEON_SRC := \
     libavcodec/arm/dsputil_init_neon.c \
     libavcodec/arm/dsputil_neon.S \
+    libavcodec/arm/fmtconvert_neon.S \
     libavcodec/arm/int_neon.S \
     libavcodec/arm/mpegvideo_neon.S \
     libavcodec/arm/simple_idct_neon.S \
@@ -617,7 +632,7 @@ LOCAL_C_INCLUDES += $(FF_INCLUDE)
 
 LOCAL_CFLAGS += $(FF_CFLAGS)
 
-LOCAL_CFLAGS += -DHAVE_ARMVFP=0 -DHAVE_NEON=0 -march=armv6j -mtune=arm1136j-s -msoft-float
+LOCAL_CFLAGS += -DHAVE_NEON=0 -march=armv6j -mtune=arm1136j-s -msoft-float
 
 LOCAL_SRC_FILES := \
     $(FF_COMMON_SRC) \
@@ -637,14 +652,13 @@ LOCAL_C_INCLUDES += $(FF_INCLUDE)
 
 LOCAL_CFLAGS += $(FF_CFLAGS)
 
-LOCAL_CFLAGS += -DHAVE_ARMVFP=1 -DHAVE_NEON=1 -march=armv7-a -mtune=cortex-a8 -mfloat-abi=softfp -mfpu=neon
+LOCAL_CFLAGS += -DHAVE_NEON=1 -march=armv7-a -mtune=cortex-a8 -mfloat-abi=softfp -mfpu=neon
 
 LOCAL_LDFLAGS += -Wl,--fix-cortex-a8
 
 LOCAL_SRC_FILES := \
     $(FF_COMMON_SRC) \
     $(FF_ARM_V6_SRC) \
-    $(FF_ARM_VFP_SRC) \
     $(FF_ARM_NEON_SRC)
 
 LOCAL_LDLIBS := -lc -lm -lz -llog

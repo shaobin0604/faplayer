@@ -261,6 +261,13 @@ static int decode_slice(MpegEncContext *s){
 
     assert(s->mb_x==0 && s->mb_y==s->mb_height);
 
+    if(s->codec_id==CODEC_ID_MPEG4
+       && (s->workaround_bugs&FF_BUG_AUTODETECT)
+       && get_bits_left(&s->gb) >= 48
+       && show_bits(&s->gb, 24)==0x4010
+       && !s->data_partitioning)
+        s->padding_bug_score+=32;
+
     /* try to detect the padding bug */
     if(      s->codec_id==CODEC_ID_MPEG4
        &&   (s->workaround_bugs&FF_BUG_AUTODETECT)
@@ -728,7 +735,7 @@ av_log(avctx, AV_LOG_DEBUG, "%"PRId64"\n", rdtsc()-time);
     return get_consumed_bytes(s, buf_size);
 }
 
-AVCodec h263_decoder = {
+AVCodec ff_h263_decoder = {
     "h263",
     AVMEDIA_TYPE_VIDEO,
     CODEC_ID_H263,

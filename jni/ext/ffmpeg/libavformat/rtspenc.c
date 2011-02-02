@@ -22,10 +22,11 @@
 #include "avformat.h"
 
 #include <sys/time.h>
-#if HAVE_SYS_SELECT_H
-#include <sys/select.h>
+#if HAVE_POLL_H
+#include <poll.h>
 #endif
 #include "network.h"
+#include "os_support.h"
 #include "rtsp.h"
 #include "internal.h"
 #include "libavutil/intreadwrite.h"
@@ -172,30 +173,23 @@ static int rtsp_write_packet(AVFormatContext *s, AVPacket *pkt)
 {
     RTSPState *rt = s->priv_data;
     RTSPStream *rtsp_st;
-    fd_set rfds;
-    int n, tcp_fd;
-    struct timeval tv;
+    int n;
+    struct pollfd p = {url_get_file_handle(rt->rtsp_hd), POLLIN, 0};
     AVFormatContext *rtpctx;
     int ret;
 
-    tcp_fd = url_get_file_handle(rt->rtsp_hd);
-
     while (1) {
-        FD_ZERO(&rfds);
-        FD_SET(tcp_fd, &rfds);
-        tv.tv_sec = 0;
-        tv.tv_usec = 0;
-        n = select(tcp_fd + 1, &rfds, NULL, NULL, &tv);
+        n = poll(&p, 1, 0);
         if (n <= 0)
             break;
-        if (FD_ISSET(tcp_fd, &rfds)) {
+        if (p.revents & POLLIN) {
             RTSPMessageHeader reply;
 
             /* Don't let ff_rtsp_read_reply handle interleaved packets,
              * since it would block and wait for an RTSP reply on the socket
              * (which may not be coming any time soon) if it handles
              * interleaved packets internally. */
-            ret = ff_rtsp_read_reply(s, &reply, NULL, 1);
+            ret = ff_rtsp_read_reply(s, &reply, NULL, 1, NULL);
             if (ret < 0)
                 return AVERROR(EPIPE);
             if (ret == 1)
@@ -233,7 +227,7 @@ static int rtsp_write_close(AVFormatContext *s)
     return 0;
 }
 
-AVOutputFormat rtsp_muxer = {
+AVOutputFormat ff_rtsp_muxer = {
     "rtsp",
     NULL_IF_CONFIG_SMALL("RTSP output format"),
     NULL,

@@ -33,6 +33,8 @@
 #include "libavutil/common.h"
 #include "libavutil/log.h"
 
+#include "libavformat/version.h"
+
 /* unbuffered I/O */
 
 /**
@@ -353,6 +355,7 @@ ByteIOContext *av_alloc_put_byte(
                   int64_t (*seek)(void *opaque, int64_t offset, int whence));
 
 void put_byte(ByteIOContext *s, int b);
+void put_nbyte(ByteIOContext *s, int b, int count);
 void put_buffer(ByteIOContext *s, const unsigned char *buf, int size);
 void put_le64(ByteIOContext *s, uint64_t val);
 void put_be64(ByteIOContext *s, uint64_t val);
@@ -364,7 +367,21 @@ void put_le16(ByteIOContext *s, unsigned int val);
 void put_be16(ByteIOContext *s, unsigned int val);
 void put_tag(ByteIOContext *s, const char *tag);
 
-void put_strz(ByteIOContext *s, const char *buf);
+#if FF_API_OLD_AVIO
+attribute_deprecated void put_strz(ByteIOContext *s, const char *buf);
+#endif
+
+/**
+ * Write a NULL-terminated string.
+ * @return number of bytes written.
+ */
+int avio_put_str(ByteIOContext *s, const char *str);
+
+/**
+ * Convert an UTF-8 string to UTF-16LE and write it.
+ * @return number of bytes written.
+ */
+int avio_put_str16le(ByteIOContext *s, const char *str);
 
 /**
  * fseek() equivalent for ByteIOContext.
@@ -442,6 +459,15 @@ unsigned int get_le24(ByteIOContext *s);
 unsigned int get_le32(ByteIOContext *s);
 uint64_t get_le64(ByteIOContext *s);
 unsigned int get_le16(ByteIOContext *s);
+
+/**
+ * Read a UTF-16 string from pb and convert it to UTF-8.
+ * The reading will terminate when either a null or invalid character was
+ * encountered or maxlen bytes have been read.
+ * @return number of bytes read (is always <= maxlen)
+ */
+int avio_get_str16le(ByteIOContext *pb, int maxlen, char *buf, int buflen);
+int avio_get_str16be(ByteIOContext *pb, int maxlen, char *buf, int buflen);
 
 char *get_strz(ByteIOContext *s, char *buf, int maxlen);
 unsigned int get_be16(ByteIOContext *s);

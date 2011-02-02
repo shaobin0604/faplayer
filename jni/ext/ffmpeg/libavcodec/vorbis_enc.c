@@ -1102,7 +1102,7 @@ static av_cold int vorbis_encode_close(AVCodecContext *avccontext)
     return 0 ;
 }
 
-AVCodec vorbis_encoder = {
+AVCodec ff_vorbis_encoder = {
     "vorbis",
     AVMEDIA_TYPE_AUDIO,
     CODEC_ID_VORBIS,
@@ -1111,6 +1111,6 @@ AVCodec vorbis_encoder = {
     vorbis_encode_frame,
     vorbis_encode_close,
     .capabilities= CODEC_CAP_DELAY | CODEC_CAP_EXPERIMENTAL,
-    .sample_fmts = (const enum SampleFormat[]){SAMPLE_FMT_S16,SAMPLE_FMT_NONE},
+    .sample_fmts = (const enum AVSampleFormat[]){AV_SAMPLE_FMT_S16,AV_SAMPLE_FMT_NONE},
     .long_name = NULL_IF_CONFIG_SMALL("Vorbis"),
 };

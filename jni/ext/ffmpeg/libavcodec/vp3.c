@@ -1432,7 +1432,7 @@ static void render_slice(Vp3DecodeContext *s, int slice)
                             if(stride<0) temp -= 9*stride;
                             else temp += 9*stride;
 
-                            ff_emulated_edge_mc(temp, motion_source, stride, 9, 9, src_x, src_y, plane_width, plane_height);
+                            s->dsp.emulated_edge_mc(temp, motion_source, stride, 9, 9, src_x, src_y, plane_width, plane_height);
                             motion_source= temp;
                         }
                     }
@@ -1721,7 +1721,6 @@ static int vp3_decode_frame(AVCodecContext *avctx,
     int buf_size = avpkt->size;
     Vp3DecodeContext *s = avctx->priv_data;
     GetBitContext gb;
-    static int counter = 0;
     int i;
 
     init_get_bits(&gb, buf, buf_size * 8);
@@ -1747,8 +1746,7 @@ static int vp3_decode_frame(AVCodecContext *avctx,
 
     if (s->avctx->debug & FF_DEBUG_PICT_INFO)
         av_log(s->avctx, AV_LOG_INFO, " VP3 %sframe #%d: Q index = %d\n",
-            s->keyframe?"key":"", counter, s->qps[0]);
-    counter++;
+            s->keyframe?"key":"", avctx->frame_number+1, s->qps[0]);
 
     s->skip_loop_filter = !s->filter_limit_values[s->qps[0]] ||
         avctx->skip_loop_filter >= (s->keyframe ? AVDISCARD_ALL : AVDISCARD_NONKEY);
@@ -1780,7 +1778,7 @@ static int vp3_decode_frame(AVCodecContext *avctx,
             if (s->version)
             {
                 s->version = get_bits(&gb, 5);
-                if (counter == 1)
+                if (avctx->frame_number == 0)
                     av_log(s->avctx, AV_LOG_DEBUG, "VP version: %d\n", s->version);
             }
         }
@@ -2214,7 +2212,7 @@ static av_cold int theora_decode_init(AVCodecContext *avctx)
     return vp3_decode_init(avctx);
 }
 
-AVCodec theora_decoder = {
+AVCodec ff_theora_decoder = {
     "theora",
     AVMEDIA_TYPE_VIDEO,
     CODEC_ID_THEORA,
@@ -2229,7 +2227,7 @@ AVCodec theora_decoder = {
 };
 #endif
 
-AVCodec vp3_decoder = {
+AVCodec ff_vp3_decoder = {
     "vp3",
     AVMEDIA_TYPE_VIDEO,
     CODEC_ID_VP3,

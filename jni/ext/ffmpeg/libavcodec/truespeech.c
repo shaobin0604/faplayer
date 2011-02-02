@@ -56,7 +56,7 @@ static av_cold int truespeech_decode_init(AVCodecContext * avctx)
 {
 //    TSContext *c = avctx->priv_data;
 
-    avctx->sample_fmt = SAMPLE_FMT_S16;
+    avctx->sample_fmt = AV_SAMPLE_FMT_S16;
     return 0;
 }
 
@@ -381,7 +381,7 @@ static int truespeech_decode_frame(AVCodecContext *avctx,
     return consumed;
 }
 
-AVCodec truespeech_decoder = {
+AVCodec ff_truespeech_decoder = {
     "truespeech",
     AVMEDIA_TYPE_AUDIO,
     CODEC_ID_TRUESPEECH,

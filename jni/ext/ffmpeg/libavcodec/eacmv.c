@@ -97,9 +97,10 @@ static void cmv_decode_inter(CmvContext * s, const uint8_t *buf, const uint8_t *
             }else if(raw<buf_end) {  /* inter using second-last frame as reference */
                 int xoffset = (*raw & 0xF) - 7;
                 int yoffset = ((*raw >> 4)) - 7;
-                cmv_motcomp(s->frame.data[0], s->frame.linesize[0],
-                            s->last2_frame.data[0], s->last2_frame.linesize[0],
-                            x*4, y*4, xoffset, yoffset, s->avctx->width, s->avctx->height);
+                if (s->last2_frame.data[0])
+                    cmv_motcomp(s->frame.data[0], s->frame.linesize[0],
+                                s->last2_frame.data[0], s->last2_frame.linesize[0],
+                                x*4, y*4, xoffset, yoffset, s->avctx->width, s->avctx->height);
                 raw++;
             }
         }else{  /* inter using last frame as reference */
@@ -204,7 +205,7 @@ static av_cold int cmv_decode_end(AVCodecContext *avctx){
     return 0;
 }
 
-AVCodec eacmv_decoder = {
+AVCodec ff_eacmv_decoder = {
     "eacmv",
     AVMEDIA_TYPE_VIDEO,
     CODEC_ID_CMV,

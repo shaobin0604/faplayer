@@ -35,7 +35,7 @@ static av_cold int gsm_init(AVCodecContext *avctx)
     avctx->channels = 1;
     if (!avctx->sample_rate)
         avctx->sample_rate = 8000;
-    avctx->sample_fmt = SAMPLE_FMT_S16;
+    avctx->sample_fmt = AV_SAMPLE_FMT_S16;
 
     switch (avctx->codec_id) {
     case CODEC_ID_GSM:
@@ -84,7 +84,7 @@ static int gsm_decode_frame(AVCodecContext *avctx, void *data,
     return avctx->block_align;
 }
 
-AVCodec gsm_decoder = {
+AVCodec ff_gsm_decoder = {
     "gsm",
     AVMEDIA_TYPE_AUDIO,
     CODEC_ID_GSM,
@@ -96,7 +96,7 @@ AVCodec gsm_decoder = {
     .long_name = NULL_IF_CONFIG_SMALL("GSM"),
 };
 
-AVCodec gsm_ms_decoder = {
+AVCodec ff_gsm_ms_decoder = {
     "gsm_ms",
     AVMEDIA_TYPE_AUDIO,
     CODEC_ID_GSM_MS,

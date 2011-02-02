@@ -31,8 +31,8 @@
 #include "internal.h"
 #include "network.h"
 #include "os_support.h"
-#if HAVE_SYS_SELECT_H
-#include <sys/select.h>
+#if HAVE_POLL_H
+#include <poll.h>
 #endif
 #include <sys/time.h>
 
@@ -245,8 +245,9 @@ static int udp_port(struct sockaddr_storage *addr, int addr_len)
 int udp_set_remote_url(URLContext *h, const char *uri)
 {
     UDPContext *s = h->priv_data;
-    char hostname[256];
+    char hostname[256], buf[10];
     int port;
+    const char *p;
 
     av_url_split(NULL, 0, NULL, 0, hostname, sizeof(hostname), &port, NULL, 0, uri);
 
@@ -256,6 +257,21 @@ int udp_set_remote_url(URLContext *h, const char *uri)
         return AVERROR(EIO);
     }
     s->is_multicast = ff_is_multicast_address((struct sockaddr*) &s->dest_addr);
+    p = strchr(uri, '?');
+    if (p) {
+        if (find_info_tag(buf, sizeof(buf), "connect", p)) {
+            int was_connected = s->is_connected;
+            s->is_connected = strtol(buf, NULL, 10);
+            if (s->is_connected && !was_connected) {
+                if (connect(s->udp_fd, (struct sockaddr *) &s->dest_addr,
+                            s->dest_addr_len)) {
+                    s->is_connected = 0;
+                    av_log(NULL, AV_LOG_ERROR, "connect: %s\n", strerror(errno));
+                    return AVERROR(EIO);
+                }
+            }
+        }
+    }
 
     return 0;
 }
@@ -416,25 +432,20 @@ static int udp_open(URLContext *h, const char *uri, int flags)
 static int udp_read(URLContext *h, uint8_t *buf, int size)
 {
     UDPContext *s = h->priv_data;
+    struct pollfd p = {s->udp_fd, POLLIN, 0};
     int len;
-    fd_set rfds;
     int ret;
-    struct timeval tv;
 
     for(;;) {
         if (url_interrupt_cb())
             return AVERROR(EINTR);
-        FD_ZERO(&rfds);
-        FD_SET(s->udp_fd, &rfds);
-        tv.tv_sec = 0;
-        tv.tv_usec = 100 * 1000;
-        ret = select(s->udp_fd + 1, &rfds, NULL, NULL, &tv);
+        ret = poll(&p, 1, 100);
         if (ret < 0) {
             if (ff_neterrno() == FF_NETERROR(EINTR))
                 continue;
             return AVERROR(EIO);
         }
-        if (!(ret > 0 && FD_ISSET(s->udp_fd, &rfds)))
+        if (!(ret == 1 && p.revents & POLLIN))
             continue;
         len = recv(s->udp_fd, buf, size, 0);
         if (len < 0) {
@@ -482,7 +493,7 @@ static int udp_close(URLContext *h)
     return 0;
 }
 
-URLProtocol udp_protocol = {
+URLProtocol ff_udp_protocol = {
     "udp",
     udp_open,
     udp_read,

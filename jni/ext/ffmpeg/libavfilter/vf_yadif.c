@@ -167,7 +167,14 @@ static void return_frame(AVFilterContext *ctx, int is_second)
 {
     YADIFContext *yadif = ctx->priv;
     AVFilterLink *link= ctx->outputs[0];
-    int tff = yadif->parity == -1 ? yadif->cur->video->top_field_first : (yadif->parity^1);
+    int tff;
+
+    if (yadif->parity == -1) {
+        tff = yadif->cur->video->interlaced ?
+            yadif->cur->video->top_field_first : 1;
+    } else {
+        tff = yadif->parity^1;
+    }
 
     if (is_second)
         yadif->out = avfilter_get_video_buffer(link, AV_PERM_WRITE | AV_PERM_PRESERVE |
@@ -175,8 +182,17 @@ static void return_frame(AVFilterContext *ctx, int is_second)
 
     filter(ctx, yadif->out, tff ^ !is_second, tff);
 
-    if (is_second)
+    if (is_second) {
+        if (yadif->next->pts != AV_NOPTS_VALUE &&
+            yadif->cur->pts != AV_NOPTS_VALUE) {
+            yadif->out->pts =
+                (yadif->next->pts&yadif->cur->pts) +
+                ((yadif->next->pts^yadif->cur->pts)>>1);
+        } else {
+            yadif->out->pts = AV_NOPTS_VALUE;
+        }
         avfilter_start_frame(ctx->outputs[0], yadif->out);
+    }
     avfilter_draw_slice(ctx->outputs[0], 0, link->h, 1);
     avfilter_end_frame(ctx->outputs[0]);
 
@@ -206,7 +222,8 @@ static void start_frame(AVFilterLink *link, AVFilterBufferRef *picref)
     yadif->out = avfilter_get_video_buffer(ctx->outputs[0], AV_PERM_WRITE | AV_PERM_PRESERVE |
                                        AV_PERM_REUSE, link->w, link->h);
 
-    yadif->out->pts = yadif->cur->pts;
+    avfilter_copy_buffer_ref_props(yadif->out, yadif->cur);
+    yadif->out->video->interlaced = 0;
     avfilter_start_frame(ctx->outputs[0], yadif->out);
 }
 
@@ -294,7 +311,11 @@ static av_cold int init(AVFilterContext *ctx, const char *args, void *opaque)
     if (args) sscanf(args, "%d:%d", &yadif->mode, &yadif->parity);
 
     yadif->filter_line = filter_line_c;
-    if (HAVE_MMX && cpu_flags & AV_CPU_FLAG_MMX)
+    if (HAVE_SSSE3 && cpu_flags & AV_CPU_FLAG_SSSE3)
+        yadif->filter_line = ff_yadif_filter_line_ssse3;
+    else if (HAVE_SSE && cpu_flags & AV_CPU_FLAG_SSE2)
+        yadif->filter_line = ff_yadif_filter_line_sse2;
+    else if (HAVE_MMX && cpu_flags & AV_CPU_FLAG_MMX)
         yadif->filter_line = ff_yadif_filter_line_mmx;
 
     av_log(ctx, AV_LOG_INFO, "mode:%d parity:%d\n", yadif->mode, yadif->parity);
