@@ -11,14 +11,31 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
-		<SeekBar
-            android:id="@+id/seek"
+        <TextView
+            android:id="@+id/time"
+            android:text="@string/nulltime"
+            android:gravity="center"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="24dip"
+            android:layout_weight="4"
+            android:layout_gravity="center" />
+
+		<SeekBar
+            android:id="@+id/seekbar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginTop="4dip"
-            android:layout_marginRight="24dip"
             android:layout_marginBottom="4dip" />
+
+        <TextView
+            android:id="@+id/length"
+            android:text="@string/nulltime"
+            android:gravity="center"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:layout_gravity="center" />
 
 	</LinearLayout>
 

@@ -56,10 +56,10 @@ void dump(const void* addr, int size) {
         }
         v = *((unsigned char*)(addr) + i);
         c = (v >> 4) | 0x30;
-        c += (c > 9) ? 7 : 0;
+        c += (c > '9') ? 7 : 0;
         buffer[j++] = c;
         c = (v & 0x0f) | 0x30;
-        c += (c > 9) ? 7 : 0;
+        c += (c > '9') ? 7 : 0;
         buffer[j++] = c;
         buffer[j++] = 0x20;
     }

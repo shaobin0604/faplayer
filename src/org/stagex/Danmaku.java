@@ -19,7 +19,7 @@ import android.content.res.AssetManager;
 public class Danmaku extends Application {
 
 	protected boolean initialize() {
-		// prepair
+		// prepare, orz
 		String root = super.getCacheDir().getAbsolutePath();
 		try {
 			ArrayList<String> list = new ArrayList<String>();
@@ -71,8 +71,6 @@ public class Danmaku extends Application {
 		// attention: SO_MAX is 96
 		String libd = String.format("%s/lib", root);
 		String datd = String.format("%s/share", root);
-		String intf = "rc";
-		String host = "127.0.0.1:21178";
 		int code = SystemUtility.getSDKVersionCode();
 		if (code == 6 || code == 7)
 			code = 5;
@@ -82,9 +80,9 @@ public class Danmaku extends Application {
 		String vout = String
 				.format("vout_android-%d", test.exists() ? code : 5);
 		VLC.getInstance().create(
-				new String[] { "--no-ignore-config", "--verbose", "2", "--plugin-path", libd,
-						"--data-path", datd, "--intf", intf, "--rc-host", host,
-						"--rc-fake-tty", "--aout", aout, "--vout", vout });
+				new String[] { "--no-ignore-config", "--verbose", "2",
+						"--plugin-path", libd, "--data-path", datd, "--intf",
+						"asrc", "--aout", aout, "--vout", vout });
 		// start VLM
 		VLM.getInstance().create(new String[] { "127.0.0.1", "21178" });
 

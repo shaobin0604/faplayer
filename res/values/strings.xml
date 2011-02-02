@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">faplayer</string>
     <string name="go">go</string>
+    <string name="nulltime">--:--:--</string>
 </resources>

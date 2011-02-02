@@ -91,12 +91,8 @@ demux_t *__demux_New( vlc_object_t *p_obj, input_thread_t *p_parent_input,
 #if defined ( ANDROID )
     // force to use avformat
     if( s && *psz_module == '\0') {
-        char name[16];
-        int arch = android_getCpuFamily() & ANDROID_CPU_ARM_FEATURE_ARMv7 ? 7 : 6;
-
         p_demux->b_force = true;
-        sprintf(name, "avformat-%d", arch);
-        psz_module = name;
+        psz_module = "avformat";
     }
 #else
     if( s && *psz_module == '\0' && strrchr( p_demux->psz_path, '.' ) )

@@ -1,11 +1,13 @@
 package org.videolan;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.Socket;
-import java.util.ArrayList;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.SocketChannel;
+import java.util.Iterator;
 
 import android.util.Log;
 
@@ -13,37 +15,122 @@ public class VLM {
 
 	private static VLM mInstance;
 
-	private Socket mClientSocket;
-	private InputStream mClientIn;
-	private OutputStream mClientOut;
-	private Thread mBoot;
+	private VLI mCallbackHandler = null;
+
+	private Thread mVLMThread = null;
+
+	private ByteBuffer mSendBuffer = ByteBuffer.allocate(512);
+	private ByteBuffer mRecvBuffer = ByteBuffer.allocate(512);
+	private Selector mSelector;
+	private SocketChannel mClientChannel = null;
+
+	private int mLineOffset = 0;
+	private int mLineLength = 0;
+	private byte[] mLineBuffer = new byte[512];
 
 	protected VLM() {
 	}
 
-	protected String readBytes() {
-		int length = 0;
-		byte[] buffer = new byte[4096];
-		String str = new String();
-		try {
-			length = mClientIn.read(buffer);
-			str = new String(buffer, 0, length, "utf-8");
-		} catch (IOException e) {
+	protected void triggerCallback(String line) {
+		if (line == null || line.length() == 0 || mCallbackHandler == null)
+			return;
+		// TODO: quote
+		String[] temp = line.split("\\s+");
+		if (temp.length != 3)
+			return;
+		mCallbackHandler.onStateChange(temp[0], temp[1], temp[2]);
+	}
+
+	protected boolean wantRead() {
+		return true;
+	}
+
+	protected boolean wantWrite() {
+		synchronized (mSendBuffer) {
+			return (mSendBuffer.position() > 0);
 		}
-		return str;
+	}
+
+	protected void doRead() throws IOException {
+		synchronized (mRecvBuffer) {
+			mRecvBuffer.clear();
+			int read = mClientChannel.read(mRecvBuffer);
+			if (read == 0)
+				return;
+			mRecvBuffer.flip();
+			while (mRecvBuffer.position() != mRecvBuffer.limit()) {
+				byte ch = mRecvBuffer.get();
+				mLineBuffer[(mLineOffset + mLineLength++) % mLineBuffer.length] = ch;
+				if ((ch == '\n' || ch == '\r' || ch == '\0')
+						|| (mLineLength == mLineBuffer.length)) {
+					if ((ch == '\n' || ch == '\r' || ch == '\0'))
+						mLineLength -= 1;
+					String line = null;
+					try {
+						if (mLineOffset + mLineLength <= mLineBuffer.length)
+							line = new String(mLineBuffer, mLineOffset,
+									mLineLength, "utf-8");
+						else {
+							byte[] temp = new byte[mLineLength];
+							int part1 = mLineBuffer.length - mLineOffset;
+							int part2 = (mLineOffset + mLineLength)
+									% mLineBuffer.length;
+							System.arraycopy(mLineBuffer, mLineOffset, temp, 0,
+									part1);
+							System.arraycopy(mLineBuffer, 0, temp, part1, part2);
+							line = new String(temp, 0, mLineLength, "utf-8");
+						}
+					} catch (UnsupportedEncodingException e) {
+					}
+					if (line != null) {
+						Log.d("faplayer-java", line);
+						triggerCallback(line);
+					}
+					mLineOffset += mLineLength;
+					mLineOffset %= mLineBuffer.length;
+					mLineLength = 0;
+				}
+			}
+		}
+	}
+
+	protected void doWrite() throws IOException {
+		synchronized (mSendBuffer) {
+			int position = mSendBuffer.position();
+			mSendBuffer.flip();
+			int written = 0;
+			written = mClientChannel.write(mSendBuffer);
+			if (written < position) {
+				mSendBuffer.position(position - written);
+			}
+			mSendBuffer.compact();
+			Log.d("faplayer-java", String.format("%d bytes written", written));
+		}
 	}
 
 	protected void writeBytes(String str) {
 		if (str == null || str.length() == 0)
 			return;
-		// Log.d("faplayer", str);
+		if (!str.endsWith("\n"))
+			str += "\n";
+		byte[] data = null;
 		try {
-			byte[] raw = str.getBytes("utf-8");
-			mClientOut.write(raw);
-			mClientOut.flush();
+			data = str.getBytes("utf-8");
 		} catch (UnsupportedEncodingException e) {
-		} catch (IOException e) {
 		}
+		writeBytes(data);
+	}
+
+	protected void writeBytes(byte[] data) {
+		if (data != null && data.length > 0) {
+			synchronized (mSendBuffer) {
+				mSendBuffer.put(data, 0,
+						mSendBuffer.remaining() >= data.length ? data.length
+								: mSendBuffer.remaining());
+			}
+		}
+		if (mSelector != null)
+			mSelector.wakeup();
 	}
 
 	public static VLM getInstance() {
@@ -53,25 +140,58 @@ public class VLM {
 	}
 
 	public void create(final String[] args) {
-		if (args == null || args.length != 2)
+		if (args == null || args.length != 2 || mVLMThread != null)
 			return;
-		if (mClientSocket != null && mClientSocket.isConnected())
-			return;
-		mBoot = new Thread(new Runnable() {
+		mVLMThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				for (;;) {
+					mLineOffset = 0;
+					mLineLength = 0;
+					mRecvBuffer.clear();
+					mSendBuffer.clear();
 					try {
-						mClientSocket = new Socket(args[0],
-								Integer.parseInt(args[1]));
-						mClientSocket.setKeepAlive(true);
-						mClientSocket.setTcpNoDelay(true);
-						mClientIn = mClientSocket.getInputStream();
-						mClientOut = mClientSocket.getOutputStream();
-						writeBytes("help\n");
-						Log.d("faplayer", readBytes());
-						break;
+						mSelector = Selector.open();
+						mClientChannel = SocketChannel
+								.open(new InetSocketAddress(args[0], Integer
+										.parseInt(args[1])));
+						mClientChannel.configureBlocking(false);
+						mClientChannel.register(mSelector, SelectionKey.OP_READ
+								| SelectionKey.OP_WRITE);
+						while (true) {
+							mClientChannel
+									.register(
+											mSelector,
+											(wantRead() ? SelectionKey.OP_READ
+													: 0)
+													| (wantWrite() ? SelectionKey.OP_WRITE
+															: 0));
+							// TODO: when the connection hangs up unexpectedly,
+							// figure it out
+							int n = mSelector.select();
+							if (n < 0)
+								break;
+							Iterator<SelectionKey> it = mSelector
+									.selectedKeys().iterator();
+							while (it.hasNext()) {
+								SelectionKey key = (SelectionKey) it.next();
+								it.remove();
+								if (key.isReadable()) {
+									doRead();
+								}
+								if (key.isWritable()) {
+									doWrite();
+								}
+							}
+						}
 					} catch (IOException e) {
+						try {
+							if (mClientChannel != null)
+								mClientChannel.close();
+							if (mSelector != null)
+								mSelector.close();
+						} catch (IOException ex) {
+						}
 						try {
 							Thread.sleep(100);
 						} catch (InterruptedException ex) {
@@ -80,57 +200,30 @@ public class VLM {
 				}
 			}
 		});
-		mBoot.start();
+		mVLMThread.start();
 	}
 
 	public void destroy() {
-		if (mClientSocket != null) {
-			try {
-				writeBytes("quit\n");
-				try {
-					mClientSocket.close();
-				} finally {
-					mClientSocket = null;
-				}
-			} catch (IOException e) {
-			}
-			mClientIn = null;
-			mClientOut = null;
+		// 乱暴じゃなイカ？
+		if (mVLMThread.isAlive()) {
+			mVLMThread.interrupt();
+			mVLMThread = null;
 		}
 	}
 
-	public void play(int index) {
+	public void setCallbackHandler(VLI handler) {
+		mCallbackHandler = handler;
+	}
+
+	public void open(String file) {
 		String line;
-		line = String.format("goto %d\n", index);
-		writeBytes(line);
-		line = "play\n";
+		line = String.format("open \"%s\"", file);
 		writeBytes(line);
 	}
 
-	public void playMRL(String mrl) {
+	public void close() {
 		String line;
-		line = "clear\n";
+		line = String.format("close");
 		writeBytes(line);
-		line = String.format("enqueue %s\n", mrl);
-		writeBytes(line);
-		line = "goto 1\n";
-		writeBytes(line);
-	}
-
-	public void stop() {
-		String line;
-		line = "stop\n";
-		writeBytes(line);
-	}
-
-	public void setPlayList(ArrayList<String> list) {
-		String line;
-		writeBytes("clear\n");
-		for (String file : list) {
-			line = String.format("enqueue %s\n", file);
-			writeBytes(line);
-		}
-		line = "playlist\n";
-		Log.d("faplayer", readBytes());
 	}
 }

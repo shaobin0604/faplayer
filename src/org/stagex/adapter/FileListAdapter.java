@@ -154,7 +154,7 @@ public class FileListAdapter extends BaseAdapter implements
 		if (dot < 0 || dot == name.length() - 1)
 			return false;
 		String ext = name.substring(dot + 1).toLowerCase();
-		String list = "3gp#amv#ape#asf#avi#flac#flv#mkv#mov#mp3#mp4#mpeg#mpg#rm#rmvb#tta#wav#wma#wmv";
+		String list = "3gp#amv#ape#asf#avi#flac#flv#hlv#mkv#mov#mp3#mp4#mpeg#mpg#rm#rmvb#tta#wav#wma#wmv";
 		if (list.indexOf(ext) < 0)
 			return false;
 		return true;
