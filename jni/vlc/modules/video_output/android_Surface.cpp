@@ -92,9 +92,9 @@ static int Open(vlc_object_t *object) {
     fmt.i_chroma = chroma;
     switch (chroma) {
     case VLC_CODEC_RGB16:
-        fmt.i_rmask = 0x001f;
+        fmt.i_rmask = 0xf800;
         fmt.i_gmask = 0x07e0;
-        fmt.i_bmask = 0xf800;
+        fmt.i_bmask = 0x001f;
         break;
     default:
         fmt.i_rmask = 0;

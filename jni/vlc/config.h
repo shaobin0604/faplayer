@@ -50,13 +50,13 @@
 /* #undef CAN_COMPILE_SSSE3 */
 
 /* The ./configure command line */
-#define CONFIGURE_LINE "./configure  '--host=arm-linux-androideabi' '--prefix=/opt/google/standalone-android-toolchain/sysroot' '--without-contrib' '--disable-non-utf8' '--disable-dbus' '--disable-dbus-control' '--disable-telepathy' '--with-tuning=arm1136j-s' '--disable-sout' '--disable-lua' '--enable-httpd' '--disable-libproxy' '--disable-growl' '--disable-notify' '--disable-taglib' '--disable-live555' '--disable-dc1394' '--disable-dv' '--disable-dvdread' '--disable-dvdnav' '--disable-dshow' '--disable-bda' '--disable-opencv' '--disable-smb' '--disable-sftp' '--disable-dvbpsi' '--disable-v4l' '--disable-libv4l' '--disable-v4l2' '--disable-libv4l2' '--disable-pvr' '--disable-gnomevfs' '--disable-vcdx' '--disable-vcd' '--disable-libcddb' '--disable-dvb' '--enable-screen' '--disable-gme' '--disable-ogg' '--disable-mux_ogg' '--disable-shout' '--enable-mkv' '--disable-mod' '--disable-mpc' '--disable-wma-fixed' '--disable-shine' '--disable-omxil' '--disable-mad' '--disable-id3tag' '--enable-merge-ffmpeg' '--enable-avcodec' '--disable-libva' '--disable-dxva2' '--disable-switcher' '--enable-avformat' '--enable-swscale' '--disable-postproc' '--disable-faad' '--disable-twolame' '--disable-quicktime' '--disable-real' '--disable-realrtsp' '--disable-libtar' '--disable-a52' '--disable-dca' '--disable-flac' '--disable-libmpeg2' '--disable-vorbis' '--disable-tremor' '--disable-speex' '--disable-theora' '--disable-dirac' '--disable-schroedinger' '--disable-png' '--disable-x264' '--disable-fluidsynth' '--disable-zvbi' '--disable-telx' '--disable-libass' '--disable-asademux' '--disable-kate' '--disable-tiger' '--without-x' '--disable-xcb' '--disable-xvideo' '--disable-glx' '--disable-opengl' '--disable-sdl' '--disable-sdl-image' '--disable-freetype' '--disable-fribidi' '--disable-fontconfig' '--disable-libxml2' '--disable-svg' '--disable-snapshot' '--disable-hd1000v' '--disable-directx' '--disable-wingdi' '--disable-fb' '--disable-omapfb' '--disable-svgalib' '--disable-directfb' '--disable-ggi' '--disable-aa' '--disable-caca' '--disable-oss' '--disable-pulse' '--disable-portaudio' '--disable-alsa' '--disable-waveout' '--disable-macosx-audio' '--disable-hd1000a' '--disable-jack' '--disable-cyberlink' '--disable-upnp' '--disable-skins2' '--disable-hildon' '--disable-qt4' '--disable-macosx' '--disable-macosx-vout' '--disable-macosx-dialog-provider' '--disable-macosx-qtcapture' '--disable-macosx-eyetv' '--disable-macosx-vlc-app' '--disable-ncurses' '--disable-fbosd' '--disable-visual' '--disable-goom' '--disable-projectm' '--disable-atmo' '--disable-bonjour' '--disable-udev' '--disable-mtp' '--disable-lirc' '--disable-libgcrypt' '--disable-gnutls' '--disable-remoteosd' '--disable-osso_screensaver' '--disable-update-check' '--disable-sqlite' '--disable-loader' '--enable-vlc' '--disable-activex' '--disable-mozilla' 'host_alias=arm-linux-androideabi'"
+#define CONFIGURE_LINE "./configure  '--host=arm-linux-androideabi' '--prefix=/opt/google/standalone-android-toolchain/sysroot' '--without-contrib' '--disable-non-utf8' '--disable-dbus' '--disable-dbus-control' '--disable-telepathy' '--disable-sout' '--disable-lua' '--disable-httpd' '--disable-libproxy' '--disable-vlm' '--disable-growl' '--disable-notify' '--disable-taglib' '--disable-live555' '--disable-dc1394' '--disable-dv' '--disable-dvdread' '--disable-dvdnav' '--disable-dshow' '--disable-bda' '--disable-opencv' '--disable-smb' '--disable-sftp' '--disable-dvbpsi' '--disable-v4l' '--disable-libv4l' '--disable-v4l2' '--disable-libv4l2' '--disable-pvr' '--disable-gnomevfs' '--disable-vcdx' '--disable-vcd' '--disable-libcddb' '--disable-dvb' '--disable-screen' '--disable-gme' '--disable-ogg' '--disable-mux_ogg' '--disable-shout' '--disable-mkv' '--disable-mod' '--disable-mpc' '--disable-wma-fixed' '--disable-shine' '--disable-omxil' '--disable-mad' '--disable-id3tag' '--disable-merge-ffmpeg' '--enable-avcodec' '--disable-libva' '--disable-dxva2' '--disable-switcher' '--enable-avformat' '--enable-swscale' '--disable-postproc' '--disable-faad' '--disable-twolame' '--disable-quicktime' '--disable-real' '--disable-realrtsp' '--disable-libtar' '--disable-a52' '--disable-dca' '--disable-flac' '--disable-libmpeg2' '--disable-vorbis' '--disable-tremor' '--disable-speex' '--disable-theora' '--disable-dirac' '--disable-schroedinger' '--disable-png' '--disable-x264' '--disable-fluidsynth' '--disable-zvbi' '--disable-telx' '--disable-libass' '--disable-asademux' '--disable-kate' '--disable-tiger' '--without-x' '--disable-xcb' '--disable-xvideo' '--disable-glx' '--disable-opengl' '--disable-sdl' '--disable-sdl-image' '--disable-freetype' '--disable-fribidi' '--disable-fontconfig' '--disable-libxml2' '--disable-svg' '--disable-snapshot' '--disable-hd1000v' '--disable-directx' '--disable-wingdi' '--disable-fb' '--disable-omapfb' '--disable-svgalib' '--disable-directfb' '--disable-ggi' '--disable-aa' '--disable-caca' '--disable-oss' '--disable-pulse' '--disable-portaudio' '--disable-alsa' '--disable-waveout' '--disable-macosx-audio' '--disable-hd1000a' '--disable-jack' '--disable-cyberlink' '--disable-upnp' '--disable-skins2' '--disable-hildon' '--disable-qt4' '--disable-macosx' '--disable-macosx-vout' '--disable-macosx-dialog-provider' '--disable-macosx-qtcapture' '--disable-macosx-eyetv' '--disable-macosx-vlc-app' '--disable-ncurses' '--disable-fbosd' '--disable-visual' '--disable-goom' '--disable-projectm' '--disable-atmo' '--disable-bonjour' '--disable-udev' '--disable-mtp' '--disable-lirc' '--disable-libgcrypt' '--disable-gnutls' '--disable-remoteosd' '--disable-osso_screensaver' '--disable-update-check' '--disable-sqlite' '--disable-loader' '--disable-vlc' '--disable-activex' '--disable-mozilla' 'host_alias=arm-linux-androideabi'"
 
 /* Copyright string */
-#define COPYRIGHT_MESSAGE "Copyright © 1996-2010 the VideoLAN team"
+#define COPYRIGHT_MESSAGE "Copyright © 1996-2011 the VideoLAN team"
 
 /* The copyright years */
-#define COPYRIGHT_YEARS "1996-2010"
+#define COPYRIGHT_YEARS "1996-2011"
 
 /* Disables runtime check for buggy glibc. */
 /* #undef DISABLE_BUGGY_GLIBC_CHECK */
@@ -65,7 +65,7 @@
 /* #undef DISTRO_VERSION */
 
 /* Define if you want the HTTP dameon support */
-#define ENABLE_HTTPD 1
+/* #undef ENABLE_HTTPD */
 
 /* Define to 1 if translation of program messages to the user's native
    language is requested. */
@@ -75,7 +75,7 @@
 /* #undef ENABLE_SOUT */
 
 /* Define if you want the VideoLAN manager support */
-#define ENABLE_VLM 1
+/* #undef ENABLE_VLM */
 
 /* Define to 1 if you have the <a52dec/a52.h> header file. */
 /* #undef HAVE_A52DEC_A52_H */
@@ -103,7 +103,7 @@
 #define HAVE_ASPRINTF 1
 
 /* Define to 1 if you have the `atof' function. */
-#define HAVE_ATOF 1 
+#define HAVE_ATOF 1
 
 /* Define to 1 if you have the `atoll' function. */
 #define HAVE_ATOLL 1
@@ -347,10 +347,10 @@
 #define HAVE_LIBAVCODEC_AVCODEC_H 1
 
 /* Define to 1 if you have the <libavcodec/dxva2.h> header file. */
-#define HAVE_LIBAVCODEC_DXVA2_H 1
+/* #undef HAVE_LIBAVCODEC_DXVA2_H */
 
 /* Define to 1 if you have the <libavcodec/vaapi.h> header file. */
-#define HAVE_LIBAVCODEC_VAAPI_H 1
+/* #undef HAVE_LIBAVCODEC_VAAPI_H */
 
 /* Define to 1 if you have the <libavformat/avformat.h> header file. */
 #define HAVE_LIBAVFORMAT_AVFORMAT_H 1
@@ -762,7 +762,7 @@
 #define PACKAGE_NAME "vlc"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "vlc 1.1.5"
+#define PACKAGE_STRING "vlc 1.1.7"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "vlc"
@@ -771,7 +771,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.1.5"
+#define PACKAGE_VERSION "1.1.7"
 
 /* version minor number */
 #define PACKAGE_VERSION_EXTRA ""
@@ -783,7 +783,7 @@
 #define PACKAGE_VERSION_MINOR "1"
 
 /* version minor number */
-#define PACKAGE_VERSION_REVISION "5"
+#define PACKAGE_VERSION_REVISION "7"
 
 /* Define if you want to use SQLite module */
 /* #undef SQLITE_MODULE */
@@ -820,10 +820,10 @@
 
 
 /* Version number of package */
-#define VERSION "1.1.5"
+#define VERSION "1.1.7"
 
 /* Simple version string */
-#define VERSION_MESSAGE "1.1.5 The Luggage"
+#define VERSION_MESSAGE "1.1.7 The Luggage"
 
 /* Location of videodev2.h */
 /* #undef VIDEODEV2_H_FILE */

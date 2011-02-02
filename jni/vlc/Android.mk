@@ -84,9 +84,6 @@ LOCAL_SRC_FILES := \
     src/input/stream_memory.c \
     src/input/subtitles.c \
     src/input/var.c \
-    src/input/vlm.c \
-    src/input/vlm_event.c \
-    src/input/vlmshell.c \
     src/interface/dialog.c \
     src/interface/interface.c \
     src/misc/action.c \
@@ -126,7 +123,6 @@ LOCAL_SRC_FILES := \
     src/modules/textdomain.c \
     src/network/acl.c \
     src/network/getaddrinfo.c \
-    src/network/httpd.c \
     src/network/io.c \
     src/network/poll.c \
     src/network/rootbind.c \

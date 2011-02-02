@@ -2,7 +2,7 @@
  * live555.cpp : LIVE555 Streaming Media support.
  *****************************************************************************
  * Copyright (C) 2003-2007 the VideoLAN team
- * $Id: c83200c2d68f93c559ee141c79ff409fc29733b4 $
+ * $Id: b3f4de163dcba93bbfc97d3228a008eba548fbe1 $
  *
  * Authors: Laurent Aimar <fenrir@via.ecp.fr>
  *          Derk-Jan Hartman <hartman at videolan. org>
@@ -812,6 +812,11 @@ static int SessionsSetup( demux_t *p_demux )
                 {
                     tk->fmt.i_codec = VLC_FOURCC( 't', 'w', 'o', 's' );
                     tk->fmt.audio.i_bitspersample = 16;
+                }
+                else if( !strcmp( sub->codecName(), "L24" ) )
+                {
+                    tk->fmt.i_codec = VLC_CODEC_S24B;
+                    tk->fmt.audio.i_bitspersample = 24;
                 }
                 else if( !strcmp( sub->codecName(), "L8" ) )
                 {
@@ -1814,7 +1819,8 @@ static void StreamRead( void *p_private, unsigned int i_size,
     }
 
     /* Update our global npt value */
-    if( tk->i_npt > 0 && tk->i_npt > p_sys->i_npt && tk->i_npt < p_sys->i_npt_length)
+    if( tk->i_npt > 0 && tk->i_npt > p_sys->i_npt &&
+        ( tk->i_npt < p_sys->i_npt_length || p_sys->i_npt_length <= 0 ) )
         p_sys->i_npt = tk->i_npt;
 
     if( p_block )

@@ -185,7 +185,11 @@ int module_Load( vlc_object_t *p_this, const char *psz_file,
 # endif
     char *path = ToLocale( psz_file );
 
+#if defined ( ANDROID )
     handle = dlopen( path, 0 );
+#else
+    handle = dlopen( path, flags );
+#endif
     if( handle == NULL )
     {
         msg_Warn( p_this, "cannot load module `%s' (%s)", path, dlerror() );

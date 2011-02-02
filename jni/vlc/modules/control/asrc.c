@@ -413,7 +413,7 @@ static int InputEvent(vlc_object_t *p_this, char const *psz_cmd, vlc_value_t old
         vlc_value_t val;
 
         var_Get(p_input, "state", &val);
-        Notify(p_intf, "input state %d\n", val.i_int / 1000000);
+        Notify(p_intf, "input state %d\n", val.i_int);
         break;
     }
     case INPUT_EVENT_DEAD: {

@@ -630,6 +630,7 @@ static const char psz_thanks[] =
 "Salar Khalilzadeh\" - Persian translation\n"
 "Sašo Kiselkov - RTSP session timeout fix for some STBs, multipass x264 patch\n"
 "Scott Caudle - Visualization, WX improvements\n"
+"Seanán Ó Coistín - Irish translation\n"
 "Sebastian Jenny - AAC decoding channel ordering fix.\n"
 "Sebastien Chaumat - YOPY port tests\n"
 "Sebastien Zwickert (aka dilaroga) - Multiple Mac OS fixes and improvements\n"

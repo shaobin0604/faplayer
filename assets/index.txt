@@ -8,7 +8,6 @@ lib/codec/libavcodec_plugin-7.so
 lib/codec/libavcodec_plugin-6.so
 lib/misc/libdummy_plugin.so
 lib/control/libasrc_plugin.so
-lib/arm_neon/libaudio_format_neon_plugin-7.so
 lib/video_filter/libswscale_plugin-6.so
 lib/video_filter/libswscale_plugin-7.so
 lib/video_filter/libvideo_filter_wrapper_plugin.so

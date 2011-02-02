@@ -30,10 +30,6 @@
 #include <vlc_codec.h>
 #include <vlc_meta.h>
 
-#if defined ( ANDROID )
-#include "cpu-features.h"
-#endif
-
 static bool SkipID3Tag( demux_t * );
 static bool SkipAPETag( demux_t *p_demux );
 
@@ -88,13 +84,6 @@ demux_t *__demux_New( vlc_object_t *p_obj, input_thread_t *p_parent_input,
     if( s ) psz_module = p_demux->psz_demux;
     else psz_module = p_demux->psz_access;
 
-#if defined ( ANDROID )
-    // force to use avformat
-    if( s && *psz_module == '\0') {
-        p_demux->b_force = true;
-        psz_module = "avformat";
-    }
-#else
     if( s && *psz_module == '\0' && strrchr( p_demux->psz_path, '.' ) )
     {
        /* XXX: add only file without any problem here and with strong detection.
@@ -164,7 +153,6 @@ demux_t *__demux_New( vlc_object_t *p_obj, input_thread_t *p_parent_input,
 
         }
     }
-#endif
 
     /* Before module_need (for var_Create...) */
     vlc_object_attach( p_demux, p_obj );

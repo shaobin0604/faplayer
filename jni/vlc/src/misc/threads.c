@@ -63,6 +63,7 @@ static void *thread_entry (void *data)
 {
     vlc_object_t *obj = ((struct vlc_thread_boot *)data)->object;
     void *(*func) (vlc_object_t *) = ((struct vlc_thread_boot *)data)->entry;
+
 #if defined( ANDROID )
     int err = 0;
     int priority = ((struct vlc_thread_boot *)data)->priority / 5 + 6;

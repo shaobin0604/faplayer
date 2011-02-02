@@ -2,7 +2,7 @@
  * lirc.c : lirc module for vlc
  *****************************************************************************
  * Copyright (C) 2003-2005 the VideoLAN team
- * $Id: 5688c97ab106c2e64038f3d05faf42d113b62ff3 $
+ * $Id: 5c585bc68a6fbd2e15d51d16242173f99805f3b6 $
  *
  * Author: Sigmund Augdal Helberg <dnumgis@videolan.org>
  *
@@ -25,6 +25,7 @@
  * Preamble
  *****************************************************************************/
 
+#include <errno.h>
 #include <fcntl.h>
 
 #ifdef HAVE_CONFIG_H
@@ -154,7 +155,12 @@ static void Run( intf_thread_t *p_intf )
         /* Wait for data */
         struct pollfd ufd = { .fd = p_sys->i_fd, .events = POLLIN, .revents = 0 };
         if( poll( &ufd, 1, -1 ) == -1 )
-            break;
+        {
+            if( errno == EINTR )
+                continue;
+            else
+                break;
+        }
 
         /* Process */
         int canc = vlc_savecancel();

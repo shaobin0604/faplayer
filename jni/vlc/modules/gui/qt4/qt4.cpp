@@ -2,7 +2,7 @@
  * qt4.cpp : QT4 interface
  ****************************************************************************
  * Copyright © 2006-2009 the VideoLAN team
- * $Id: 5ed768274c6080a3ce8ffbfe560008862c583714 $
+ * $Id: 8d8065824bce87b5c00d078ba6732efdd665e9fd $
  *
  * Authors: Clément Stenac <zorglub@videolan.org>
  *          Jean-Baptiste Kempf <jb@videolan.org>
@@ -28,6 +28,7 @@
 
 #include <QApplication>
 #include <QDate>
+#include <QMutex>
 
 #include "qt4.hpp"
 
@@ -163,6 +164,12 @@ static void ShowDialog   ( intf_thread_t *, int, int, intf_dialog_args_t * );
 
 #define QT_MINIMAL_MODE_TEXT N_("Start in minimal view (without menus)" )
 
+#define QT_DISABLE_VOLUME_KEYS_TEXT N_( "Ignore keyboard volume buttons." )
+#define QT_DISABLE_VOLUME_KEYS_LONGTEXT N_(                                             \
+    "With this option checked, the volume up, volume down and mute buttons on your "    \
+    "keyboard will always change your system volume. With this option unchecked, the "  \
+    "volume buttons will change VLC's volume when VLC is selected and change the "      \
+    "system volume when VLC is not selected." )
 /**********************************************************************/
 vlc_module_begin ()
     set_shortname( "Qt" )
@@ -235,6 +242,15 @@ vlc_module_begin ()
               QT_AUTOLOAD_EXTENSIONS_TEXT, QT_AUTOLOAD_EXTENSIONS_LONGTEXT,
               false )
 
+#ifdef WIN32
+    add_bool( "qt-disable-volume-keys"             /* name */,
+              false                                /* default value */,
+              NULL,
+              QT_DISABLE_VOLUME_KEYS_TEXT          /* text */,
+              QT_DISABLE_VOLUME_KEYS_LONGTEXT      /* longtext */,
+              false                                /* advanced mode only */)
+#endif
+
     add_obsolete_bool( "qt-blingbling" ) /* Suppressed since 1.0.0 */
     add_obsolete_integer( "qt-display-mode" ) /* Suppressed since 1.1.0 */
 
@@ -267,11 +283,9 @@ static vlc_sem_t ready;
 #ifdef Q_WS_X11
 static char *x11_display = NULL;
 #endif
-static struct
-{
-    vlc_mutex_t lock;
-    bool busy;
-} one = { VLC_STATIC_MUTEX, false };
+static QMutex lock;
+static bool busy = false;
+static bool active = false;
 
 /*****************************************************************************
  * Module callbacks
@@ -299,11 +313,7 @@ static int Open( vlc_object_t *p_this, bool isDialogProvider )
     char *display = NULL;
 #endif
 
-    bool busy;
-    vlc_mutex_lock (&one.lock);
-    busy = one.busy;
-    one.busy = true;
-    vlc_mutex_unlock (&one.lock);
+    QMutexLocker locker (&lock);
     if (busy)
     {
         msg_Err (p_this, "cannot start Qt4 multiple times");
@@ -326,15 +336,13 @@ static int Open( vlc_object_t *p_this, bool isDialogProvider )
     {
         delete p_sys;
         free (display);
-        vlc_mutex_lock (&one.lock);
-        one.busy = false;
-        vlc_mutex_unlock (&one.lock);
         return VLC_ENOMEM;
     }
 
     /* */
     vlc_sem_wait (&ready);
     vlc_sem_destroy (&ready);
+    busy = active = true;
 
     if( !p_sys->b_isDialogProvider )
     {
@@ -366,22 +374,20 @@ static void Close( vlc_object_t *p_this )
         var_Destroy (pl_Get(p_this), "qt4-iface");
 
     /* And quit */
-    msg_Dbg( p_intf, "Please die, die, die..." );
-    QApplication::closeAllWindows();
-
-//    QApplication::quit();
+    msg_Dbg( p_this, "requesting exit..." );
     QVLCApp::triggerQuit();
 
-    msg_Dbg( p_intf, "Please die, die, die 2..." );
+    msg_Dbg( p_this, "waiting for UI thread..." );
     vlc_join (p_sys->thread, NULL);
 #ifdef Q_WS_X11
     free (x11_display);
     x11_display = NULL;
 #endif
     delete p_sys;
-    vlc_mutex_lock (&one.lock);
-    one.busy = false;
-    vlc_mutex_unlock (&one.lock);
+
+    QMutexLocker locker (&lock);
+    assert (busy);
+    busy = false;
 }
 
 static void *Thread( void *obj )
@@ -449,19 +455,24 @@ static void *Thread( void *obj )
 
     /* Create the normal interface in non-DP mode */
     if( !p_intf->p_sys->b_isDialogProvider )
+    {
         p_mi = new MainInterface( p_intf );
+        p_intf->p_sys->p_mi = p_mi;
+    }
     else
         p_mi = NULL;
-    p_intf->p_sys->p_mi = p_mi;
 
     /* Explain how to show a dialog :D */
     p_intf->pf_show_dialog = ShowDialog;
 
-    /* */
+    /* Tell the main LibVLC thread we are ready */
     vlc_sem_post (&ready);
 
     /* Last settings */
-    app.setQuitOnLastWindowClosed( true );
+    if( p_intf->p_sys->b_isDialogProvider )
+        app.setQuitOnLastWindowClosed( false );
+    else
+        app.setQuitOnLastWindowClosed( true );
 
     /* Retrieve last known path used in file browsing */
     p_intf->p_sys->filepath =
@@ -478,9 +489,8 @@ static void *Thread( void *obj )
     msg_Dbg( p_intf, "Exec finished()" );
     if (p_mi != NULL)
     {
-#warning BUG!
-        /* FIXME: the video window may still be registerd at this point */
-        /* See LP#448082 as an example. */
+        QMutexLocker locker (&lock);
+        active = false;
 
         p_intf->p_sys->p_mi = NULL;
         /* Destroy first the main interface because it is connected to some
@@ -555,6 +565,10 @@ static int WindowOpen( vlc_object_t *p_obj )
         return VLC_EGENERIC;
     }
 
+    QMutexLocker locker (&lock);
+    if (unlikely(!active))
+        return VLC_EGENERIC;
+
     MainInterface *p_mi = p_intf->p_sys->p_mi;
     msg_Dbg( p_obj, "requesting video..." );
 
@@ -585,6 +599,13 @@ static int WindowOpen( vlc_object_t *p_obj )
 static int WindowControl( vout_window_t *p_wnd, int i_query, va_list args )
 {
     MainInterface *p_mi = (MainInterface *)p_wnd->sys;
+    QMutexLocker locker (&lock);
+
+    if (unlikely(!active))
+    {
+        msg_Warn (p_wnd, "video already released before control");
+        return VLC_EGENERIC;
+    }
     return p_mi->controlVideo( i_query, args );
 }
 
@@ -592,8 +613,22 @@ static void WindowClose( vlc_object_t *p_obj )
 {
     vout_window_t *p_wnd = (vout_window_t*)p_obj;
     MainInterface *p_mi = (MainInterface *)p_wnd->sys;
+    QMutexLocker locker (&lock);
 
-    msg_Dbg( p_obj, "releasing video..." );
+    /* Normally, the interface terminates after the video. In the contrary, the
+     * Qt4 main loop is gone, so we cannot send any event to the user interface
+     * widgets. Ideally, we would keep the Qt4 main loop running until after
+     * the video window is released. But it is far simpler to just have the Qt4
+     * thread destroy the window early, and to turn this function into a stub.
+     *
+     * That assumes the video output will behave sanely if it window is
+     * destroyed asynchronously.
+     * XCB and Xlib-XCB are fine with that. Plain Xlib wouldn't, */
+    if (unlikely(!active))
+    {
+        msg_Warn (p_obj, "video already released");
+        return;
+    }
+    msg_Dbg (p_obj, "releasing video...");
     p_mi->releaseVideo();
 }
-

@@ -115,9 +115,6 @@ vlc_thread_fatal (const char *action, int error,
         case ERANGE: /* should never happen */
             msg = "unknwon (too big to display)";
             break;
-        case ERANGE: /* should never happen */
-            msg = "unknwon (too big to display)";
-            break;
         default:
             msg = "unknown (invalid error number)";
             break;
@@ -938,4 +935,3 @@ unsigned vlc_timer_getoverrun (vlc_timer_t timer)
     vlc_mutex_unlock (&timer->lock);
     return ret;
 }
-
