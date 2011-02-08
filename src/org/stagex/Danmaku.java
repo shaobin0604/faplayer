@@ -80,7 +80,8 @@ public class Danmaku extends Application {
 		String vout = String
 				.format("vout_android-%d", test.exists() ? code : 5);
 		VLC.getInstance().create(
-				new String[] { "--no-ignore-config", "--verbose", "2",
+				new String[] { "--no-ignore-config", "--no-plugins-cache",
+						"--no-drop-late-frames", "--verbose", "2",
 						"--plugin-path", libd, "--data-path", datd, "--intf",
 						"asrc", "--aout", aout, "--vout", vout });
 		// start VLM

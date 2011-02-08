@@ -104,7 +104,6 @@ public class VLM {
 				mSendBuffer.position(position - written);
 			}
 			mSendBuffer.compact();
-			Log.d("faplayer-java", String.format("%d bytes written", written));
 		}
 	}
 
@@ -224,6 +223,18 @@ public class VLM {
 	public void close() {
 		String line;
 		line = String.format("close");
+		writeBytes(line);
+	}
+
+	public void play() {
+		String line;
+		line = String.format("play");
+		writeBytes(line);
+	}
+
+	public void pause() {
+		String line;
+		line = String.format("pause");
 		writeBytes(line);
 	}
 }

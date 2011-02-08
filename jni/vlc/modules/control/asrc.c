@@ -414,6 +414,12 @@ static int InputEvent(vlc_object_t *p_this, char const *psz_cmd, vlc_value_t old
 
         var_Get(p_input, "state", &val);
         Notify(p_intf, "input state %d\n", val.i_int);
+        if (val.i_int == PLAYING_S) {
+            var_Get(p_input, "can-pause", &val);
+            Notify(p_intf, "input can-pause %d\n", val.i_int);
+            var_Get(p_input, "can-seek", &val);
+            Notify(p_intf, "input can-seek %d\n", val.i_int);
+        }
         break;
     }
     case INPUT_EVENT_DEAD: {
@@ -434,6 +440,19 @@ static int InputEvent(vlc_object_t *p_this, char const *psz_cmd, vlc_value_t old
 
         var_Get(p_input, "length", &val);
         Notify(p_intf, "input length %"PRIu64"\n", val.i_time / 1000000);
+        break;
+    }
+    case INPUT_EVENT_VOUT: {
+        vout_thread_t *p_vout;
+
+        p_vout = input_GetVout(p_input);
+        if (p_vout) {
+            int width, height;
+
+            width = p_vout->i_window_width;
+            height = p_vout->i_window_height;
+            Notify(p_intf, "video size %dx%d\n", width, height);
+        }
         break;
     }
     default:

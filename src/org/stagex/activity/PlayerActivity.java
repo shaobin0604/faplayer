@@ -71,14 +71,18 @@ public class PlayerActivity extends Activity implements VLI {
 				switch (state) {
 				case VLI.EVENT_INPUT_STATE_PLAY: {
 					mImageButtonPlay.setImageResource(R.drawable.pause);
+					mImageButtonPlay.invalidate();
 					break;
 				}
 				case VLI.EVENT_INPUT_STATE_PAUSE: {
 					mImageButtonPlay.setImageResource(R.drawable.play);
+					mImageButtonPlay.invalidate();
 					break;
 				}
 				case VLI.EVENT_INPUT_STATE_END: {
+					//mImageButtonPlay.
 					mImageButtonPlay.setImageResource(R.drawable.play);
+					mImageButtonPlay.invalidate();
 					break;
 				}
 				case VLI.EVENT_INPUT_STATE_ERROR: {
@@ -95,17 +99,19 @@ public class PlayerActivity extends Activity implements VLI {
 			}
 			case VLI.EVENT_INPUT_POSITION: {
 				int val = msg.arg1;
-				int hour = val / 3600;
-				val -= hour * 3600;
-				int minute = val / 60;
-				val -= minute * 60;
-				int second = val;
-				String time = String.format("%02d:%02d:%02d", hour, minute,
-						second);
-				mTextViewTime.setText(time);
-				mCurrentTime = msg.arg1;
-				if (mCurrentLength > 0) {
-					mSeekBar.setProgress(mCurrentTime);
+				if (val != mCurrentTime) {
+					int hour = val / 3600;
+					val -= hour * 3600;
+					int minute = val / 60;
+					val -= minute * 60;
+					int second = val;
+					String time = String.format("%02d:%02d:%02d", hour, minute,
+							second);
+					mTextViewTime.setText(time);
+					mCurrentTime = val;
+					if (mCurrentLength > 0) {
+						mSeekBar.setProgress(mCurrentTime);
+					}
 				}
 				break;
 			}
@@ -123,6 +129,11 @@ public class PlayerActivity extends Activity implements VLI {
 				if (mCurrentLength > 0) {
 					mSeekBar.setMax(mCurrentLength);
 				}
+				break;
+			}
+			case VLI.EVENT_INPUT_VOUT: {
+				mVideoWidth = msg.arg1;
+				mVideoHeight = msg.arg2;
 				break;
 			}
 			default:
@@ -185,18 +196,23 @@ public class PlayerActivity extends Activity implements VLI {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		
+		VLM.getInstance().close();
+		
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
+		
+		VLM.getInstance().play();
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
 
-		// VLM.getInstance().stop();
+		VLM.getInstance().pause();
 
 	}
 
@@ -218,6 +234,19 @@ public class PlayerActivity extends Activity implements VLI {
 				msg.what = VLI.EVENT_INPUT_LENGTH;
 				msg.arg1 = Integer.parseInt(value);
 				mEventHandler.sendMessage(msg);
+			}
+		} else if (module.compareTo("video") == 0) {
+			if (name.compareTo("size") == 0) {
+				String[] temp = value.split("x");
+				if (temp.length == 2) {
+					int width = Integer.parseInt(temp[0]);
+					int height = Integer.parseInt(temp[1]);
+					Message msg = new Message();
+					msg.what = VLI.EVENT_INPUT_VOUT;
+					msg.arg1 = width;
+					msg.arg2 = height;
+					mEventHandler.sendMessage(msg);
+				}
 			}
 		}
 	}

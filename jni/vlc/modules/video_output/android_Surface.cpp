@@ -24,6 +24,8 @@ extern "C" void LockSurface();
 extern "C" void UnlockSurface();
 extern "C" void *GetSurface();
 
+extern "C" void debug(const char *fmt, ...);
+
 static int Open (vlc_object_t *);
 static void Close(vlc_object_t *);
 
@@ -42,15 +44,17 @@ static void Display(vout_display_t *, picture_t *);
 static int Control(vout_display_t *, int, va_list);
 static void Manage(vout_display_t *);
 
+static void picture_Strech2(vout_display_t *, picture_t *, picture_t *);
+
 struct vout_display_sys_t {
+    vout_display_place_t place;
     int format;
     int width;
     int height;
 #if __PLATFORM__ > 4
     int stride;
 #endif
-    int mode;
-    int x, y;
+    int w, h;
     picture_t *picture;
     picture_pool_t *pool;
 };
@@ -72,8 +76,6 @@ static int Open(vlc_object_t *object) {
     surf->unlockAndPost();
     UnlockSurface();
     video_format_t fmt = vd->fmt;
-    fmt.i_width  = info.w;
-    fmt.i_height = info.h;
     // TODO: what about the other formats?
     const char *chroma_format;
     switch (info.format) {
@@ -111,8 +113,14 @@ static int Open(vlc_object_t *object) {
 #if __PLATFORM__ > 4
     sys->stride = info.s;
 #endif
+    sys->w = fmt.i_width;
+    sys->h = fmt.i_height;
     sys->pool = NULL;
     vd->sys = sys;
+    vout_display_cfg_t cfg = *vd->cfg;
+    cfg.display.width = info.w;
+    cfg.display.height = info.h;
+    vout_display_PlacePicture(&sys->place, &vd->source, &cfg, true);
     vd->info.has_hide_mouse = true;
     //vd->info.is_slow = true;
     // uncomment to disable dr
@@ -123,8 +131,7 @@ static int Open(vlc_object_t *object) {
     vd->display = Display;
     vd->control = Control;
     vd->manage  = Manage;
-    //vout_display_SendEventFullscreen(vd, true);
-    vout_display_SendEventDisplaySize(vd, sys->width, sys->height, true);
+    vout_display_SendEventDisplaySize(vd, sys->width, sys->height, vd->cfg->is_fullscreen);
     return VLC_SUCCESS;
 }
 
@@ -138,9 +145,7 @@ static void Close(vlc_object_t *object) {
 }
 
 static picture_pool_t *Pool(vout_display_t *vd, unsigned count) {
-    VLC_UNUSED(count);
     vout_display_sys_t *sys = vd->sys;
-    picture_resource_t rsc;
 
     if (!sys->pool) {
         sys->pool = picture_pool_NewFromFormat(&vd->fmt, count);
@@ -179,10 +184,10 @@ static void Display(vout_display_t *vd, picture_t *picture) {
 #else
                 surface.p[0].i_pitch = info.w << 1;
 #endif
-                surface.p[0].i_pixel_pitch = 1;
+                surface.p[0].i_pixel_pitch = 2;
                 surface.p[0].i_visible_lines = info.h;
-                surface.p[0].i_visible_lines = info.w << 1;
-                picture_CopyPixels(&surface, picture);
+                surface.p[0].i_visible_pitch = info.w << 1;
+                picture_Strech2(vd, &surface, picture);
             }
         default:
             break;
@@ -201,5 +206,83 @@ static int Control(vout_display_t *vd, int query, va_list args) {
 
 static void Manage(vout_display_t *vd) {
     VLC_UNUSED(vd);
+}
+
+static inline void copyrow2(uint16_t *src, int src_w, uint16_t *dst, int dst_w) {
+    int i;
+    int pos, inc;
+    uint16_t pixel = 0;
+
+    pos = 0x10000;
+    inc = (src_w << 16) / dst_w;
+    for (i = dst_w; i > 0; --i) {
+        while (pos >= 0x10000) {
+            pixel = *src++;
+            pos -= 0x10000;
+        }
+        *dst++ = pixel;
+        pos += inc;
+    }
+}
+
+static void picture_Strech2(vout_display_t *vd, picture_t *dst_p, picture_t *src_p) {
+    vout_display_sys_t *sys = vd->sys;
+    vout_display_place_t *place = &sys->place;
+
+    // TODO: shall i handle all the planes?
+    if (src_p->i_planes != dst_p->i_planes)
+        return;
+    if (src_p->i_planes != 1 || dst_p->i_planes != 1)
+        return;
+    //for (int i = 0; i < src->i_planes; i++) {
+    //    if (src->p[i].i_pixel_pitch != dst->p[i].i_pixel_pitch)
+    //        return;
+    //}
+    if ((sys->width < place->x + place->width) || (sys->height < place->y + sys->height))
+        return;
+    // TODO: shall i handle all the planes?
+    plane_t *sp = &src_p->p[0];
+    plane_t *dp = &dst_p->p[0];
+    uint16_t *src, *dst;
+    uint16_t *srcp, *dstp;
+    int sw, sh, ss, dw, dh, ds;
+    int srx, sry, srh, srw;
+    int drx, dry, drh, drw;
+    int pos, inc;
+    int dst_max_row;
+    int src_row, dst_row;
+
+    src = (uint16_t*)sp->p_pixels;
+    dst = (uint16_t*)dp->p_pixels;
+    sw = sp->i_visible_pitch / sp->i_pixel_pitch;
+    sh = sp->i_visible_lines;
+    ss = sp->i_pitch / sp->i_pixel_pitch;
+    srx = 0;
+    sry = 0;
+    srw = sp->i_visible_pitch / sp->i_pixel_pitch;
+    srh = sp->i_visible_lines;
+    dw = dp->i_visible_pitch / dp->i_pixel_pitch;
+    dh = dp->i_visible_lines;
+    ds = dp->i_pitch / dp->i_pixel_pitch;
+    drx = place->x;
+    dry = place->y;
+    drw = place->width;
+    drh = place->height;
+    //debug("%dx%d %d %d,%d %dx%d -> %dx%d %d %d,%d %dx%d", sw, sh, ss, srx, sry, srw, srh, dw, dh, ds, drx, dry, drw, drh);
+    pos = 0x10000;
+    inc = (srh << 16) / drh;
+    src_row = sry;
+    dst_row = dry;
+
+    for (dst_max_row = dst_row + drh; dst_row < dst_max_row; ++dst_row ) {
+        while (pos >= 0x10000) {
+            srcp = src + src_row * ss + srx;
+            ++src_row;
+            pos -= 0x10000;
+        }
+        dstp = dst + dst_row * ds + drx;
+        copyrow2(srcp, srw, dstp, drw);
+        pos += inc;
+    }
 }
 

@@ -18,13 +18,13 @@
 #ffmpeg-workaround-bugs=1
 
 # Hurry up (boolean)
-#ffmpeg-hurry-up=1
+ffmpeg-hurry-up=1
 
 # Skip frame (default=0) (integer)
-ffmpeg-skip-frame=0
+ffmpeg-skip-frame=1
 
 # Skip idct (default=0) (integer)
-ffmpeg-skip-idct=0
+ffmpeg-skip-idct=1
 
 # Visualize motion vectors (integer)
 #ffmpeg-vismv=0

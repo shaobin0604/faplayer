@@ -9,6 +9,7 @@ public interface VLI {
 	public final static int EVENT_INPUT_DEAD = 1;
 	public final static int EVENT_INPUT_POSITION = 4;
 	public final static int EVENT_INPUT_LENGTH = 5;
+	public final static int EVENT_INPUT_VOUT = 23;
 
 	public final static int EVENT_INPUT_STATE_INIT = 0;
 	public final static int EVENT_INPUT_STATE_OPEN = 1;
