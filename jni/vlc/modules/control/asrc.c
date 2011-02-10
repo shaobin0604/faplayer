@@ -125,7 +125,7 @@ static void Run(intf_thread_t *p_intf) {
             }
         }
         else {
-            if (p_input->b_dead) {
+            if (p_input->b_dead || !vlc_object_alive(p_input)) {
                 var_DelCallback(p_input, "intf-event", InputEvent, p_intf);
                 vlc_object_release(p_input);
                 p_input = NULL;
@@ -208,7 +208,7 @@ static void Run(intf_thread_t *p_intf) {
                 }
                 if (b_line && strlen(p_sys->p_read_buffer)) {
                     p_sys->i_read_offset = 0;
-                    //Notify(p_intf, "%s\n", p_sys->p_read_buffer);
+                    //msg_Dbg(VLC_OBJECT(p_intf), "%s\n", p_sys->p_read_buffer);
                     ProcessCommand(p_intf, p_sys->p_read_buffer);
                 }
                 if(i_len == 0) {
@@ -363,8 +363,15 @@ static void ProcessCommand(intf_thread_t *p_intf, const char *p_string) {
         else if (!strcmp(p_argv[0], "pause")) {
             playlist_Pause(p_playlist);
         }
-        else if (!strcmp(p_argv[0], "close")) {
+        else if (!strcmp(p_argv[0], "stop")) {
             playlist_Stop(p_playlist);
+        }
+        else if (!strcmp(p_argv[0], "close")) {
+            playlist_Clear(p_playlist, pl_Unlocked);
+        }
+        else if (!strcmp(p_argv[0], "ff")) {
+        }
+        else if (!strcmp(p_argv[0], "fb")) {
         }
         else if (!strcmp(p_argv[0], "quit")) {
             net_Close(p_sys->i_socket);
@@ -379,9 +386,9 @@ static void ProcessCommand(intf_thread_t *p_intf, const char *p_string) {
     else if (i_argc == 2) {
         if (!strcmp(p_argv[0], "open")) {
             //playlist_Stop(p_playlist);
-            playlist_Clear(p_playlist, pl_Unlocked);
+            //playlist_Clear(p_playlist, pl_Unlocked);
             input_item_t *p_item = input_item_New(p_intf, p_argv[1], NULL);
-            playlist_AddInput(p_playlist, p_item, PLAYLIST_GO|PLAYLIST_APPEND, PLAYLIST_END, true, pl_Unlocked);
+            int i_ret = playlist_AddInput(p_playlist, p_item, PLAYLIST_GO|PLAYLIST_APPEND, PLAYLIST_END, true, pl_Unlocked);
             //playlist_Pause(p_playlist);
             vlc_gc_decref(p_item);
         }

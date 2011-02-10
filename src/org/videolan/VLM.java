@@ -83,7 +83,7 @@ public class VLM {
 					} catch (UnsupportedEncodingException e) {
 					}
 					if (line != null) {
-						Log.d("faplayer-java", line);
+						// Log.d("faplayer-java", line);
 						triggerCallback(line);
 					}
 					mLineOffset += mLineLength;
@@ -235,6 +235,12 @@ public class VLM {
 	public void pause() {
 		String line;
 		line = String.format("pause");
+		writeBytes(line);
+	}
+
+	public void stop() {
+		String line;
+		line = String.format("stop");
 		writeBytes(line);
 	}
 }
