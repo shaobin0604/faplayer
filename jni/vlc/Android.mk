@@ -12,12 +12,13 @@ LOCAL_CFLAGS += \
     -DHAVE_CONFIG_H \
     -DNDEBUG \
     -DMODULE_STRING=\"main\" \
+    -D__LIBVLC__ \
+    -D__arm__ \
     -DLOCALEDIR=\"/sdcard/.vlc/locale\" \
     -DSYSCONFDIR=\"/sdcard/.vlc/etc\" \
     -DDATA_PATH=\"/sdcard/.vlc/share\" \
     -DPKGLIBDIR=\"/sdcard/.vlc/lib\" \
-    -DPACKAGENAME=\"org.stagex\" \
-    -D__LIBVLC__
+    -DPACKAGENAME=\"org.stagex\"
 
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \

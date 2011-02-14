@@ -65,29 +65,29 @@ static void *thread_entry (void *data)
     void *(*func) (vlc_object_t *) = ((struct vlc_thread_boot *)data)->entry;
 
 #if defined( ANDROID )
-    int err = 0;
-    int priority = ((struct vlc_thread_boot *)data)->priority / 5 + 6;
+    int err;
+    int priority;
     jclass clz;
     jmethodID mid;
-    jobject cur;
     JNIEnv *env = NULL;
 
     if (gJVM) {
-        msg_Dbg(obj, "call java.lang.Thread.setPriority(%d)", priority);
         err = (*gJVM)->AttachCurrentThread(gJVM, &env, NULL);
         if (err)
             goto bail;
-        clz = (*env)->FindClass(env, "java/lang/Thread");
-        mid = (*env)->GetStaticMethodID(env, clz, "currentThread", "()Ljava/lang/Thread;");
-        cur = (*env)->CallStaticObjectMethod(env, clz, mid);
-        mid = (*env)->GetMethodID(env, clz, "setPriority", "(I)V");
-        if (priority > 10)
-            priority = 10;
-        if (priority < 1)
-            priority = 1;
-        (*env)->CallVoidMethod(env, cur, mid, priority);
-        (*env)->DeleteLocalRef(env, cur);
-        (*env)->DeleteLocalRef(env, clz);
+        priority = 0 - ((struct vlc_thread_boot *)data)->priority;
+        if (priority < -20)
+            priority = -20;
+        if (priority > 19)
+            priority = 19;
+        msg_Dbg(obj, "call android.os.setThreadPriority(%d)", priority);
+        clz = (*env)->FindClass(env, "android/os/Process");
+        if (clz) {
+            mid = (*env)->GetStaticMethodID(env, clz, "setThreadPriority", "(I)V");
+            if (mid)
+                (*env)->CallStaticVoidMethod(env, clz, mid, priority);
+            (*env)->DeleteLocalRef(env, clz);
+        }
         (*gJVM)->DetachCurrentThread(gJVM);
     }
 bail:

@@ -12,6 +12,7 @@ typedef struct {
     int state;          // enable/disable
     int type;           //
     int flag;           // 
+    pthread_cond_t *cond;
 } pthread_cancel_t;
 
 static int init = 0;
@@ -37,7 +38,6 @@ static inline void _mutex_unlock() {
     pthread_mutex_unlock(&mutex);
 }
 
-// TODO: use hashing instead of searching
 void pthread_register(pthread_t th) {
     int i;
     pthread_cancel_t *p;
@@ -50,6 +50,24 @@ void pthread_register(pthread_t th) {
             p->state = PTHREAD_CANCEL_ENABLE;
             p->type = PTHREAD_CANCEL_ASYNCHRONOUS;
             p->flag = 0;
+            break;
+        }
+    }
+    _mutex_unlock();
+}
+
+void pthread_cond_store(pthread_cond_t *cond) {
+    pthread_cancel_t *p;
+    int i;
+    pthread_t th;
+
+    th = pthread_self();
+    _mutex_lock();
+    for (i = 0; i < MAXT; i++) {
+        p = &(threads[i]);
+        if (p->thread == th) {
+            p->cond = cond;
+            break;
         }
     }
     _mutex_unlock();
@@ -63,8 +81,11 @@ int pthread_cancel(pthread_t th) {
     _mutex_lock();
     for (i = 0; i < MAXT; i++) {
         p = &(threads[i]);
-        if (p->thread == th && p->state == PTHREAD_CANCEL_ENABLE) {
+        if (p->thread == th) {
             p->flag = -1;
+            // TODO: 大丈夫か？
+            if (p->cond)
+                pthread_cond_broadcast(p->cond);
             ret = 0;
             break;
         }
@@ -86,18 +107,17 @@ void pthread_testcancel() {
     for (i = 0; i < MAXT; i++) {
         p = &(threads[i]);
         if (p->thread == th) {
-            if (p->flag) {
+            if (p->flag && p->state == PTHREAD_CANCEL_ENABLE) {
+                p->thread = 0;
                 exit = -1;
-                break;
             }
-            if (p->state == PTHREAD_CANCEL_DISABLE) {
-                break;
-            }
+            break;
         }
     }
     _mutex_unlock();
-    if (exit)
+    if (exit) {
         pthread_exit(PTHREAD_CANCELED);
+    }
 }
 
 int pthread_setcanceltype(int type, int *oldtype) {
