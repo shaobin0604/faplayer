@@ -311,7 +311,7 @@
 /* #undef HAVE_GROWL_GROWLDEFINES_H */
 
 /* Define if you have the iconv() function and it works. */
-/* #undef HAVE_ICONV */
+#define HAVE_ICONV 1
 
 /* Define to 1 if you have the <id3tag.h> header file. */
 /* #undef HAVE_ID3TAG_H */
@@ -731,7 +731,7 @@
 #define HAVE___VA_COPY 1
 
 /* Define as const if the declaration of iconv() needs const. */
-/* #undef ICONV_CONST */
+#define ICONV_CONST 
 
 /* Dynamic object extension */
 #define LIBEXT ".so"

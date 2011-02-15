@@ -1,176 +1,315 @@
+/*****************************************************************************
+ * pthread_cancel.c: pthread deferred cancellation replacement
+ *****************************************************************************
+ * Copyright © 2011 VideoLAN
+ *
+ * Author: Jean-Philippe André <jpeg # videolan.org>
+ *
+ * License: LGPL
+ *****************************************************************************/
 
+//#ifdef HAVE_CONFIG_H
+//# include <config.h>
+//#endif
+
+//#include <vlc_common.h>
+//#include <vlc_fixups.h>
+//#include <pthread.h>
 #include "pthread-compat.h"
+#include <assert.h>
 
-#include <errno.h>
+// FIXME: Used for debugging purposes only. Remove once the code is stable
+// and well tested
+#if defined(HAVE_ANDROID) && !defined(NDEBUG)
+# include <android/log.h>
+# define LOG_TAG "pthread"
+# define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE,LOG_TAG,__VA_ARGS__)
+# define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+#else
+# define LOGV(...)
+# define LOGE(...)
+#endif
 
-#warning "this module needs more work!!!"
+#define bool int
+#define true 1
+#define false 0
+#ifdef __GNUC__
+#   define likely(p)   __builtin_expect(!!(p), 1)
+#   define unlikely(p) __builtin_expect(!!(p), 0)
+#else
+#   define likely(p)   (!!(p))
+#   define unlikely(p) (!!(p))
+#endif
 
-#define MAXT 512
+/*
+ * This file provide fixups for the following functions:
+ * - pthread_cancel
+ * - pthread_testcancel
+ * - pthread_setcancelstate
+ * As a result of the implementation design, we must also wrap
+ * pthread_create into a cancellation-aware function
+ */
 
-typedef struct {
-    pthread_t thread;   // id
-    int state;          // enable/disable
-    int type;           //
-    int flag;           // 
-    pthread_cond_t *cond;
-} pthread_cancel_t;
+static void* thread_wrapper_routine (void *arg);
+static void  thread_cancel_handler (int signal);
+static void  thread_cancel_destructor (void *data);
 
-static int init = 0;
-static pthread_mutex_t mutex;
-static pthread_cancel_t threads[MAXT];
+// Functions used by LibVLC
+void pthread_cancel_initialize (void);
+void pthread_cancel_deinitialize (void);
 
-static inline void _mutex_init() {
-    pthread_mutex_init(&mutex, NULL);
-    init = -1;
+/*
+ * Some static variables used for initialization
+ */
+static pthread_key_t cancel_key = 0; /// Key for the thread-local variable
+
+/*
+ * These objects define the thread-local variable tracking the thread's
+ * cancellation status (cancellable, cancelled)
+ */
+typedef struct cancel_t cancel_t;
+struct cancel_t
+{
+    int state;      /// PTHREAD_CANCEL_ENABLE (0) or PTHREAD_CANCEL_DISABLE (1)
+    pthread_cond_t *cond; /// Non-null if thread waiting on cond
+
+    /* Booleans at the end for packing purposes */
+    bool cancelled; /// Non-zero means this thread has been cancelled
+};
+
+/*
+ * This is the thread wrapper data
+ */
+typedef struct thread_wrapper_t thread_wrapper_t;
+struct thread_wrapper_t
+{
+    void     *(*routine) (void*); /// Main thread routine to call
+    void     *arg;                /// Argument to pass to the thread routine
+    cancel_t *cancel; /// The cancel structure is allocated before the thread
+};
+
+/**
+ * Initialize pthread cancellation
+ * Creates thread-local variable's key and catches SIGRTMIN in main thread
+ **/
+void pthread_cancel_initialize (void)
+{
+    // Set up signal handler
+    struct sigaction act;
+    memset (&act, 0, sizeof (act));
+    sigemptyset (&act.sa_mask);
+    act.sa_flags = 0;
+    act.sa_handler = thread_cancel_handler;
+    sigaction (SIGRTMIN, &act, NULL);
+
+    // Create thread-local variable key
+    pthread_key_create (&cancel_key, thread_cancel_destructor);
 }
 
-static inline void _mutex_free() {
-    pthread_mutex_destroy(&mutex);
+/**
+ * Deinitialize pthread cancellation
+ **/
+void pthread_cancel_deinitialize (void)
+{
+    struct sigaction act;
+    memset (&act, 0, sizeof (act));
+    sigemptyset (&act.sa_mask);
+    sigaction (SIGRTMIN, &act, NULL);
+    pthread_key_delete (cancel_key);
+    cancel_key = 0;
 }
 
-static inline void _mutex_lock() {
-    if (!init)
-        _mutex_init();
-    pthread_mutex_lock(&mutex);
+/**
+ * Replacement for pthread_cancel
+ * Sends a SIGRTMIN signal to the thread
+ **/
+int pthread_cancel (pthread_t thread_id)
+{
+    return pthread_kill (thread_id, SIGRTMIN);
 }
 
-static inline void _mutex_unlock() {
-    pthread_mutex_unlock(&mutex);
-}
+/**
+ * Replacement for pthread_create with support for cancellation
+ **/
+int pthread_create_cancel (pthread_t *thread_id,
+                           const pthread_attr_t *attr,
+                           void *(*routine) (void *),
+                           void *arg)
+{
+    thread_wrapper_t *wrapper_data =
+            (thread_wrapper_t*) calloc (1, sizeof (thread_wrapper_t));
+    if (unlikely (!wrapper_data))
+        return -1;
 
-void pthread_register(pthread_t th) {
-    int i;
-    pthread_cancel_t *p;
+    wrapper_data->routine = routine;
+    wrapper_data->arg     = arg;
+    wrapper_data->cancel  = (cancel_t*) calloc (1, sizeof (cancel_t));
 
-    _mutex_lock();
-    for (i = 0; i < MAXT; i++) {
-        p = &(threads[i]);
-        if (!p->thread) {
-            p->thread = th;
-            p->state = PTHREAD_CANCEL_ENABLE;
-            p->type = PTHREAD_CANCEL_ASYNCHRONOUS;
-            p->flag = 0;
-            break;
-        }
-    }
-    _mutex_unlock();
-}
-
-void pthread_cond_store(pthread_cond_t *cond) {
-    pthread_cancel_t *p;
-    int i;
-    pthread_t th;
-
-    th = pthread_self();
-    _mutex_lock();
-    for (i = 0; i < MAXT; i++) {
-        p = &(threads[i]);
-        if (p->thread == th) {
-            p->cond = cond;
-            break;
-        }
-    }
-    _mutex_unlock();
-}
-
-int pthread_cancel(pthread_t th) {
-    int i, ret;
-    pthread_cancel_t *p;
-
-    ret = -1;
-    _mutex_lock();
-    for (i = 0; i < MAXT; i++) {
-        p = &(threads[i]);
-        if (p->thread == th) {
-            p->flag = -1;
-            // TODO: 大丈夫か？
-            if (p->cond)
-                pthread_cond_broadcast(p->cond);
-            ret = 0;
-            break;
-        }
-    }
-    _mutex_unlock();
-    if (ret < 0)
-        errno = -EINVAL;
-    return ret;
-}
-
-void pthread_testcancel() {
-    int i, exit;
-    pthread_t th;
-    pthread_cancel_t *p;
-
-    exit = 0;
-    th = pthread_self();
-    _mutex_lock();
-    for (i = 0; i < MAXT; i++) {
-        p = &(threads[i]);
-        if (p->thread == th) {
-            if (p->flag && p->state == PTHREAD_CANCEL_ENABLE) {
-                p->thread = 0;
-                exit = -1;
-            }
-            break;
-        }
-    }
-    _mutex_unlock();
-    if (exit) {
-        pthread_exit(PTHREAD_CANCELED);
-    }
-}
-
-int pthread_setcanceltype(int type, int *oldtype) {
-    int i, ret;
-    pthread_t th;
-    pthread_cancel_t *p;
-
-    if (type != PTHREAD_CANCEL_DEFERRED || type != PTHREAD_CANCEL_ASYNCHRONOUS) {
-        errno = -EINVAL;
+    if (unlikely (!wrapper_data->cancel))
+    {
+        free (wrapper_data);
         return -1;
     }
-    ret = -1;
-    th = pthread_self();
-    _mutex_lock();
-    for (i = 0; i < MAXT; i++) {
-        p = &(threads[i]);
-        if (p->thread == th) {
-            p->type = type;
-            if (oldtype)
-                *oldtype = p->type;
-            ret = 0;
-        }
+
+    int ret = pthread_create (thread_id, attr, thread_wrapper_routine,
+                              wrapper_data);
+    if (unlikely (ret != 0))
+    {
+        // The thread wrapper should free these variables but it didn't start
+        free (wrapper_data->cancel);
+        free (wrapper_data);
     }
-    _mutex_unlock();
-    if (ret < 0)
-        errno = -EINVAL;
     return ret;
 }
 
-int pthread_setcancelstate(int state, int *oldstate) {
-    int i, ret;
-    pthread_t th;
-    pthread_cancel_t *p;
+/**
+ * Thread wrapper
+ * Sets up signal handlers and thread-local data before running the routine
+ **/
+static void* thread_wrapper_routine (void *arg)
+{
+    thread_wrapper_t *wrapper_data = (thread_wrapper_t*) arg;
 
-    if (state != PTHREAD_CANCEL_ENABLE || state != PTHREAD_CANCEL_DISABLE) {
-        errno = -EINVAL;
-        return -1;
-    }
-    ret = -1;
-    th = pthread_self();
-    _mutex_lock();
-    for (i = 0; i < MAXT; i++) {
-        p = &(threads[i]);
-        if (p->thread == th) {
-            p->state = state;
-            if (oldstate)
-                *oldstate = p->state;
-            ret = 0;
-        }
-    }
-    _mutex_unlock();
-    if (ret < 0)
-        errno = -EINVAL;
+    // Set up signal handler
+    struct sigaction act;
+    memset (&act, 0, sizeof (act));
+    sigemptyset (&act.sa_mask);
+    act.sa_flags = 0;
+    act.sa_handler = thread_cancel_handler;
+    sigaction (SIGRTMIN, &act, NULL);
+
+    // Place specific data (cancel state stack)
+    cancel_t *canc = wrapper_data->cancel;
+    memset (canc, 0, sizeof (cancel_t));
+    if (unlikely (pthread_setspecific (cancel_key, canc) != 0))
+        return NULL;
+
+    void *ret = wrapper_data->routine (wrapper_data->arg);
+    // Don't free wrapper_data->cancel. It will be destroyed automatically.
+    free (wrapper_data);
     return ret;
 }
 
+/**
+ * Change thread's cancellation state (enable/disable)
+ **/
+int pthread_setcancelstate (int state, int *oldstate)
+{
+    cancel_t *canc = pthread_getspecific (cancel_key);
+    if (unlikely (canc == NULL))
+    {
+        /// FIXME
+        // Let's just add this missing variable since the main thread
+        // uses these features but wasn't created by pthread_create_cancel
+        canc = (cancel_t*) calloc (1, sizeof (cancel_t));
+        pthread_setspecific (cancel_key, canc);
+    }
+
+    if (oldstate)
+        *oldstate = canc->state;
+    canc->state = state;
+
+    if (state == PTHREAD_CANCEL_ENABLE)
+        pthread_testcancel ();
+
+    return 0;
+}
+
+/**
+ * Create a cancellation point
+ **/
+void pthread_testcancel (void)
+{
+    cancel_t *canc = pthread_getspecific (cancel_key);
+    if (unlikely (!canc))
+        return; // Don't mess with the main thread
+
+    assert (canc->cond == NULL);
+
+    if (canc->cancelled) // Don't check PTHREAD_CANCEL_ENABLE
+        pthread_exit (NULL);
+}
+
+/**
+ * Cancellation signal handler
+ **/
+static void thread_cancel_handler (int signal)
+{
+    assert (signal == SIGRTMIN);
+
+    cancel_t *canc = (cancel_t*) pthread_getspecific (cancel_key);
+    if (unlikely (!canc))
+        return; // Main thread, can't be cancelled
+
+    canc->cancelled = true;
+    if (canc->cond)
+    {
+        /* Wakeup all threads waiting on cond. As we are supposed to expect
+         * spurious wakeups, this should not be an issue
+         */
+        pthread_cond_t *cond = canc->cond;
+        canc->cond = NULL;
+        pthread_cond_broadcast (cond);
+        /* FIXME: not calling pthread_exit (crashes in input thread). Why? */
+        // pthread_exit (NULL);
+        return;
+    }
+    if (canc->state == PTHREAD_CANCEL_ENABLE)
+        pthread_exit (NULL);
+}
+
+/**
+ * Destroy a cancel_t variable. Nothing fancy.
+ **/
+static void thread_cancel_destructor (void *data)
+{
+    cancel_t *canc = (cancel_t*) data;
+    free (canc);
+}
+
+int pthread_cond_wait_cancel( pthread_cond_t *cond,
+                                     pthread_mutex_t *mutex )
+{
+    int oldstate;
+    pthread_setcancelstate (PTHREAD_CANCEL_DISABLE, &oldstate);
+    cancel_t *canc = pthread_getspecific (cancel_key);
+    if (canc)
+    {
+        assert (!canc->cond);
+        canc->cond = cond;
+    }
+
+    int ret = pthread_cond_wait (cond, mutex);
+
+    if (canc)
+        canc->cond = NULL;
+
+    /// FIXME: We should call testcancel() here, but it leads to crashes.
+    // pthread_testcancel ();
+    pthread_setcancelstate (oldstate, NULL);
+    return ret;
+}
+
+int pthread_cond_timedwait_cancel( pthread_cond_t *cond,
+                                   pthread_mutex_t *mutex,
+                                   const struct timespec *abstime )
+{
+    int oldstate;
+    pthread_setcancelstate (PTHREAD_CANCEL_DISABLE, &oldstate);
+    cancel_t *canc = pthread_getspecific (cancel_key);
+    if (canc)
+    {
+        assert (!canc->cond);
+        canc->cond = cond;
+    }
+
+    int ret = pthread_cond_timedwait (cond, mutex, abstime);
+
+    if (canc)
+        canc->cond = NULL;
+
+    /// FIXME: We should call testcancel() here, but it leads to crashes.
+    // pthread_testcancel ();
+    pthread_setcancelstate (oldstate, NULL);
+    return ret;
+}

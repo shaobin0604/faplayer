@@ -38,14 +38,22 @@ static void libvlc_setup_threads (bool init)
     vlc_mutex_lock (&lock);
     if (init)
     {
-        if (refs++ == 0)
+        if (refs++ == 0) {
             vlc_threadvar_create (&context, free);
+#if defined( ANDROID )
+            pthread_cancel_initialize ();
+#endif
+}
     }
     else
     {
         assert (refs > 0);
-        if (--refs == 0)
+        if (--refs == 0) {
             vlc_threadvar_delete (&context);
+#if defined( ANDROID )
+            pthread_cancel_deinitialize ();
+#endif
+        }
     }
     vlc_mutex_unlock (&lock);
 }

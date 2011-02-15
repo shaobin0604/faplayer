@@ -14,6 +14,7 @@ LOCAL_CFLAGS += \
     -DMODULE_STRING=\"main\" \
     -D__LIBVLC__ \
     -D__arm__ \
+    -D__linux__ \
     -DLOCALEDIR=\"/sdcard/.vlc/locale\" \
     -DSYSCONFDIR=\"/sdcard/.vlc/etc\" \
     -DDATA_PATH=\"/sdcard/.vlc/share\" \
@@ -25,7 +26,8 @@ LOCAL_C_INCLUDES += \
     $(VLCROOT) \
     $(VLCROOT)/include \
     $(VLCROOT)/src \
-    $(EXTROOT)/cpufeatures
+    $(EXTROOT)/cpufeatures \
+    $(EXTROOT)/iconv/include
 
 LOCAL_SRC_FILES := \
     src/jni.c \
@@ -164,7 +166,7 @@ LOCAL_SRC_FILES := \
 
 LOCAL_LDLIBS += -llog
 
-LOCAL_STATIC_LIBRARIES += compat cpufeatures
+LOCAL_STATIC_LIBRARIES += compat cpufeatures iconv charset
 
 include $(BUILD_SHARED_LIBRARY)
 

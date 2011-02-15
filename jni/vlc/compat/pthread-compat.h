@@ -73,11 +73,19 @@ enum {
 
 #define PTHREAD_CANCELED ((void *) -1)
 
-void pthread_register(pthread_t th);
 int pthread_cancel(pthread_t th);
 void pthread_testcancel();
-int pthread_setcanceltype(int type, int *oldtype);
 int pthread_setcancelstate(int state, int *oldstate);
+
+void pthread_cancel_initialize();
+void pthread_cancel_deinitialize();
+
+int pthread_create_cancel(pthread_t *thread, pthread_attr_t const * attr,
+                   void *(*start_routine)(void *), void * arg);
+int pthread_cond_wait_cancel(pthread_cond_t *cond, pthread_mutex_t *mutex);
+int pthread_cond_timedwait_cancel(pthread_cond_t *cond,
+                           pthread_mutex_t * mutex,
+                           const struct timespec *abstime);
 
 #ifdef __cplusplus
 }

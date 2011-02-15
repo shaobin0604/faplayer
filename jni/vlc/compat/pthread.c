@@ -1440,8 +1440,6 @@ int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex)
     return pthread_cond_timedwait(cond, mutex, NULL);
 }
 
-void pthread_cond_store(pthread_cond_t *cond);
-
 int __pthread_cond_timedwait_relative(pthread_cond_t *cond,
                                       pthread_mutex_t * mutex,
                                       const struct timespec *reltime)
@@ -1449,7 +1447,6 @@ int __pthread_cond_timedwait_relative(pthread_cond_t *cond,
     int  status;
     int  oldvalue = cond->value;
 
-    pthread_cond_store(cond);
     pthread_mutex_unlock(mutex);
     status = __futex_wait_ex(&cond->value, COND_IS_SHARED(cond), oldvalue, reltime);
     pthread_mutex_lock(mutex);

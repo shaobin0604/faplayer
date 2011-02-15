@@ -17,6 +17,12 @@ LOCAL_CFLAGS += \
     -DCLONE_PARENT_SETTID=0x00100000 \
     -DCLONE_CHILD_SETTID=0x01000000
 
+LOCAL_C_INCLUDES += \
+    $(VLCROOT)/compat \
+    $(VLCROOT) \
+    $(VLCROOT)/include \
+    $(VLCROOT)/src
+
 LOCAL_SRC_FILES := \
     bionic_clone.c \
     clone.S \

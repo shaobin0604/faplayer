@@ -393,8 +393,11 @@ int vlc_cond_timedwait (vlc_cond_t *p_condvar, vlc_mutex_t *p_mutex,
 #endif
     lldiv_t d = lldiv( deadline, CLOCK_FREQ );
     struct timespec ts = { d.quot, d.rem * (1000000000 / CLOCK_FREQ) };
-
+#if defined( ANDROID )
+    int val = pthread_cond_timedwait_cancel (p_condvar, p_mutex, &ts);
+#else
     int val = pthread_cond_timedwait (p_condvar, p_mutex, &ts);
+#endif
     if (val != ETIMEDOUT)
         VLC_THREAD_ASSERT ("timed-waiting on condition");
     return val;
@@ -642,14 +645,13 @@ int vlc_clone (vlc_thread_t *p_handle, void * (*entry) (void *), void *data,
     assert (ret == 0); /* fails iif VLC_STACKSIZE is invalid */
 #endif
 
+#if defined (ANDROID)
+    ret = pthread_create_cancel (p_handle, &attr, entry, data);
+#else
     ret = pthread_create (p_handle, &attr, entry, data);
+#endif
     pthread_sigmask (SIG_SETMASK, &oldset, NULL);
     pthread_attr_destroy (&attr);
-#if defined (ANDROID)
-    if (!ret) {
-        pthread_register(*p_handle);
-    }
-#endif
     return ret;
 }
 
