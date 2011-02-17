@@ -620,7 +620,7 @@ FF_ARM_NEON_SRC := \
     libavcodec/arm/vp3dsp_neon.S \
     libavcodec/arm/vp56dsp_neon.S
 
-FF_CFLAGS := -DHAVE_AV_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+FF_CFLAGS := -DHAVE_AV_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -ffast-math -ftree-vectorize -fsingle-precision-constant 
 
 include $(CLEAR_VARS)
 
@@ -632,7 +632,7 @@ LOCAL_C_INCLUDES += $(FF_INCLUDE)
 
 LOCAL_CFLAGS += $(FF_CFLAGS)
 
-LOCAL_CFLAGS += -DHAVE_NEON=0 -march=armv6j -mtune=arm1136j-s -msoft-float -ffast-math
+LOCAL_CFLAGS += -DHAVE_NEON=0 -march=armv6j -mtune=arm1136j-s -msoft-float
 
 LOCAL_SRC_FILES := \
     $(FF_COMMON_SRC) \
@@ -652,14 +652,15 @@ LOCAL_C_INCLUDES += $(FF_INCLUDE)
 
 LOCAL_CFLAGS += $(FF_CFLAGS)
 
-LOCAL_CFLAGS += -DHAVE_NEON=1 -march=armv7-a -mtune=cortex-a8 -mfloat-abi=softfp -mfpu=neon -ffast-math
+LOCAL_CFLAGS += -DHAVE_NEON=1 -march=armv7-a -mtune=cortex-a8 -mfloat-abi=softfp -mfpu=neon
 
 LOCAL_LDFLAGS += -Wl,--fix-cortex-a8
 
 LOCAL_SRC_FILES := \
     $(FF_COMMON_SRC) \
     $(FF_ARM_V6_SRC) \
-    $(FF_ARM_NEON_SRC)
+    $(FF_ARM_NEON_SRC) \
+    runfast.c
 
 LOCAL_LDLIBS := -lc -lm -lz -llog
 
