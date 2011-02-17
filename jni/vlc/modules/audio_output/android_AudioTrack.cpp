@@ -28,7 +28,6 @@ struct aout_sys_t {
 static int  Open(vlc_object_t *);
 static void Close(vlc_object_t *);
 static void Play(aout_instance_t *);
-static void *AudioTrackThread(vlc_object_t *);
 
 vlc_module_begin ()
     set_shortname("AndroidAudioTrack")
@@ -78,14 +77,7 @@ static int Open(vlc_object_t *p_this) {
 #endif
     p_sys->channel = channel;
     // use the minium value
-#if __PLATFORM__ == 9
-    status = AudioTrack::getMinFrameCount(&p_aout->output.i_nb_samples, type, rate);
-    if (status != NO_ERROR) {
-        msg_Err(p_aout, "AudioTrack::getMinFrameCount() failed!");
-        free(p_sys);
-        return VLC_EGENERIC;
-    }
-#elif (__PLATFORM__ < 9) && (__PLATFORM__ >= 3)
+#if __PLATFORM__ < 9
     status = AudioSystem::getOutputSamplingRate(&afSampleRate, type);
     status ^= AudioSystem::getOutputFrameCount(&afFrameCount, type);
     status ^= AudioSystem::getOutputLatency((uint32_t*)(&afLatency), type);
@@ -100,7 +92,12 @@ static int Open(vlc_object_t *p_this) {
     minFrameCount = (afFrameCount * rate * minBufCount) / afSampleRate;
     p_aout->output.i_nb_samples = minFrameCount;
 #else
-#error "sorry this is not a supported platform :("
+    status = AudioTrack::getMinFrameCount(&p_aout->output.i_nb_samples, type, rate);
+    if (status != NO_ERROR) {
+        msg_Err(p_aout, "AudioTrack::getMinFrameCount() failed!");
+        free(p_sys);
+        return VLC_EGENERIC;
+    }
 #endif
     p_aout->output.i_nb_samples <<= 1;
     p_sys->size = p_aout->output.i_nb_samples;
@@ -112,15 +109,8 @@ static int Open(vlc_object_t *p_this) {
         free(p_sys);
         return VLC_EGENERIC;
     }
+    p_sys->handle->start();
     p_aout->output.pf_play = Play;
-    /* Volume is entirely done in software. */
-    aout_VolumeSoftInit(p_aout);
-    if (vlc_thread_create(p_aout, "aout", AudioTrackThread, VLC_THREAD_PRIORITY_OUTPUT)) {
-        msg_Err(p_aout, "cannot create AudioTrack thread (%m)");
-        delete p_sys->handle;
-        free(p_sys);
-        return VLC_ENOMEM;
-    }
     return VLC_SUCCESS;
 }
 
@@ -128,29 +118,22 @@ static void Close(vlc_object_t *p_this) {
     aout_instance_t *p_aout = (aout_instance_t*)p_this;
     struct aout_sys_t *p_sys = p_aout->output.p_sys;
 
+    p_sys->handle->stop();
+    p_sys->handle->flush();
+    delete p_sys->handle;
     vlc_object_kill(p_aout);
     vlc_thread_join(p_aout);
     p_aout->b_die = false;
-    delete p_sys->handle;
     free(p_sys);
 }
 
 static void Play(aout_instance_t *p_aout) {
-    VLC_UNUSED(p_aout);
-}
-
-static void *AudioTrackThread(vlc_object_t *p_this) {
+    struct aout_sys_t *p_sys = p_aout->output.p_sys;
     int length;
     aout_buffer_t *p_buffer;
-    aout_instance_t *p_aout = (aout_instance_t*)p_this;
-    struct aout_sys_t *p_sys = p_aout->output.p_sys;
-    int canc = vlc_savecancel();
 
-    p_sys->handle->start();
     while (vlc_object_alive(p_aout)) {
-        vlc_mutex_lock(&p_aout->output_fifo_lock);
         p_buffer = aout_FifoPop(p_aout, &p_aout->output.fifo);
-        vlc_mutex_unlock(&p_aout->output_fifo_lock);
         if (p_buffer != NULL) {
             length = 0;
             while (length < p_buffer->i_buffer) {
@@ -159,11 +142,7 @@ static void *AudioTrackThread(vlc_object_t *p_this) {
             aout_BufferFree(p_buffer);
         }
         else
-            msleep(VLC_HARD_MIN_SLEEP);
+            break;
     }
-    p_sys->handle->stop();
-    p_sys->handle->flush();
-    vlc_restorecancel(canc);
-    return NULL;
 }
 
