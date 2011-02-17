@@ -1,3 +1,4 @@
+
 LOCAL_PATH:= $(call my-dir)
 
 include $(CLEAR_VARS)
@@ -166,7 +167,11 @@ LOCAL_SRC_FILES := \
 
 LOCAL_LDLIBS += -llog
 
-LOCAL_STATIC_LIBRARIES += compat cpufeatures iconv charset
+LOCAL_STATIC_LIBRARIES += compat cpufeatures 
+
+# please try to use the latest NDK
+# http://code.google.com/p/android/issues/detail?id=9439
+LOCAL_WHOLE_STATIC_LIBRARIES += iconv charset freetype ass
 
 include $(BUILD_SHARED_LIBRARY)
 

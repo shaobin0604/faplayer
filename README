@@ -9,3 +9,41 @@ Build steps:
 2. run ./trivial.rb(only tested on ruby-1.9.2)
 3. rebuild the project
 
+if you encounter compiling errors, take a look at this.
+1. there is problem with NDK headers when compiling in ARM mode
+diff -Nurp platforms/android-3/arch-arm/usr/include/asm/byteorder.h.org platforms/android-3/arch-arm/usr/include/asm/byteorder.h
+--- platforms/android-3/arch-arm/usr/include/asm/byteorder.h.org	2010-11-13 07:53:10.000000000 +0800
++++ platforms/android-3/arch-arm/usr/include/asm/byteorder.h	2010-11-13 07:53:10.000000000 +0800
+@@ -22,7 +22,7 @@ static inline __attribute_const__ __u32 
+ #ifndef __thumb__
+  if (!__builtin_constant_p(x)) {
+ 
+- asm ("eor\t%0, %1, %1, ror #16" : "=r" (t) : "r" (x));
++ __asm__ ("eor\t%0, %1, %1, ror #16" : "=r" (t) : "r" (x));
+  } else
+ #endif
+  t = x ^ ((x << 16) | (x >> 16));
+
+2. LOCAL_WHOLE_STATIC_LIBRARIES does not work
+diff -Nurp toolchains/arm-linux-androideabi-4.4.3/setup.mk.org toolchains/arm-linux-androideabi-4.4.3/setup.mk
+--- toolchains/arm-linux-androideabi-4.4.3/setup.mk.org	2010-11-30 22:06:34.000000000 +0800
++++ toolchains/arm-linux-androideabi-4.4.3/setup.mk	2010-11-30 22:06:34.000000000 +0800
+@@ -123,7 +123,7 @@ $(TARGET_CXX) \
+     -shared \
+     --sysroot=$(call host-path,$(SYSROOT)) \
+     $(call host-path, $(PRIVATE_OBJECTS)) \
+-    $(call whole-archive-list-flags,$(PRIVATE_WHOLE_STATIC_LIBRARIES)) \
++    $(call link-whole-archives,$(PRIVATE_WHOLE_STATIC_LIBRARIES)) \
+     $(call host-path,\
+         $(PRIVATE_STATIC_LIBRARIES) \
+         $(PRIVATE_SHARED_LIBRARIES)) \
+@@ -139,7 +139,7 @@ $(TARGET_CXX) \
+     -Wl,-z,nocopyreloc \
+     --sysroot=$(call host-path,$(SYSROOT)) \
+     $(call host-path, $(PRIVATE_OBJECTS)) \
+-    $(call whole-archive-list-flags,$(PRIVATE_WHOLE_STATIC_LIBRARIES)) \
++    $(call link-whole-archives,$(PRIVATE_WHOLE_STATIC_LIBRARIES)) \
+     $(call host-path,\
+         $(PRIVATE_STATIC_LIBRARIES) \
+         $(PRIVATE_SHARED_LIBRARIES)) \
+

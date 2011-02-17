@@ -19,7 +19,7 @@ LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
-    $(VLCROOT)/src \
+    $(VLCROOT)/src
 
 LOCAL_SRC_FILES := \
     directory.c \

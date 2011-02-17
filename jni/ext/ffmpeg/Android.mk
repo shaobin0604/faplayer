@@ -632,7 +632,7 @@ LOCAL_C_INCLUDES += $(FF_INCLUDE)
 
 LOCAL_CFLAGS += $(FF_CFLAGS)
 
-LOCAL_CFLAGS += -DHAVE_NEON=0 -march=armv6j -mtune=arm1136j-s -msoft-float
+LOCAL_CFLAGS += -DHAVE_NEON=0 -march=armv6j -mtune=arm1136j-s -msoft-float -ffast-math
 
 LOCAL_SRC_FILES := \
     $(FF_COMMON_SRC) \
@@ -652,7 +652,7 @@ LOCAL_C_INCLUDES += $(FF_INCLUDE)
 
 LOCAL_CFLAGS += $(FF_CFLAGS)
 
-LOCAL_CFLAGS += -DHAVE_NEON=1 -march=armv7-a -mtune=cortex-a8 -mfloat-abi=softfp -mfpu=neon
+LOCAL_CFLAGS += -DHAVE_NEON=1 -march=armv7-a -mtune=cortex-a8 -mfloat-abi=softfp -mfpu=neon -ffast-math
 
 LOCAL_LDFLAGS += -Wl,--fix-cortex-a8
 

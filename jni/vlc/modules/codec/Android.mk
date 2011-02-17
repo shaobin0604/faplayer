@@ -1,12 +1,12 @@
 
 LOCAL_PATH := $(call my-dir)
 
-# liblibmpeg2_plugin.so
+# liblibass_plugin.so
 
 include $(CLEAR_VARS)
 
 # "^lib" is auto removed
-#LOCAL_MODULE := liblibmpeg2_plugin
+LOCAL_MODULE := liblibass_plugin
 
 LOCAL_CFLAGS += \
     -std=c99 \
@@ -14,24 +14,25 @@ LOCAL_CFLAGS += \
     -DHAVE_CONFIG_H \
     -DNDEBUG \
     -D__PLUGIN__ \
-    -DMODULE_STRING=\"libmpeg2\"
+    -DMODULE_STRING=\"libass\"
 
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \
     $(VLCROOT) \
     $(VLCROOT)/include \
     $(VLCROOT)/src \
-    $(EXTROOT)/libmpeg2/include
+    $(EXTROOT)/iconv/include \
+    $(EXTROOT)/freetype/include \
+    $(EXTROOT)/libass/include
 
 LOCAL_SRC_FILES := \
-    libmpeg2.c
+    libass.c
 
-LOCAL_SHARED_LIBRARIES += vlccore mpeg2
+LOCAL_SHARED_LIBRARIES += vlccore
 
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
 include $(call all-makefiles-under,$(LOCAL_PATH))
-
 
