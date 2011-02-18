@@ -24,8 +24,6 @@ extern "C" void LockSurface();
 extern "C" void UnlockSurface();
 extern "C" void *GetSurface();
 
-extern "C" void debug(const char *fmt, ...);
-
 static int Open (vlc_object_t *);
 static void Close(vlc_object_t *);
 
@@ -115,6 +113,11 @@ static int Open(vlc_object_t *object) {
 #endif
     sys->w = fmt.i_width;
     sys->h = fmt.i_height;
+#if __PLATFORM__ > 4
+    msg_Dbg(object, "SurfaceInfo w = %d, h = %d, s = %d", sys->width, sys->height, sys->stride);
+#else
+    msg_Dbg(object, "SurfaceInfo w = %d, h = %d", sys->width, sys->height);
+#endif
     sys->pool = NULL;
     vd->sys = sys;
     vout_display_cfg_t cfg = *vd->cfg;
@@ -230,16 +233,20 @@ static void picture_Strech2(vout_display_t *vd, picture_t *dst_p, picture_t *src
     vout_display_place_t *place = &sys->place;
 
     // TODO: shall i handle all the planes?
-    if (src_p->i_planes != dst_p->i_planes)
+    if (src_p->i_planes != dst_p->i_planes) {
+        msg_Dbg(VLC_OBJECT(vd), "FIXME: src_p->i_planes != dst_p->i_planes");
         return;
+    }
     if (src_p->i_planes != 1 || dst_p->i_planes != 1)
         return;
     //for (int i = 0; i < src->i_planes; i++) {
     //    if (src->p[i].i_pixel_pitch != dst->p[i].i_pixel_pitch)
     //        return;
     //}
-    if ((sys->width < place->x + place->width) || (sys->height < place->y + sys->height))
+    if ((sys->width < place->x + place->width) || (sys->height < place->y + place->height)) {
+        msg_Dbg(VLC_OBJECT(vd), "Surface %dx%d, place %d, %d %dx%d, out of region", sys->width, sys->height, place->x, place->y, place->width, place->height);
         return;
+    }
     // TODO: shall i handle all the planes?
     plane_t *sp = &src_p->p[0];
     plane_t *dp = &dst_p->p[0];
@@ -268,7 +275,7 @@ static void picture_Strech2(vout_display_t *vd, picture_t *dst_p, picture_t *src
     dry = place->y;
     drw = place->width;
     drh = place->height;
-    //debug("%dx%d %d %d,%d %dx%d -> %dx%d %d %d,%d %dx%d", sw, sh, ss, srx, sry, srw, srh, dw, dh, ds, drx, dry, drw, drh);
+    //msg_Dbg(VLC_OBJECT(vd), "%dx%d %d %d,%d %dx%d -> %dx%d %d %d,%d %dx%d", sw, sh, ss, srx, sry, srw, srh, dw, dh, ds, drx, dry, drw, drh);
     pos = 0x10000;
     inc = (srh << 16) / drh;
     src_row = sry;
