@@ -5,6 +5,8 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+LOCAL_ARM_MODE := arm
+
 LOCAL_MODULE := float32_mixer_plugin
 
 LOCAL_CFLAGS += \
@@ -31,6 +33,8 @@ include $(BUILD_SHARED_LIBRARY)
 # libtrivial_mixer_plugin.so
 
 include $(CLEAR_VARS)
+
+LOCAL_ARM_MODE := arm
 
 LOCAL_MODULE := trivial_mixer_plugin
 

@@ -5,6 +5,8 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+LOCAL_ARM_MODE := arm
+
 LOCAL_MODULE := avcodec_plugin-6
 
 LOCAL_CFLAGS += \
@@ -41,6 +43,8 @@ include $(BUILD_SHARED_LIBRARY)
 # libavcodec_plugin-7.so
 
 include $(CLEAR_VARS)
+
+LOCAL_ARM_MODE := arm
 
 LOCAL_MODULE := avcodec_plugin-7
 

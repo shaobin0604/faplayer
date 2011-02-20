@@ -5,6 +5,8 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+LOCAL_ARM_MODE := arm
+
 LOCAL_MODULE := aout_android-3_plugin
 
 LOCAL_CFLAGS += \
@@ -35,6 +37,8 @@ include $(BUILD_SHARED_LIBRARY)
 # libaout_android-4_plugin.so
 
 include $(CLEAR_VARS)
+
+LOCAL_ARM_MODE := arm
 
 LOCAL_MODULE := aout_android-4_plugin
 
@@ -67,6 +71,8 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
+LOCAL_ARM_MODE := arm
+
 LOCAL_MODULE := aout_android-5_plugin
 
 LOCAL_CFLAGS += \
@@ -98,6 +104,8 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
+LOCAL_ARM_MODE := arm
+
 LOCAL_MODULE := aout_android-8_plugin
 
 LOCAL_CFLAGS += \
@@ -128,6 +136,8 @@ include $(BUILD_SHARED_LIBRARY)
 # libaout_android-9_plugin.so
 
 include $(CLEAR_VARS)
+
+LOCAL_ARM_MODE := arm
 
 LOCAL_MODULE := aout_android-9_plugin
 

@@ -5,6 +5,8 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+LOCAL_ARM_MODE := arm
+
 LOCAL_MODULE := vout_android-3_plugin
 
 LOCAL_CFLAGS += \
@@ -35,6 +37,8 @@ include $(BUILD_SHARED_LIBRARY)
 #libvout_android-4_plugin.so
 
 include $(CLEAR_VARS)
+
+LOCAL_ARM_MODE := arm
 
 LOCAL_MODULE := vout_android-4_plugin
 
@@ -67,6 +71,8 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
+LOCAL_ARM_MODE := arm
+
 LOCAL_MODULE := vout_android-5_plugin
 
 LOCAL_CFLAGS += \
@@ -97,6 +103,8 @@ include $(BUILD_SHARED_LIBRARY)
 #libvout_android-8_plugin.so
 
 include $(CLEAR_VARS)
+
+LOCAL_ARM_MODE := arm
 
 LOCAL_MODULE := vout_android-8_plugin
 
@@ -129,6 +137,8 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
+LOCAL_ARM_MODE := arm
+
 LOCAL_MODULE := vout_android-9_plugin
 
 LOCAL_CFLAGS += \
@@ -159,6 +169,8 @@ include $(BUILD_SHARED_LIBRARY)
 #libvout_wrapper_plugin.so
 
 include $(CLEAR_VARS)
+
+LOCAL_ARM_MODE := arm
 
 LOCAL_MODULE := vout_wrapper_plugin
 

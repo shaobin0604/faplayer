@@ -17,9 +17,6 @@ drop-late-frames=0
 # Skip frames (boolean)
 skip-frames=0
 
-# Audio visualizations  (string)
-audio-visual=visual
-
 [avcodec] # FFmpeg audio/video decoder
 
 # Direct rendering (boolean)

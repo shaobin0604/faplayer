@@ -5,6 +5,8 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+LOCAL_ARM_MODE := arm
+
 LOCAL_MODULE := blend_plugin
 
 LOCAL_CFLAGS += \
@@ -31,6 +33,8 @@ include $(BUILD_SHARED_LIBRARY)
 # libswscale_plugin-6.so
 
 include $(CLEAR_VARS)
+
+LOCAL_ARM_MODE := arm
 
 LOCAL_MODULE := swscale_plugin-6
 
@@ -62,6 +66,8 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
+LOCAL_ARM_MODE := arm
+
 LOCAL_MODULE := swscale_plugin-7
 
 LOCAL_CFLAGS += \
@@ -91,6 +97,8 @@ include $(BUILD_SHARED_LIBRARY)
 # libvideo_filter_wrapper_plugin.so
 
 include $(CLEAR_VARS)
+
+LOCAL_ARM_MODE := arm
 
 LOCAL_MODULE := video_filter_wrapper_plugin
 

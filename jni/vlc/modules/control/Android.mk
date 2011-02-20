@@ -1,9 +1,11 @@
 
 LOCAL_PATH := $(call my-dir)
 
-# libandroid_simple_rc_plugin.so
+# libasrc_plugin.so
 
 include $(CLEAR_VARS)
+
+LOCAL_ARM_MODE := arm
 
 LOCAL_MODULE := asrc_plugin
 

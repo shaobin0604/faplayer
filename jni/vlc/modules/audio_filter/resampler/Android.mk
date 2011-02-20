@@ -5,6 +5,8 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+LOCAL_ARM_MODE := arm
+
 LOCAL_MODULE := bandlimited_resampler_plugin
 
 LOCAL_CFLAGS += \
@@ -31,6 +33,8 @@ include $(BUILD_SHARED_LIBRARY)
 # libugly_resampler_plugin.so
 
 include $(CLEAR_VARS)
+
+LOCAL_ARM_MODE := arm
 
 LOCAL_MODULE := ugly_resampler_plugin
 
