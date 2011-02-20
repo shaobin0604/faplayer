@@ -1584,8 +1584,6 @@ static char *GetTmpPath( char *psz_path )
         free( psz_path );
         return strdup( "C:" );
     }
-#elif defined ( ANDROID )
-    psz_path = strdup ( "/sqlite_stmt_journals" );
 #else
     psz_path = strdup( "/tmp" );
 #endif

@@ -16,11 +16,11 @@ LOCAL_CFLAGS += \
     -D__LIBVLC__ \
     -D__arm__ \
     -D__linux__ \
-    -DLOCALEDIR=\"/sdcard/.vlc/locale\" \
-    -DSYSCONFDIR=\"/sdcard/.vlc/etc\" \
-    -DDATA_PATH=\"/sdcard/.vlc/share\" \
-    -DPKGLIBDIR=\"/sdcard/.vlc/lib\" \
-    -DPACKAGENAME=\"org.stagex\"
+    -DPACKAGENAME=\"org.stagex\" \
+    -DLOCALEDIR=\"/data/data/\"PACKAGENAME\"/cache/locale\" \
+    -DSYSCONFDIR=\"/data/data/\"PACKAGENAME\"/cache/etc\" \
+    -DDATA_PATH=\"/data/data/\"PACKAGENAME\"/cache/share\" \
+    -DPKGLIBDIR=\"/data/data/\"PACKAGENAME\"/cache/lib\"
 
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \

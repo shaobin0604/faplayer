@@ -77,7 +77,7 @@ def loadmf(mf, cf)
 end
 
 arch = 'arm'
-dirs = 'libavcodec|libavcore|libavdevice|libavfilter|libavformat|libavutil|libswscale'
+dirs = 'libavcodec|libavcore|libavfilter|libavformat|libavutil|libswscale'
 
 cf = loadcf('config.mk')
 
@@ -97,6 +97,7 @@ dirs.split('|').each { |d|
 }
 
 all.uniq!
+all.sort!
 
 all.each { |f|
     print "    #{f} \\\n"

@@ -98,28 +98,28 @@ char *config_GetUserDir (vlc_userdir_t type)
         case VLC_HOME_DIR:
             break;
         case VLC_CONFIG_DIR:
-            return config_GetAppDir (NULL, "etc");
+            return strdup (SYSCONFDIR);
         case VLC_DATA_DIR:
-            return config_GetAppDir (NULL, "share");
+            return strdup (DATA_PATH);
         case VLC_CACHE_DIR:
-            return config_GetAppDir (NULL, "cache");
+            return strdup ("/data/data/" PACKAGENAME "/cache");
 
         case VLC_DESKTOP_DIR:
-            return config_GetTypeDir ("DESKTOP");
+            return config_GetTypeDir ("Desktop");
         case VLC_DOWNLOAD_DIR:
-            return config_GetTypeDir ("DOWNLOAD");
+            return config_GetTypeDir ("Download");
         case VLC_TEMPLATES_DIR:
-            return config_GetTypeDir ("TEMPLATE");
+            return config_GetTypeDir ("Template");
         case VLC_PUBLICSHARE_DIR:
-            return config_GetTypeDir ("PUBLIC");
+            return config_GetTypeDir ("Public");
         case VLC_DOCUMENTS_DIR:
-            return config_GetTypeDir ("DOCUMENT");
+            return config_GetTypeDir ("Document");
         case VLC_MUSIC_DIR:
-            return config_GetTypeDir ("MUSIC");
+            return config_GetTypeDir ("Music");
         case VLC_PICTURES_DIR:
-            return config_GetTypeDir ("PICTURE");
+            return config_GetTypeDir ("Picture");
         case VLC_VIDEOS_DIR:
-            return config_GetTypeDir ("VIDEO");
+            return config_GetTypeDir ("Video");
     }
     return config_GetHomeDir ();
 }

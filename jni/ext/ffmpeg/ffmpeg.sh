@@ -2,10 +2,11 @@
 --disable-bsfs \
 --disable-devices \
 --disable-encoders \
+--disable-filters \
 --disable-muxers \
 --enable-cross-compile \
---cross-prefix=arm-none-linux-gnueabi- \
---arch=armv7-a \
---cpu=cortex-a8 \
+--cross-prefix=arm-linux-androideabi- \
+--arch=armv6j \
+--cpu=arm1136j-s \
 --target-os=linux \
 --enable-pic

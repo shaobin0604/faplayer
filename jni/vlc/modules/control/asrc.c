@@ -385,11 +385,23 @@ static void ProcessCommand(intf_thread_t *p_intf, const char *p_string) {
     }
     else if (i_argc == 2) {
         if (!strcmp(p_argv[0], "open")) {
-            //playlist_Stop(p_playlist);
-            //playlist_Clear(p_playlist, pl_Unlocked);
-            input_item_t *p_item = input_item_New(p_intf, p_argv[1], NULL);
+            char *path = p_argv[1];
+            int len = strlen(path);
+            char *name = malloc(len + 1);
+
+            if (name) {
+                int i;
+                for (i = len - 1; i >= 0; i--) {
+                    if (path[i] == '/')
+                        break;
+                }
+                i += 1;
+                strcpy(name, path + i);
+            }
+            input_item_t *p_item = input_item_New(p_intf, p_argv[1], name);
+            if (name)
+                free(name);
             int i_ret = playlist_AddInput(p_playlist, p_item, PLAYLIST_GO|PLAYLIST_APPEND, PLAYLIST_END, true, pl_Unlocked);
-            //playlist_Pause(p_playlist);
             vlc_gc_decref(p_item);
         }
         else if (!strcmp(p_argv[0], "seek")) {

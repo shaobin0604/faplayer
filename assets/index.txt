@@ -7,6 +7,7 @@ lib/video_output/libvout_android-9_plugin.so
 lib/codec/liblibass_plugin.so
 lib/codec/libavcodec_plugin-7.so
 lib/codec/libavcodec_plugin-6.so
+lib/visualization/libvisual_plugin.so
 lib/misc/libfreetype_plugin.so
 lib/control/libasrc_plugin.so
 lib/video_filter/libswscale_plugin-6.so
