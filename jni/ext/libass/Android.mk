@@ -10,6 +10,8 @@ LOCAL_MODULE := ass
 LOCAL_CFLAGS += \
     -DHAVE_CONFIG_H
 
+LOCAL_CFLAGS += $(COMMON_OPT_CFLAGS)
+
 LOCAL_C_INCLUDES += \
     $(EXTROOT)/iconv/include \
     $(EXTROOT)/freetype/include \

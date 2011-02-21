@@ -12,6 +12,8 @@ LOCAL_CFLAGS += \
     -DBUILDING_LIBICONV \
     -DIN_LIBRARY
 
+LOCAL_CFLAGS += $(COMMON_OPT_CFLAGS)
+
 LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/include \
     $(LOCAL_PATH)/libcharset/include

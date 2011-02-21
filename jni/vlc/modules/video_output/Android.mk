@@ -24,6 +24,8 @@ LOCAL_C_INCLUDES += \
     $(VLCROOT)/include \
     $(VLCROOT)/src
 
+LOCAL_CPPFLAGS += $(COMMON_OPT_CFLAGS)
+
 LOCAL_SRC_FILES := \
     android_Surface.cpp
 
@@ -49,6 +51,8 @@ LOCAL_CFLAGS += \
     -DNDEBUG \
     -D__PLUGIN__ \
     -DMODULE_STRING=\"vout_android-4\"
+
+LOCAL_CPPFLAGS += $(COMMON_OPT_CFLAGS)
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-4/include \
@@ -83,6 +87,8 @@ LOCAL_CFLAGS += \
     -D__PLUGIN__ \
     -DMODULE_STRING=\"vout_android-5\"
 
+LOCAL_CPPFLAGS += $(COMMON_OPT_CFLAGS)
+
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-5/include \
     $(VLCROOT)/compat \
@@ -115,6 +121,8 @@ LOCAL_CFLAGS += \
     -DNDEBUG \
     -D__PLUGIN__ \
     -DMODULE_STRING=\"vout_android-8\"
+
+LOCAL_CPPFLAGS += $(COMMON_OPT_CFLAGS)
 
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-8/include \
@@ -149,6 +157,8 @@ LOCAL_CFLAGS += \
     -D__PLUGIN__ \
     -DMODULE_STRING=\"vout_android-9\"
 
+LOCAL_CPPFLAGS += $(COMMON_OPT_CFLAGS)
+
 LOCAL_C_INCLUDES += \
     $(DEPROOT)/android-9/include \
     $(VLCROOT)/compat \
@@ -181,6 +191,8 @@ LOCAL_CFLAGS += \
     -DNDEBUG \
     -D__PLUGIN__ \
     -DMODULE_STRING=\"vout_wrapper\"
+
+LOCAL_CPPFLAGS += $(COMMON_OPT_CFLAGS)
 
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \

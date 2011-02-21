@@ -17,6 +17,8 @@ LOCAL_CFLAGS += \
     -D__PLUGIN__ \
     -DMODULE_STRING=\"blend\"
 
+LOCAL_CFLAGS += $(COMMON_OPT_CFLAGS)
+
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \
     $(VLCROOT) \
@@ -45,6 +47,8 @@ LOCAL_CFLAGS += \
     -DNDEBUG \
     -D__PLUGIN__ \
     -DMODULE_STRING=\"swscale\"
+
+LOCAL_CFLAGS += $(COMMON_OPT_CFLAGS)
 
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \
@@ -78,6 +82,8 @@ LOCAL_CFLAGS += \
     -D__PLUGIN__ \
     -DMODULE_STRING=\"swscale\"
 
+LOCAL_CFLAGS += $(COMMON_OPT_CFLAGS)
+
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \
     $(VLCROOT) \
@@ -109,6 +115,8 @@ LOCAL_CFLAGS += \
     -DNDEBUG \
     -D__PLUGIN__ \
     -DMODULE_STRING=\"video_filter_wrapper\"
+
+LOCAL_CFLAGS += $(COMMON_OPT_CFLAGS)
 
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \

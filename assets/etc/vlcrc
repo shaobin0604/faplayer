@@ -12,10 +12,10 @@
 input-timeshift-path=/sqlite_stmt_journals
 
 # Drop late frames (boolean)
-drop-late-frames=0
+drop-late-frames=1
 
 # Skip frames (boolean)
-skip-frames=0
+skip-frames=1
 
 [avcodec] # FFmpeg audio/video decoder
 

@@ -13,6 +13,8 @@ LOCAL_CFLAGS += \
     -DIN_LIBRARY \
     -DLIBDIR=\"\"
 
+LOCAL_CFLAGS += $(COMMON_OPT_CFLAGS)
+
 LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/include
 

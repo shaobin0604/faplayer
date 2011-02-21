@@ -18,6 +18,8 @@ LOCAL_CFLAGS += \
     -D__PLUGIN__ \
     -DMODULE_STRING=\"libass\"
 
+LOCAL_CFLAGS += $(COMMON_OPT_CFLAGS)
+
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \
     $(VLCROOT) \

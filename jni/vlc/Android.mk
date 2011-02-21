@@ -22,6 +22,8 @@ LOCAL_CFLAGS += \
     -DDATA_PATH=\"/data/data/\"PACKAGENAME\"/cache/share\" \
     -DPKGLIBDIR=\"/data/data/\"PACKAGENAME\"/cache/lib\"
 
+LOCAL_CFLAGS += $(COMMON_OPT_CFLAGS)
+
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \
     $(VLCROOT) \

@@ -9,7 +9,15 @@ Build steps:
 2. run ./trivial.rb(only tested on ruby-1.9.2)
 3. rebuild the project
 
-if you encounter compiling errors, take a look at this.
+KNOWN ISSUES:
+
+Well, my spare time goes.
+
+1. libass sigmentation fault
+2. bugs around control
+
+or, if you encounter compiling errors, take a look at this.
+
 1. there is problem with NDK headers when compiling in ARM mode
 diff -Nurp platforms/android-3/arch-arm/usr/include/asm/byteorder.h.org platforms/android-3/arch-arm/usr/include/asm/byteorder.h
 --- platforms/android-3/arch-arm/usr/include/asm/byteorder.h.org	2010-11-13 07:53:10.000000000 +0800

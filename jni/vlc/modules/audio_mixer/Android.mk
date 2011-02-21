@@ -17,6 +17,8 @@ LOCAL_CFLAGS += \
     -D__PLUGIN__ \
     -DMODULE_STRING=\"float32_mixer\"
 
+LOCAL_CFLAGS += $(COMMON_OPT_CFLAGS)
+
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \
     $(VLCROOT) \
@@ -45,6 +47,8 @@ LOCAL_CFLAGS += \
     -DNDEBUG \
     -D__PLUGIN__ \
     -DMODULE_STRING=\"trivial_mixer\"
+
+LOCAL_CFLAGS += $(COMMON_OPT_CFLAGS)
 
 LOCAL_C_INCLUDES += \
     $(VLCROOT)/compat \

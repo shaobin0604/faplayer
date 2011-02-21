@@ -17,6 +17,8 @@ LOCAL_CFLAGS += \
     -D__PLUGIN__ \
     -DMODULE_STRING=\"freetype\"
 
+LOCAL_CFLAGS += $(COMMON_OPT_CFLAGS)
+
 LOCAL_C_INCLUDES += \
     $(EXTROOT)/iconv/include \
     $(EXTROOT)/freetype/include \

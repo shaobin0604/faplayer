@@ -593,7 +593,6 @@ FF_ARM_NEON_SRC := \
     libavcodec/arm/vp56dsp_neon.S
 
 FF_CFLAGS := -DHAVE_AV_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
-FF_CFLAGS += -ftree-vectorize 
 
 include $(CLEAR_VARS)
 
