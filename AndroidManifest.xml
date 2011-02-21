@@ -3,7 +3,7 @@
       package="org.stagex"
       android:versionCode="1"
       android:versionName="1.0">
-    <application android:debuggable="true"  android:name=".Danmaku" android:icon="@drawable/icon" android:label="@string/app_name">
+    <application android:name=".Danmaku" android:icon="@drawable/icon" android:label="@string/app_name">
         <activity android:name=".activity.FileListActivity"
                   android:label="@string/app_name">
             <intent-filter>
