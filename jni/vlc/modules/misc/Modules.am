@@ -1,0 +1,45 @@
+BASE_SUBDIRS = dummy notify playlist stats osd
+
+SUBDIRS = $(BASE_SUBDIRS)
+DIST_SUBDIRS = $(BASE_SUBDIRS)
+
+SOURCES_freetype = freetype.c text_renderer.h
+SOURCES_win32text = win32text.c
+SOURCES_quartztext = quartztext.c text_renderer.h
+SOURCES_logger = logger.c
+SOURCES_vod_rtsp = rtsp.c
+SOURCES_gnutls = gnutls.c dhparams.h
+SOURCES_svg = svg.c
+SOURCES_audioscrobbler = audioscrobbler.c
+SOURCES_inhibit = inhibit.c
+SOURCES_sqlite = sqlite.c
+SOURCES_xml = xml/libxml.c
+
+libxdg_screensaver_plugin_la_SOURCES = inhibit/xdg.c
+libxdg_screensaver_plugin_la_CFLAGS = $(AM_CFLAGS)
+libxdg_screensaver_plugin_la_LIBADD = $(AM_LIBADD)
+libxdg_screensaver_plugin_la_DEPENDENCIES =
+libxscreensaver_plugin_la_SOURCES = inhibit/xscreensaver.c
+libxscreensaver_plugin_la_CFLAGS = $(AM_CFLAGS)
+libxscreensaver_plugin_la_LIBADD = $(AM_LIBADD)
+libxscreensaver_plugin_la_DEPENDENCIES =
+if HAVE_XCB
+libvlc_LTLIBRARIES += \
+	libxdg_screensaver_plugin.la \
+	libxscreensaver_plugin.la
+endif
+
+SOURCES_osso_screensaver = inhibit/osso.c
+
+libvlc_LTLIBRARIES += \
+	libaudioscrobbler_plugin.la \
+	liblogger_plugin.la
+
+if HAVE_WINCE
+libvlc_LTLIBRARIES += libwin32text_plugin.la
+endif
+if ENABLE_SOUT
+libvlc_LTLIBRARIES += \
+	libvod_rtsp_plugin.la \
+	$(NULL)
+endif

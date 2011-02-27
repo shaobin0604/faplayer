@@ -1,0 +1,127 @@
+SUBDIRS = msw
+# Automake forgets to add a proper tag to libtool with Objective-C files.
+# Moreocer Libtool should default tag to CC when none is specified but
+# obviously does not. Here is a fix for that.
+LIBTOOL=@LIBTOOL@ --tag=CC
+
+SOURCES_aa = aa.c
+SOURCES_caca = caca.c
+SOURCES_fb = fb.c
+SOURCES_vout_sdl = sdl.c
+SOURCES_snapshot = snapshot.c
+SOURCES_directfb = directfb.c
+SOURCES_vmem = vmem.c
+SOURCES_yuv = yuv.c
+SOURCES_vout_macosx = macosx.m opengl.h opengl.c
+SOURCES_vout_ios = ios.m opengl.h opengl.c
+
+
+### OpenGL ###
+# TODO: merge all three source files (?)
+libgles2_plugin_la_SOURCES = opengl.c opengl.h gl.c
+libgles2_plugin_la_CFLAGS = $(AM_CFLAGS) $(GLES2_CFLAGS) -DUSE_OPENGL_ES=2
+libgles2_plugin_la_LIBADD = $(AM_LIBADD) $(GLES2_LIBS)
+libgles2_plugin_la_DEPENDENCIES =
+
+libgles1_plugin_la_SOURCES = opengl.c opengl.h gl.c
+libgles1_plugin_la_CFLAGS = $(AM_CFLAGS) $(GLES1_CFLAGS) -DUSE_OPENGL_ES=1
+libgles1_plugin_la_LIBADD = $(AM_LIBADD) $(GLES1_LIBS)
+libgles1_plugin_la_DEPENDENCIES =
+
+libgl_plugin_la_SOURCES = opengl.c opengl.h gl.c
+libgl_plugin_la_CFLAGS = $(AM_CFLAGS) $(GL_CFLAGS)
+libgl_plugin_la_LIBADD = $(AM_LIBADD) $(GL_LIBS)
+libgl_plugin_la_DEPENDENCIES =
+
+EXTRA_LTLIBRARIES += \
+	libgles2_plugin.la \
+	libgles1_plugin.la \
+	libgl_plugin.la
+libvlc_LTLIBRARIES += \
+	$(LTLIBgles2) \
+	$(LTLIBgles1) \
+	$(LTLIBgl)
+
+
+### XCB ###
+libxcb_x11_plugin_la_SOURCES = \
+	xcb/xcb_vlc.h \
+	xcb/x11.c \
+	xcb/common.c \
+	xcb/events.c
+libxcb_x11_plugin_la_CFLAGS = $(AM_CFLAGS) \
+	$(XCB_CFLAGS) $(XCB_SHM_CFLAGS)
+libxcb_x11_plugin_la_LIBADD = $(AM_LIBADD) \
+	$(XCB_LIBS) $(XCB_SHM_LIBS)
+libxcb_x11_plugin_la_DEPENDENCIES =
+
+libxcb_xv_plugin_la_SOURCES = \
+	xcb/xcb_vlc.h \
+	xcb/xvideo.c \
+	xcb/common.c \
+	xcb/events.c
+libxcb_xv_plugin_la_CFLAGS = $(AM_CFLAGS) \
+	$(XCB_CFLAGS) $(XCB_SHM_CFLAGS) $(XCB_XV_CFLAGS)
+libxcb_xv_plugin_la_LIBADD = $(AM_LIBADD) \
+	$(XCB_LIBS) $(XCB_SHM_LIBS) $(XCB_XV_LIBS)
+libxcb_xv_plugin_la_DEPENDENCIES =
+
+libxcb_glx_plugin_la_SOURCES = \
+	xcb/xcb_vlc.h \
+	xcb/glx.c \
+	opengl.h \
+	opengl.c \
+	xcb/events.c
+libxcb_glx_plugin_la_CFLAGS = $(AM_CFLAGS) \
+	$(XLIB_XCB_CFLAGS) $(GL_CFLAGS)
+libxcb_glx_plugin_la_LIBADD = $(AM_LIBADD) \
+	$(XLIB_XCB_LIBS) $(GL_LIBS)
+libxcb_glx_plugin_la_DEPENDENCIES =
+
+libxcb_window_plugin_la_SOURCES = xcb/window.c xcb/keys.c xcb/keysym.h xcb/xcb_keysym.h
+libxcb_window_plugin_la_CFLAGS = $(AM_CFLAGS) \
+	$(XPROTO_CFLAGS) \
+	$(XCB_CFLAGS) \
+	$(XCB_KEYSYMS_CFLAGS)
+libxcb_window_plugin_la_LIBADD = $(AM_LIBADD) \
+	$(XPROTO_LIBS) \
+	$(XCB_LIBS) \
+	$(XCB_KEYSYMS_LIBS)
+libxcb_window_plugin_la_DEPENDENCIES =
+
+if HAVE_XCB
+libvlc_LTLIBRARIES += \
+	libxcb_x11_plugin.la \
+	libxcb_window_plugin.la
+endif
+EXTRA_LTLIBRARIES += \
+	libxcb_xv_plugin.la \
+	libxcb_glx_plugin.la
+libvlc_LTLIBRARIES += \
+	$(LTLIBxcb_xv) \
+	$(LTLIBxcb_glx)
+
+### Win32 ###
+libdrawable_plugin_la_SOURCES = drawable.c
+libdrawable_plugin_la_CFLAGS = $(AM_CFLAGS)
+libdrawable_plugin_la_LIBADD = $(AM_LIBADD)
+libdrawable_plugin_la_DEPENDENCIES =
+if HAVE_WIN32
+libvlc_LTLIBRARIES += libdrawable_plugin.la
+endif
+
+### EGL ###
+libegl_plugin_la_SOURCES = egl.c
+libegl_plugin_la_CFLAGS = $(AM_CFLAGS) $(EGL_CFLAGS)
+libegl_plugin_la_LIBADD = $(AM_LIBADD) $(EGL_LIBS)
+if !HAVE_WIN32
+libegl_plugin_la_LIBADD += $(X_LIBS) $(X_PRE_LIBS) -lX11
+endif
+libegl_plugin_la_DEPENDENCIES =
+EXTRA_LTLIBRARIES += libegl_plugin.la
+libvlc_LTLIBRARIES += $(LTLIBegl)
+
+### Common ###
+libvlc_LTLIBRARIES += \
+	libvmem_plugin.la \
+	libyuv_plugin.la

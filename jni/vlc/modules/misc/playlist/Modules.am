@@ -1,0 +1,9 @@
+SOURCES_export = \
+	export.c \
+        html.c \
+	m3u.c \
+	xspf.c \
+	xspf.h \
+	$(NULL)
+
+libvlc_LTLIBRARIES += libexport_plugin.la

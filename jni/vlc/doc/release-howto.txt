@@ -1,0 +1,102 @@
+[ Note: this howto is probably useful to core vlc developers only ]
+
+  Release HOWTO
+  -------------
+
+ * Tests: compilation, regression tests ...
+
+ * Changes on the git repository
+   - Check that the version number everywhere it's needed
+     · configure.ac
+     · NEWS
+   - Update important things and add them to the NEWS file
+   - Close the milestone on Trac https://trac.videolan.org/vlc
+   - Update OpenGPG key embedded in include/vlc_update.h if needed
+   - Increase the libvlccore and libvlc revisions in src/Makefile.am
+      _if_and_only_if_ the ABI number has not been increased instead, in
+      which case the revision goes back to zero.
+
+ * Commit
+ * Tag the commit
+
+ * Tarballs (Use a clean tree !!!)
+  - Use 'make distcheck' to make sure all files are exported correctly
+  - copy the tar.xz file on altair.videolan.org
+  - copy the binaries files on altair.videolan.org, if possible
+  - generate SHA, MD5 hashes and OpenPGP signature of these files
+    (use sha*sum --binary, md5sum --binary, gpg --sign --detach --armor)
+    Use the ~/bin/sumandsign.sh script
+
+ * Contribs
+  - Put a copy of the libraries or git snapshot in vlc-X.X.X/contrib
+  - Put the relevant win32 contrib package
+  - Update developers.v.o/vlc and www.v.o/vlc/download-sources.html
+
+ * Win32 Packages
+  - configure using the extras/package/win32/configure-mingw-release.sh script
+  - move to altair and generate md5 plus SHA1 hashes and gpg signature of these files
+    (c.f. Tarballs)
+
+ * OS X packages
+  - configure using ./configure --enable-macosx
+  - compile the source on both a PowerPC and an Intel-based Mac. Don't try to
+    cross-compile for either platform. Don't forget the framework.
+  - use extras/package/macosx/ub.sh to create a Universal Binary.
+  - move to altair and generate md5 plus SHA1 hashes and gpg signature of these files
+    (c.f. Tarballs)
+
+ * Commit changes ... it never works the first time
+
+ * "Tag" the release
+    git tag -a -m "VLC Release VERSION" <VERSION>
+    (Create an annotated tag, you can skip -a if you used -m)
+    git push origin <VERSION>
+
+ * Move the signed files from altair to ganesh, on /opt/ftp/pub/videolan/vlc/X.X.X
+  - At first block access to this directory by http or ftp. Only authorize rsync.
+    This is to avoid leak as some journalists and forums seem to watch the ftp.
+  - Update the "last" symlink
+
+ * Update the website
+  - edit the /index.php /vlc/*.php, include/os-specific.php files
+  - create a /vlc/release/X.X.X page
+  - add a news item to news.msg
+  - update the front page OS dependant screenshots if the interface changed.
+
+ * "Check for updates" functionality
+  - edit update.videolan.org/vlc/status
+  - gpg -t --sign --detach --armor
+
+ * Mirrors (if necessary)
+  - Forwarn the mirror admins
+  - Update the list of files for the mirror check 
+     (/var/www/local/mirrors.v.o/files)
+  - Disable mirrors which haven't synced yet and possibly ganesh if there are
+    enough other mirrors (see http://mirrors.videolan.org/release.html)
+
+ * Update the wiki
+  - edit http://wiki.videolan.org/Template:VLC:latest_version
+
+ * Announce on www.freshmeat.net (let jb or sam do it)
+  - you need a freshmeat account
+  - go to http://www.freshmeat.net/projects/vlc/
+  - chose "Submit a release" in the right menu
+  - fill out all the info and submit
+  - the update can take several hours
+
+ * Announce on VersionTracker
+  - ask Meuuh
+
+ * Announce on twitter and facebook...
+  Unfortunately, those are more followed than the other means
+
+ * Announce email and forum topic
+  - write something along the lines of previous releases
+  - post in videolan-announce (moderated), vlc et vlc-devel
+    You are advised to add the author list for this version using
+    'git shortlog -s PREVIOUS_VERSION..VERSION'
+    And to add git diff --stat PREVIOUS_VERSION..VERSION if it's relevant.
+    You can play a bit with git to show the piece of information that may be
+    interesting.
+  - add a sticky thread in the "General VLC media player discussion" forum
+
