@@ -1,7 +1,0 @@
-SOURCES_asf = \
-	asf.c \
-	libasf.c \
-	libasf.h \
-	$(NULL)
-
-libvlc_LTLIBRARIES += libasf_plugin.la

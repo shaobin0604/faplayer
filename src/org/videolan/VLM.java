@@ -203,7 +203,6 @@ public class VLM {
 	}
 
 	public void destroy() {
-		// 乱暴じゃなイカ？
 		if (mVLMThread.isAlive()) {
 			mVLMThread.interrupt();
 			mVLMThread = null;

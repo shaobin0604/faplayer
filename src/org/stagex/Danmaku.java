@@ -68,8 +68,9 @@ public class Danmaku extends Application {
 			return false;
 		}
 		// start VLC
-		// attention: SO_MAX is 96
 		String libd = String.format("%s/lib", root);
+		VLC.setenv("VLC_PLUGIN_PATH", libd, true);
+		String conf = String.format("%s/etc/vlcrc.4", root);
 		int code = SystemUtility.getSDKVersionCode();
 		if (code == 6 || code == 7)
 			code = 5;
@@ -79,9 +80,9 @@ public class Danmaku extends Application {
 		String vout = String
 				.format("vout_android-%d", test.exists() ? code : 5);
 		VLC.getInstance().create(
-				new String[] { "--no-ignore-config", "--verbose", "3",
-						"--plugin-path", libd, "--intf", "asrc", "--aout",
-						aout, "--vout", vout });
+				new String[] { "--verbose", "3", "--no-ignore-config",
+						"--config", conf, "--no-plugins-cache", "--intf",
+						"notify", "--aout", aout, "--vout", vout });
 		// start VLM
 		VLM.getInstance().create(new String[] { "127.0.0.1", "21178" });
 

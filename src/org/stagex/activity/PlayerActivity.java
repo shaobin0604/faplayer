@@ -59,7 +59,7 @@ public class PlayerActivity extends Activity implements VLI {
 				VLC.attachVideoOutput(surface);
 				if (mPlayList != null && mCurrentIndex >= 0
 						&& mCurrentIndex < mPlayList.size()) {
-					VLM.getInstance().open(mPlayList.get(mCurrentIndex));
+					VLM.getInstance().open("file://" + mPlayList.get(mCurrentIndex));
 				}
 				break;
 			}
@@ -194,7 +194,7 @@ public class PlayerActivity extends Activity implements VLI {
 					mCurrentIndex--;
 					if (mCurrentIndex < 0)
 						mCurrentIndex = 0;
-					VLM.getInstance().open(mPlayList.get(mCurrentIndex));
+					VLM.getInstance().open("file://" + mPlayList.get(mCurrentIndex));
 				}
 			}
 		});
@@ -228,7 +228,7 @@ public class PlayerActivity extends Activity implements VLI {
 					mCurrentIndex++;
 					if (mCurrentIndex >= mPlayList.size())
 						mCurrentIndex %= mPlayList.size();
-					VLM.getInstance().open(mPlayList.get(mCurrentIndex));
+					VLM.getInstance().open("file://" + mPlayList.get(mCurrentIndex));
 				}
 			}
 		});

@@ -1,0 +1,48 @@
+
+[main]
+
+# Timeshift directory (string)
+input-timeshift-path=/sqlite_stmt_journals
+
+# Drop late frames (boolean)
+drop-late-frames=1
+
+[avcodec] # FFmpeg audio/video decoder
+
+# Allow speed tricks (boolean)
+ffmpeg-fast=1
+
+# Hurry up (boolean)
+ffmpeg-hurry-up=1
+
+# Skip frame (default=0) (integer)
+ffmpeg-skip-frame=1
+
+# Skip idct (default=0) (integer)
+ffmpeg-skip-idct=1
+
+# Skip the loop filter for H.264 decoding (integer)
+ffmpeg-skiploopfilter=1
+
+[swscale] # Video scaling filter
+
+# Scaling mode (integer)
+swscale-mode=0
+
+[freetype] # Freetype2 font renderer
+
+# Font
+freetype-font=/system/fonts/DroidSansFallback.ttf
+
+# Font size in pixels
+#freetype-fontsize=0
+
+# Opacity
+freetype-opacity=192
+
+# Text default color
+freetype-color=65280
+
+# Relative font size
+#freetype-rel-fontsize=16
+

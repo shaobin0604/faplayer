@@ -1,2 +1,0 @@
-This file is outdated.
-Please refer to http://developers.videolan.org/i18n/vlc-howto.html

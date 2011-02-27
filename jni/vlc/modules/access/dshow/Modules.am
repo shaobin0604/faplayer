@@ -1,1 +1,0 @@
-SOURCES_dshow = dshow.cpp common.h filter.cpp filter.h crossbar.cpp

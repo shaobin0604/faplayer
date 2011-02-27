@@ -7,10 +7,10 @@ import android.view.Surface;
 public class VLC {
 
 	static {
+		System.loadLibrary("vlccore");
 		int arch = SystemUtility.getArmArchitecture();
 		String ffmpeg = String.format("ffmpeg-%d", arch);
 		System.loadLibrary(ffmpeg);
-		System.loadLibrary("vlccore");
 	}
 
 	private static VLC mInstance = null;
@@ -21,6 +21,8 @@ public class VLC {
 
 	protected VLC() {
 	}
+	
+	public static native int setenv(String key, String val, boolean overwrite);
 
 	private native void run(String[] args);
 
