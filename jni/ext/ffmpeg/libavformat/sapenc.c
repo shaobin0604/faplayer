@@ -20,6 +20,7 @@
  */
 
 #include "avformat.h"
+#include "libavutil/parseutils.h"
 #include "libavutil/random_seed.h"
 #include "libavutil/avstring.h"
 #include "libavutil/intreadwrite.h"
@@ -45,11 +46,8 @@ static int sap_write_close(AVFormatContext *s)
         if (!rtpctx)
             continue;
         av_write_trailer(rtpctx);
-        url_fclose(rtpctx->pb);
-        av_metadata_free(&rtpctx->streams[0]->metadata);
-        av_metadata_free(&rtpctx->metadata);
-        av_free(rtpctx->streams[0]);
-        av_free(rtpctx);
+        avio_close(rtpctx->pb);
+        avformat_free_context(rtpctx);
         s->streams[i]->priv_data = NULL;
     }
 
@@ -90,16 +88,16 @@ static int sap_write_header(AVFormatContext *s)
     option_list = strrchr(path, '?');
     if (option_list) {
         char buf[50];
-        if (find_info_tag(buf, sizeof(buf), "announce_port", option_list)) {
+        if (av_find_info_tag(buf, sizeof(buf), "announce_port", option_list)) {
             port = strtol(buf, NULL, 10);
         }
-        if (find_info_tag(buf, sizeof(buf), "same_port", option_list)) {
+        if (av_find_info_tag(buf, sizeof(buf), "same_port", option_list)) {
             same_port = strtol(buf, NULL, 10);
         }
-        if (find_info_tag(buf, sizeof(buf), "ttl", option_list)) {
+        if (av_find_info_tag(buf, sizeof(buf), "ttl", option_list)) {
             ttl = strtol(buf, NULL, 10);
         }
-        if (find_info_tag(buf, sizeof(buf), "announce_addr", option_list)) {
+        if (av_find_info_tag(buf, sizeof(buf), "announce_addr", option_list)) {
             av_strlcpy(announce_addr, buf, sizeof(announce_addr));
         }
     }
@@ -242,7 +240,7 @@ static int sap_write_packet(AVFormatContext *s, AVPacket *pkt)
     if (!sap->last_time || now - sap->last_time > 5000000) {
         int ret = url_write(sap->ann_fd, sap->ann, sap->ann_size);
         /* Don't abort even if we get "Destination unreachable" */
-        if (ret < 0 && ret != FF_NETERROR(ECONNREFUSED))
+        if (ret < 0 && ret != AVERROR(ECONNREFUSED))
             return ret;
         sap->last_time = now;
     }

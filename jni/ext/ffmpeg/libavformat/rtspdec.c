@@ -283,7 +283,7 @@ retry:
             for (i = 0; i < rt->nb_rtsp_streams; i++) {
                 rule_nr = 0;
                 for (r = 0; r < s->nb_streams; r++) {
-                    if (s->streams[r]->priv_data == rt->rtsp_streams[i]) {
+                    if (s->streams[r]->id == i) {
                         if (s->streams[r]->discard != AVDISCARD_ALL) {
                             if (!first)
                                 av_strlcat(rt->last_subscription, ",",
@@ -311,7 +311,7 @@ retry:
 
     ret = ff_rtsp_fetch_packet(s, pkt);
     if (ret < 0) {
-        if (ret == FF_NETERROR(ETIMEDOUT) && !rt->packets) {
+        if (ret == AVERROR(ETIMEDOUT) && !rt->packets) {
             if (rt->lower_transport == RTSP_LOWER_TRANSPORT_UDP &&
                 rt->lower_transport_mask & (1 << RTSP_LOWER_TRANSPORT_TCP)) {
                 RTSPMessageHeader reply1, *reply = &reply1;
@@ -382,7 +382,7 @@ static int rtsp_read_close(AVFormatContext *s)
 #if 0
     /* NOTE: it is valid to flush the buffer here */
     if (rt->lower_transport == RTSP_LOWER_TRANSPORT_TCP) {
-        url_fclose(&rt->rtsp_gb);
+        avio_close(&rt->rtsp_gb);
     }
 #endif
     ff_rtsp_send_cmd_async(s, "TEARDOWN", rt->control_uri, NULL);

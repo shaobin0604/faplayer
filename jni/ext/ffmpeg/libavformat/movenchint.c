@@ -22,6 +22,7 @@
 #include "movenc.h"
 #include "libavutil/intreadwrite.h"
 #include "internal.h"
+#include "rtpenc_chain.h"
 
 int ff_mov_init_hinting(AVFormatContext *s, int index, int src_index)
 {
@@ -30,15 +31,9 @@ int ff_mov_init_hinting(AVFormatContext *s, int index, int src_index)
     MOVTrack *src_track = &mov->tracks[src_index];
     AVStream *src_st    = s->streams[src_index];
     int ret = AVERROR(ENOMEM);
-    AVOutputFormat *rtp_format = av_guess_format("rtp", NULL, NULL);
 
     track->tag = MKTAG('r','t','p',' ');
     track->src_track = src_index;
-
-    if (!rtp_format) {
-        ret = AVERROR(ENOENT);
-        goto fail;
-    }
 
     track->enc = avcodec_alloc_context();
     if (!track->enc)
@@ -46,27 +41,9 @@ int ff_mov_init_hinting(AVFormatContext *s, int index, int src_index)
     track->enc->codec_type = AVMEDIA_TYPE_DATA;
     track->enc->codec_tag  = track->tag;
 
-    track->rtp_ctx = avformat_alloc_context();
+    track->rtp_ctx = ff_rtp_chain_mux_open(s, src_st, NULL,
+                                           RTP_MAX_PACKET_SIZE);
     if (!track->rtp_ctx)
-        goto fail;
-    track->rtp_ctx->oformat = rtp_format;
-    if (!av_new_stream(track->rtp_ctx, 0))
-        goto fail;
-
-    /* Copy stream parameters */
-    track->rtp_ctx->streams[0]->sample_aspect_ratio =
-                        src_st->sample_aspect_ratio;
-
-    /* Remove the allocated codec context, link to the original one
-     * instead, to give the rtp muxer access to codec parameters. */
-    av_free(track->rtp_ctx->streams[0]->codec);
-    track->rtp_ctx->streams[0]->codec = src_st->codec;
-
-    if ((ret = url_open_dyn_packet_buf(&track->rtp_ctx->pb,
-                                       RTP_MAX_PACKET_SIZE)) < 0)
-        goto fail;
-    ret = av_write_header(track->rtp_ctx);
-    if (ret)
         goto fail;
 
     /* Copy the RTP AVStream timebase back to the hint AVStream */
@@ -79,22 +56,8 @@ int ff_mov_init_hinting(AVFormatContext *s, int index, int src_index)
 fail:
     av_log(s, AV_LOG_WARNING,
            "Unable to initialize hinting of stream %d\n", src_index);
-    if (track->rtp_ctx && track->rtp_ctx->pb) {
-        uint8_t *buf;
-        url_close_dyn_buf(track->rtp_ctx->pb, &buf);
-        av_free(buf);
-    }
-    if (track->rtp_ctx && track->rtp_ctx->streams[0]) {
-        av_metadata_free(&track->rtp_ctx->streams[0]->metadata);
-        av_free(track->rtp_ctx->streams[0]);
-    }
-    if (track->rtp_ctx) {
-        av_metadata_free(&track->rtp_ctx->metadata);
-        av_free(track->rtp_ctx->priv_data);
-        av_freep(&track->rtp_ctx);
-    }
     av_freep(&track->enc);
-    /* Set a default timescale, to avoid crashes in dump_format */
+    /* Set a default timescale, to avoid crashes in av_dump_format */
     track->timescale = 90000;
     return ret;
 }
@@ -282,40 +245,40 @@ static int find_sample_match(const uint8_t *data, int len,
 }
 
 static void output_immediate(const uint8_t *data, int size,
-                             ByteIOContext *out, int *entries)
+                             AVIOContext *out, int *entries)
 {
     while (size > 0) {
         int len = size;
         if (len > 14)
             len = 14;
-        put_byte(out, 1); /* immediate constructor */
-        put_byte(out, len); /* amount of valid data */
-        put_buffer(out, data, len);
+        avio_w8(out, 1); /* immediate constructor */
+        avio_w8(out, len); /* amount of valid data */
+        avio_write(out, data, len);
         data += len;
         size -= len;
 
         for (; len < 14; len++)
-            put_byte(out, 0);
+            avio_w8(out, 0);
 
         (*entries)++;
     }
 }
 
-static void output_match(ByteIOContext *out, int match_sample,
+static void output_match(AVIOContext *out, int match_sample,
                          int match_offset, int match_len, int *entries)
 {
-    put_byte(out, 2); /* sample constructor */
-    put_byte(out, 0); /* track reference */
-    put_be16(out, match_len);
-    put_be32(out, match_sample);
-    put_be32(out, match_offset);
-    put_be16(out, 1); /* bytes per block */
-    put_be16(out, 1); /* samples per block */
+    avio_w8(out, 2); /* sample constructor */
+    avio_w8(out, 0); /* track reference */
+    avio_wb16(out, match_len);
+    avio_wb32(out, match_sample);
+    avio_wb32(out, match_offset);
+    avio_wb16(out, 1); /* bytes per block */
+    avio_wb16(out, 1); /* samples per block */
     (*entries)++;
 }
 
 static void describe_payload(const uint8_t *data, int size,
-                             ByteIOContext *out, int *entries,
+                             AVIOContext *out, int *entries,
                              HintSampleQueue *queue)
 {
     /* Describe the payload using different constructors */
@@ -346,7 +309,7 @@ static void describe_payload(const uint8_t *data, int size,
  * @param pts pointer where the timestamp for the written RTP hint is stored
  * @return the number of RTP packets in the written hint
  */
-static int write_hint_packets(ByteIOContext *out, const uint8_t *data,
+static int write_hint_packets(AVIOContext *out, const uint8_t *data,
                               int size, MOVTrack *trk, int64_t *pts)
 {
     int64_t curpos;
@@ -355,8 +318,8 @@ static int write_hint_packets(ByteIOContext *out, const uint8_t *data,
 
     count_pos = url_ftell(out);
     /* RTPsample header */
-    put_be16(out, 0); /* packet count */
-    put_be16(out, 0); /* reserved */
+    avio_wb16(out, 0); /* packet count */
+    avio_wb16(out, 0); /* reserved */
 
     while (size > 4) {
         uint32_t packet_len = AV_RB32(data);
@@ -391,12 +354,12 @@ static int write_hint_packets(ByteIOContext *out, const uint8_t *data,
 
         count++;
         /* RTPpacket header */
-        put_be32(out, 0); /* relative_time */
-        put_buffer(out, data, 2); /* RTP header */
-        put_be16(out, seq); /* RTPsequenceseed */
-        put_be16(out, 0); /* reserved + flags */
+        avio_wb32(out, 0); /* relative_time */
+        avio_write(out, data, 2); /* RTP header */
+        avio_wb16(out, seq); /* RTPsequenceseed */
+        avio_wb16(out, 0); /* reserved + flags */
         entries_pos = url_ftell(out);
-        put_be16(out, 0); /* entry count */
+        avio_wb16(out, 0); /* entry count */
 
         data += 12;
         size -= 12;
@@ -410,13 +373,13 @@ static int write_hint_packets(ByteIOContext *out, const uint8_t *data,
 
         curpos = url_ftell(out);
         url_fseek(out, entries_pos, SEEK_SET);
-        put_be16(out, entries);
+        avio_wb16(out, entries);
         url_fseek(out, curpos, SEEK_SET);
     }
 
     curpos = url_ftell(out);
     url_fseek(out, count_pos, SEEK_SET);
-    put_be16(out, count);
+    avio_wb16(out, count);
     url_fseek(out, curpos, SEEK_SET);
     return count;
 }
@@ -429,7 +392,7 @@ int ff_mov_add_hinted_packet(AVFormatContext *s, AVPacket *pkt,
     AVFormatContext *rtp_ctx = trk->rtp_ctx;
     uint8_t *buf = NULL;
     int size;
-    ByteIOContext *hintbuf = NULL;
+    AVIOContext *hintbuf = NULL;
     AVPacket hint_pkt;
     int ret = 0, count;
 
@@ -488,9 +451,6 @@ void ff_mov_close_hinting(MOVTrack *track) {
         url_close_dyn_buf(rtp_ctx->pb, &ptr);
         av_free(ptr);
     }
-    av_metadata_free(&rtp_ctx->streams[0]->metadata);
-    av_metadata_free(&rtp_ctx->metadata);
-    av_free(rtp_ctx->streams[0]);
-    av_freep(&rtp_ctx);
+    avformat_free_context(rtp_ctx);
 }
 

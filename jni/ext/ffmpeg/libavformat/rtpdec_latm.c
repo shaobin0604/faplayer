@@ -26,7 +26,7 @@
 #include <strings.h>
 
 struct PayloadContext {
-    ByteIOContext *dyn_buf;
+    AVIOContext *dyn_buf;
     uint8_t *buf;
     int pos, len;
     uint32_t timestamp;
@@ -68,7 +68,7 @@ static int latm_parse_packet(AVFormatContext *ctx, PayloadContext *data,
             if ((ret = url_open_dyn_buf(&data->dyn_buf)) < 0)
                 return ret;
         }
-        put_buffer(data->dyn_buf, buf, len);
+        avio_write(data->dyn_buf, buf, len);
 
         if (!(flags & RTP_FLAG_MARKER))
             return AVERROR(EAGAIN);

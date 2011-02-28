@@ -98,14 +98,14 @@ static int str_probe(AVProbeData *p)
 static int str_read_header(AVFormatContext *s,
                            AVFormatParameters *ap)
 {
-    ByteIOContext *pb = s->pb;
+    AVIOContext *pb = s->pb;
     StrDemuxContext *str = s->priv_data;
     unsigned char sector[RAW_CD_SECTOR_SIZE];
     int start;
     int i;
 
     /* skip over any RIFF header */
-    if (get_buffer(pb, sector, RIFF_HEADER_SIZE) != RIFF_HEADER_SIZE)
+    if (avio_read(pb, sector, RIFF_HEADER_SIZE) != RIFF_HEADER_SIZE)
         return AVERROR(EIO);
     if (AV_RL32(&sector[0]) == RIFF_TAG)
         start = RIFF_HEADER_SIZE;
@@ -127,7 +127,7 @@ static int str_read_header(AVFormatContext *s,
 static int str_read_packet(AVFormatContext *s,
                            AVPacket *ret_pkt)
 {
-    ByteIOContext *pb = s->pb;
+    AVIOContext *pb = s->pb;
     StrDemuxContext *str = s->priv_data;
     unsigned char sector[RAW_CD_SECTOR_SIZE];
     int channel;
@@ -136,7 +136,7 @@ static int str_read_packet(AVFormatContext *s,
 
     while (1) {
 
-        if (get_buffer(pb, sector, RAW_CD_SECTOR_SIZE) != RAW_CD_SECTOR_SIZE)
+        if (avio_read(pb, sector, RAW_CD_SECTOR_SIZE) != RAW_CD_SECTOR_SIZE)
             return AVERROR(EIO);
 
         channel = sector[0x11];

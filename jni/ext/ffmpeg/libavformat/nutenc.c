@@ -241,7 +241,7 @@ static void build_frame_code(AVFormatContext *s){
     nut->frame_code['N'].flags= FLAG_INVALID;
 }
 
-static void put_tt(NUTContext *nut, StreamContext *nus, ByteIOContext *bc, uint64_t val){
+static void put_tt(NUTContext *nut, StreamContext *nus, AVIOContext *bc, uint64_t val){
     val *= nut->time_base_count;
     val += nus->time_base - nut->time_base;
     ff_put_v(bc, val);
@@ -250,25 +250,25 @@ static void put_tt(NUTContext *nut, StreamContext *nus, ByteIOContext *bc, uint6
 /**
  * Store a string as vb.
  */
-static void put_str(ByteIOContext *bc, const char *string){
+static void put_str(AVIOContext *bc, const char *string){
     int len= strlen(string);
 
     ff_put_v(bc, len);
-    put_buffer(bc, string, len);
+    avio_write(bc, string, len);
 }
 
-static void put_s(ByteIOContext *bc, int64_t val){
+static void put_s(AVIOContext *bc, int64_t val){
     ff_put_v(bc, 2*FFABS(val) - (val>0));
 }
 
 #ifdef TRACE
-static inline void ff_put_v_trace(ByteIOContext *bc, uint64_t v, char *file, char *func, int line){
+static inline void ff_put_v_trace(AVIOContext *bc, uint64_t v, char *file, char *func, int line){
     av_log(NULL, AV_LOG_DEBUG, "ff_put_v %5"PRId64" / %"PRIX64" in %s %s:%d\n", v, v, file, func, line);
 
     ff_put_v(bc, v);
 }
 
-static inline void put_s_trace(ByteIOContext *bc, int64_t v, char *file, char *func, int line){
+static inline void put_s_trace(AVIOContext *bc, int64_t v, char *file, char *func, int line){
     av_log(NULL, AV_LOG_DEBUG, "put_s %5"PRId64" / %"PRIX64" in %s %s:%d\n", v, v, file, func, line);
 
     put_s(bc, v);
@@ -278,28 +278,28 @@ static inline void put_s_trace(ByteIOContext *bc, int64_t v, char *file, char *f
 #endif
 
 //FIXME remove calculate_checksum
-static void put_packet(NUTContext *nut, ByteIOContext *bc, ByteIOContext *dyn_bc, int calculate_checksum, uint64_t startcode){
+static void put_packet(NUTContext *nut, AVIOContext *bc, AVIOContext *dyn_bc, int calculate_checksum, uint64_t startcode){
     uint8_t *dyn_buf=NULL;
     int dyn_size= url_close_dyn_buf(dyn_bc, &dyn_buf);
     int forw_ptr= dyn_size + 4*calculate_checksum;
 
     if(forw_ptr > 4096)
         init_checksum(bc, ff_crc04C11DB7_update, 0);
-    put_be64(bc, startcode);
+    avio_wb64(bc, startcode);
     ff_put_v(bc, forw_ptr);
     if(forw_ptr > 4096)
-        put_le32(bc, get_checksum(bc));
+        avio_wl32(bc, get_checksum(bc));
 
     if(calculate_checksum)
         init_checksum(bc, ff_crc04C11DB7_update, 0);
-    put_buffer(bc, dyn_buf, dyn_size);
+    avio_write(bc, dyn_buf, dyn_size);
     if(calculate_checksum)
-        put_le32(bc, get_checksum(bc));
+        avio_wl32(bc, get_checksum(bc));
 
     av_free(dyn_buf);
 }
 
-static void write_mainheader(NUTContext *nut, ByteIOContext *bc){
+static void write_mainheader(NUTContext *nut, AVIOContext *bc){
     int i, j, tmp_pts, tmp_flags, tmp_stream, tmp_mul, tmp_size, tmp_fields, tmp_head_idx;
     int64_t tmp_match;
 
@@ -366,11 +366,11 @@ static void write_mainheader(NUTContext *nut, ByteIOContext *bc){
     ff_put_v(bc, nut->header_count-1);
     for(i=1; i<nut->header_count; i++){
         ff_put_v(bc, nut->header_len[i]);
-        put_buffer(bc, nut->header[i], nut->header_len[i]);
+        avio_write(bc, nut->header[i], nut->header_len[i]);
     }
 }
 
-static int write_streamheader(AVFormatContext *avctx, ByteIOContext *bc, AVStream *st, int i){
+static int write_streamheader(AVFormatContext *avctx, AVIOContext *bc, AVStream *st, int i){
     NUTContext *nut = avctx->priv_data;
     AVCodecContext *codec = st->codec;
     ff_put_v(bc, i);
@@ -382,7 +382,7 @@ static int write_streamheader(AVFormatContext *avctx, ByteIOContext *bc, AVStrea
     }
     ff_put_v(bc, 4);
     if (codec->codec_tag){
-        put_le32(bc, codec->codec_tag);
+        avio_wl32(bc, codec->codec_tag);
     } else {
         av_log(avctx, AV_LOG_ERROR, "No codec tag defined for stream %d\n", i);
         return AVERROR(EINVAL);
@@ -392,10 +392,10 @@ static int write_streamheader(AVFormatContext *avctx, ByteIOContext *bc, AVStrea
     ff_put_v(bc, nut->stream[i].msb_pts_shift);
     ff_put_v(bc, nut->stream[i].max_pts_distance);
     ff_put_v(bc, codec->has_b_frames);
-    put_byte(bc, 0); /* flags: 0x1 - fixed_fps, 0x2 - index_present */
+    avio_w8(bc, 0); /* flags: 0x1 - fixed_fps, 0x2 - index_present */
 
     ff_put_v(bc, codec->extradata_size);
-    put_buffer(bc, codec->extradata, codec->extradata_size);
+    avio_write(bc, codec->extradata, codec->extradata_size);
 
     switch(codec->codec_type){
     case AVMEDIA_TYPE_AUDIO:
@@ -422,17 +422,17 @@ static int write_streamheader(AVFormatContext *avctx, ByteIOContext *bc, AVStrea
     return 0;
 }
 
-static int add_info(ByteIOContext *bc, const char *type, const char *value){
+static int add_info(AVIOContext *bc, const char *type, const char *value){
     put_str(bc, type);
     put_s(bc, -1);
     put_str(bc, value);
     return 1;
 }
 
-static int write_globalinfo(NUTContext *nut, ByteIOContext *bc){
+static int write_globalinfo(NUTContext *nut, AVIOContext *bc){
     AVFormatContext *s= nut->avf;
     AVMetadataTag *t = NULL;
-    ByteIOContext *dyn_bc;
+    AVIOContext *dyn_bc;
     uint8_t *dyn_buf=NULL;
     int count=0, dyn_size;
     int ret = url_open_dyn_buf(&dyn_bc);
@@ -450,15 +450,15 @@ static int write_globalinfo(NUTContext *nut, ByteIOContext *bc){
     ff_put_v(bc, count);
 
     dyn_size= url_close_dyn_buf(dyn_bc, &dyn_buf);
-    put_buffer(bc, dyn_buf, dyn_size);
+    avio_write(bc, dyn_buf, dyn_size);
     av_free(dyn_buf);
     return 0;
 }
 
-static int write_streaminfo(NUTContext *nut, ByteIOContext *bc, int stream_id){
+static int write_streaminfo(NUTContext *nut, AVIOContext *bc, int stream_id){
     AVFormatContext *s= nut->avf;
     AVStream* st = s->streams[stream_id];
-    ByteIOContext *dyn_bc;
+    AVIOContext *dyn_bc;
     uint8_t *dyn_buf=NULL;
     int count=0, dyn_size, i;
     int ret = url_open_dyn_buf(&dyn_bc);
@@ -479,16 +479,16 @@ static int write_streaminfo(NUTContext *nut, ByteIOContext *bc, int stream_id){
 
         ff_put_v(bc, count);
 
-        put_buffer(bc, dyn_buf, dyn_size);
+        avio_write(bc, dyn_buf, dyn_size);
     }
 
     av_free(dyn_buf);
     return count;
 }
 
-static int write_headers(AVFormatContext *avctx, ByteIOContext *bc){
+static int write_headers(AVFormatContext *avctx, AVIOContext *bc){
     NUTContext *nut = avctx->priv_data;
-    ByteIOContext *dyn_bc;
+    AVIOContext *dyn_bc;
     int i, ret;
 
     ff_metadata_conv_ctx(avctx, ff_nut_metadata_conv, NULL);
@@ -537,7 +537,7 @@ static int write_headers(AVFormatContext *avctx, ByteIOContext *bc){
 
 static int write_header(AVFormatContext *s){
     NUTContext *nut = s->priv_data;
-    ByteIOContext *bc = s->pb;
+    AVIOContext *bc = s->pb;
     int i, j, ret;
 
     nut->avf= s;
@@ -575,8 +575,8 @@ static int write_header(AVFormatContext *s){
     build_frame_code(s);
     assert(nut->frame_code['N'].flags == FLAG_INVALID);
 
-    put_buffer(bc, ID_STRING, strlen(ID_STRING));
-    put_byte(bc, 0);
+    avio_write(bc, ID_STRING, strlen(ID_STRING));
+    avio_w8(bc, 0);
 
     if ((ret = write_headers(s, bc)) < 0)
         return ret;
@@ -628,7 +628,7 @@ static int find_best_header_idx(NUTContext *nut, AVPacket *pkt){
 static int write_packet(AVFormatContext *s, AVPacket *pkt){
     NUTContext *nut = s->priv_data;
     StreamContext *nus= &nut->stream[pkt->stream_index];
-    ByteIOContext *bc = s->pb, *dyn_bc;
+    AVIOContext *bc = s->pb, *dyn_bc;
     FrameCode *fc;
     int64_t coded_pts;
     int best_length, frame_code, flags, needed_flags, i, header_idx, best_header_idx;
@@ -749,7 +749,7 @@ static int write_packet(AVFormatContext *s, AVPacket *pkt){
     header_idx= fc->header_idx;
 
     init_checksum(bc, ff_crc04C11DB7_update, 0);
-    put_byte(bc, frame_code);
+    avio_w8(bc, frame_code);
     if(flags & FLAG_CODED){
         ff_put_v(bc, (flags^needed_flags) & ~(FLAG_CODED));
         flags = needed_flags;
@@ -759,10 +759,10 @@ static int write_packet(AVFormatContext *s, AVPacket *pkt){
     if(flags & FLAG_SIZE_MSB)   ff_put_v(bc, pkt->size / fc->size_mul);
     if(flags & FLAG_HEADER_IDX) ff_put_v(bc, header_idx= best_header_idx);
 
-    if(flags & FLAG_CHECKSUM)   put_le32(bc, get_checksum(bc));
+    if(flags & FLAG_CHECKSUM)   avio_wl32(bc, get_checksum(bc));
     else                        get_checksum(bc);
 
-    put_buffer(bc, pkt->data + nut->header_len[header_idx], pkt->size - nut->header_len[header_idx]);
+    avio_write(bc, pkt->data + nut->header_len[header_idx], pkt->size - nut->header_len[header_idx]);
     nus->last_flags= flags;
     nus->last_pts= pkt->pts;
 
@@ -781,7 +781,7 @@ static int write_packet(AVFormatContext *s, AVPacket *pkt){
 
 static int write_trailer(AVFormatContext *s){
     NUTContext *nut= s->priv_data;
-    ByteIOContext *bc= s->pb;
+    AVIOContext *bc= s->pb;
 
     while(nut->header_count<3)
         write_headers(s, bc);

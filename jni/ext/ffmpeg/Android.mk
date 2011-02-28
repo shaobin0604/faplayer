@@ -4,7 +4,6 @@ LOCAL_PATH:= $(call my-dir)
 FF_INCLUDE := \
     $(LOCAL_PATH) \
     $(LOCAL_PATH)/libavcodec \
-    $(LOCAL_PATH)/libavcore \
     $(LOCAL_PATH)/libavdevice \
     $(LOCAL_PATH)/libavfilter \
     $(LOCAL_PATH)/libavformat \
@@ -60,6 +59,8 @@ FF_COMMON_SRC := \
     libavcodec/arm/simple_idct_armv5te.S \
     libavcodec/arm/simple_idct_armv6.S \
     libavcodec/arm/vp56dsp_init_arm.c \
+    libavcodec/arm/vp8_armv6.S \
+    libavcodec/arm/vp8dsp_init_arm.c \
     libavcodec/ass.c \
     libavcodec/assdec.c \
     libavcodec/asv1.c \
@@ -344,17 +345,14 @@ FF_COMMON_SRC := \
     libavcodec/xiph.c \
     libavcodec/xl.c \
     libavcodec/xsubdec.c \
+    libavcodec/xxan.c \
     libavcodec/yop.c \
     libavcodec/zmbv.c \
-    libavcore/audioconvert.c \
-    libavcore/imgutils.c \
-    libavcore/parseutils.c \
-    libavcore/samplefmt.c \
-    libavcore/utils.c \
     libavfilter/allfilters.c \
     libavfilter/avfilter.c \
     libavfilter/avfiltergraph.c \
     libavfilter/defaults.c \
+    libavfilter/drawutils.c \
     libavfilter/formats.c \
     libavfilter/graphparser.c \
     libavfilter/vsrc_buffer.c \
@@ -542,6 +540,7 @@ FF_COMMON_SRC := \
     libavutil/adler32.c \
     libavutil/aes.c \
     libavutil/arm/cpu.c \
+    libavutil/audioconvert.c \
     libavutil/avstring.c \
     libavutil/base64.c \
     libavutil/cpu.c \
@@ -551,6 +550,7 @@ FF_COMMON_SRC := \
     libavutil/eval.c \
     libavutil/fifo.c \
     libavutil/file.c \
+    libavutil/imgutils.c \
     libavutil/intfloat_readwrite.c \
     libavutil/inverse.c \
     libavutil/lfg.c \
@@ -561,10 +561,12 @@ FF_COMMON_SRC := \
     libavutil/md5.c \
     libavutil/mem.c \
     libavutil/opt.c \
+    libavutil/parseutils.c \
     libavutil/pixdesc.c \
     libavutil/random_seed.c \
     libavutil/rational.c \
     libavutil/rc4.c \
+    libavutil/samplefmt.c \
     libavutil/sha.c \
     libavutil/tree.c \
     libavutil/utils.c \
@@ -590,9 +592,12 @@ FF_ARM_NEON_SRC := \
     libavcodec/arm/dcadsp_neon.S \
     libavcodec/arm/synth_filter_neon.S \
     libavcodec/arm/vp3dsp_neon.S \
-    libavcodec/arm/vp56dsp_neon.S
+    libavcodec/arm/vp56dsp_neon.S \
+    libavcodec/arm/vp8dsp_neon.S
 
-FF_CFLAGS := -DHAVE_AV_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+FF_CLFAGS := -std=c99
+FF_CFLAGS += -DHAVE_AV_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+FF_CFLAGS += -ffast-math -fno-tree-vectorize
 
 include $(CLEAR_VARS)
 

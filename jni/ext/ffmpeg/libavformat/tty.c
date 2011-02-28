@@ -42,19 +42,19 @@ typedef struct {
 static int efi_read(AVFormatContext *avctx, uint64_t start_pos)
 {
     TtyDemuxContext *s = avctx->priv_data;
-    ByteIOContext *pb = avctx->pb;
+    AVIOContext *pb = avctx->pb;
     char buf[37];
     int len;
 
     url_fseek(pb, start_pos, SEEK_SET);
-    if (get_byte(pb) != 0x1A)
+    if (avio_r8(pb) != 0x1A)
         return -1;
 
 #define GET_EFI_META(name,size) \
-    len = get_byte(pb); \
+    len = avio_r8(pb); \
     if (len < 1 || len > size) \
         return -1; \
-    if (get_buffer(pb, buf, size) == size) { \
+    if (avio_read(pb, buf, size) == size) { \
         buf[len] = 0; \
         av_metadata_set2(&avctx->metadata, name, buf, 0); \
     }
@@ -120,7 +120,7 @@ static int read_packet(AVFormatContext *avctx, AVPacket *pkt)
     pkt->size = av_get_packet(avctx->pb, pkt, n);
     if (pkt->size <= 0)
         return AVERROR(EIO);
-    pkt->flags |= PKT_FLAG_KEY;
+    pkt->flags |= AV_PKT_FLAG_KEY;
     return 0;
 }
 

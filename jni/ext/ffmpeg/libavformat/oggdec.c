@@ -84,7 +84,7 @@ static int
 ogg_restore (AVFormatContext * s, int discard)
 {
     struct ogg *ogg = s->priv_data;
-    ByteIOContext *bc = s->pb;
+    AVIOContext *bc = s->pb;
     struct ogg_state *ost = ogg->state;
     int i;
 
@@ -194,7 +194,7 @@ ogg_new_buf(struct ogg *ogg, int idx)
 static int
 ogg_read_page (AVFormatContext * s, int *str)
 {
-    ByteIOContext *bc = s->pb;
+    AVIOContext *bc = s->pb;
     struct ogg *ogg = s->priv_data;
     struct ogg_stream *os;
     int i = 0;
@@ -207,7 +207,7 @@ ogg_read_page (AVFormatContext * s, int *str)
     uint8_t sync[4];
     int sp = 0;
 
-    if (get_buffer (bc, sync, 4) < 4)
+    if (avio_read (bc, sync, 4) < 4)
         return -1;
 
     do{
@@ -233,10 +233,10 @@ ogg_read_page (AVFormatContext * s, int *str)
         return -1;
 
     flags = url_fgetc (bc);
-    gp = get_le64 (bc);
-    serial = get_le32 (bc);
-    seq = get_le32 (bc);
-    crc = get_le32 (bc);
+    gp = avio_rl64 (bc);
+    serial = avio_rl32 (bc);
+    seq = avio_rl32 (bc);
+    crc = avio_rl32 (bc);
     nsegs = url_fgetc (bc);
 
     idx = ogg_find_stream (ogg, serial);
@@ -252,7 +252,7 @@ ogg_read_page (AVFormatContext * s, int *str)
     if(os->psize > 0)
         ogg_new_buf(ogg, idx);
 
-    if (get_buffer (bc, os->segments, nsegs) < nsegs)
+    if (avio_read (bc, os->segments, nsegs) < nsegs)
         return -1;
 
     os->nsegs = nsegs;
@@ -284,7 +284,7 @@ ogg_read_page (AVFormatContext * s, int *str)
         os->buf = nb;
     }
 
-    if (get_buffer (bc, os->buf + os->bufpos, size) < size)
+    if (avio_read (bc, os->buf + os->bufpos, size) < size)
         return -1;
 
     os->bufpos += size;
@@ -374,20 +374,20 @@ ogg_packet (AVFormatContext * s, int *str, int *dstart, int *dsize, int64_t *fpo
             os->segp = segp;
             os->psize = psize;
 
-            // We have reached the first non-header packet. All header
-            // packets must be complete before the first non-header
-            // one, so everything that follows must be non-header.
+            // We have reached the first non-header packet in this stream.
+            // Unfortunately more header packets may still follow for others,
+            // so we reset this later unless we are done with the headers
+            // for all streams.
             ogg->headers = 1;
 
             // Update the header state for all streams and
             // compute the data_offset.
-            s->data_offset = os->sync_pos;
+            if (!s->data_offset)
+                s->data_offset = os->sync_pos;
             for (i = 0; i < ogg->nstreams; i++) {
                 struct ogg_stream *cur_os = ogg->streams + i;
-                // Set stream header state to 0 if its last packet
-                // was a header.
                 if (cur_os->header > 0)
-                    cur_os->header = 0;
+                    ogg->headers = 0;
 
                 // if we have a partial non-header packet, its start is
                 // obviously at or after the data start
@@ -601,7 +601,7 @@ ogg_read_timestamp (AVFormatContext * s, int stream_index, int64_t * pos_arg,
 {
     struct ogg *ogg = s->priv_data;
     struct ogg_stream *os = ogg->streams + stream_index;
-    ByteIOContext *bc = s->pb;
+    AVIOContext *bc = s->pb;
     int64_t pts = AV_NOPTS_VALUE;
     int i;
     url_fseek(bc, *pos_arg, SEEK_SET);

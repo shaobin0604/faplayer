@@ -289,7 +289,14 @@ static void mpegts_write_pmt(AVFormatContext *s, MpegTSService *service)
                 *q++ = lang->value[0];
                 *q++ = lang->value[1];
                 *q++ = lang->value[2];
-                *q++ = 0; /* undefined type */
+                if (st->disposition & AV_DISPOSITION_CLEAN_EFFECTS)
+                    *q++ = 0x01;
+                else if (st->disposition & AV_DISPOSITION_HEARING_IMPAIRED)
+                    *q++ = 0x02;
+                else if (st->disposition & AV_DISPOSITION_VISUAL_IMPAIRED)
+                    *q++ = 0x03;
+                else
+                    *q++ = 0; /* undefined type */
             }
             break;
         case AVMEDIA_TYPE_SUBTITLE:
@@ -408,7 +415,7 @@ static MpegTSService *mpegts_add_service(MpegTSWrite *ts,
 static void section_write_packet(MpegTSSection *s, const uint8_t *packet)
 {
     AVFormatContext *ctx = s->opaque;
-    put_buffer(ctx->pb, packet, TS_PACKET_SIZE);
+    avio_write(ctx->pb, packet, TS_PACKET_SIZE);
 }
 
 static int mpegts_write_header(AVFormatContext *s)
@@ -586,7 +593,7 @@ static void retransmit_si_info(AVFormatContext *s)
     }
 }
 
-static int64_t get_pcr(const MpegTSWrite *ts, ByteIOContext *pb)
+static int64_t get_pcr(const MpegTSWrite *ts, AVIOContext *pb)
 {
     return av_rescale(url_ftell(pb) + 11, 8 * PCR_TIME_BASE, ts->mux_rate) +
            ts->first_pcr;
@@ -618,7 +625,7 @@ static void mpegts_insert_null_packet(AVFormatContext *s)
     *q++ = 0xff;
     *q++ = 0x10;
     memset(q, 0x0FF, TS_PACKET_SIZE - (q - buf));
-    put_buffer(s->pb, buf, TS_PACKET_SIZE);
+    avio_write(s->pb, buf, TS_PACKET_SIZE);
 }
 
 /* Write a single transport stream packet with a PCR and no payload */
@@ -643,7 +650,7 @@ static void mpegts_insert_pcr_only(AVFormatContext *s, AVStream *st)
 
     /* stuffing bytes */
     memset(q, 0xFF, TS_PACKET_SIZE - (q - buf));
-    put_buffer(s->pb, buf, TS_PACKET_SIZE);
+    avio_write(s->pb, buf, TS_PACKET_SIZE);
 }
 
 static void write_pts(uint8_t *q, int fourbits, int64_t pts)
@@ -739,7 +746,8 @@ static void mpegts_write_pes(AVFormatContext *s, AVStream *st,
                     *q++ = 0xe0;
             } else if (st->codec->codec_type == AVMEDIA_TYPE_AUDIO &&
                        (st->codec->codec_id == CODEC_ID_MP2 ||
-                        st->codec->codec_id == CODEC_ID_MP3)) {
+                        st->codec->codec_id == CODEC_ID_MP3 ||
+                        st->codec->codec_id == CODEC_ID_AAC)) {
                 *q++ = 0xc0;
             } else {
                 *q++ = 0xbd;
@@ -837,7 +845,7 @@ static void mpegts_write_pes(AVFormatContext *s, AVStream *st,
         memcpy(buf + TS_PACKET_SIZE - len, payload, len);
         payload += len;
         payload_size -= len;
-        put_buffer(s->pb, buf, TS_PACKET_SIZE);
+        avio_write(s->pb, buf, TS_PACKET_SIZE);
     }
     put_flush_packet(s->pb);
 }

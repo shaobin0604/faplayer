@@ -26,6 +26,7 @@
  */
 
 #include "avformat.h"
+#include "avio_internal.h"
 #include "rtp.h"
 #include "rtpdec.h"
 #include "isom.h"
@@ -42,7 +43,7 @@ static int qt_rtp_parse_packet(AVFormatContext *s, PayloadContext *qt,
                                uint32_t *timestamp, const uint8_t *buf,
                                int len, int flags)
 {
-    ByteIOContext pb;
+    AVIOContext pb;
     GetBitContext gb;
     int packing_scheme, has_payload_desc, has_packet_info, alen,
         has_marker_bit = flags & RTP_FLAG_MARKER;
@@ -69,7 +70,7 @@ static int qt_rtp_parse_packet(AVFormatContext *s, PayloadContext *qt,
      * http://developer.apple.com/quicktime/icefloe/dispatch026.html
      */
     init_get_bits(&gb, buf, len << 3);
-    init_put_byte(&pb, buf, len, 0, NULL, NULL, NULL, NULL);
+    ffio_init_context(&pb, buf, len, 0, NULL, NULL, NULL, NULL);
 
     if (len < 4)
         return AVERROR_INVALIDDATA;
@@ -103,20 +104,20 @@ static int qt_rtp_parse_packet(AVFormatContext *s, PayloadContext *qt,
         data_len = get_bits(&gb, 16);
 
         url_fseek(&pb, pos + 4, SEEK_SET);
-        tag = get_le32(&pb);
-        if ((st->codec->codec_type == CODEC_TYPE_VIDEO &&
+        tag = avio_rl32(&pb);
+        if ((st->codec->codec_type == AVMEDIA_TYPE_VIDEO &&
                  tag != MKTAG('v','i','d','e')) ||
-            (st->codec->codec_type == CODEC_TYPE_AUDIO &&
+            (st->codec->codec_type == AVMEDIA_TYPE_AUDIO &&
                  tag != MKTAG('s','o','u','n')))
             return AVERROR_INVALIDDATA;
-        av_set_pts_info(st, 32, 1, get_be32(&pb));
+        av_set_pts_info(st, 32, 1, avio_rb32(&pb));
 
         if (pos + data_len > len)
             return AVERROR_INVALIDDATA;
         /* TLVs */
         while (url_ftell(&pb) + 4 < pos + data_len) {
-            int tlv_len = get_be16(&pb);
-            tag = get_le16(&pb);
+            int tlv_len = avio_rb16(&pb);
+            tag = avio_rl16(&pb);
             if (url_ftell(&pb) + tlv_len > pos + data_len)
                 return AVERROR_INVALIDDATA;
 
@@ -246,9 +247,9 @@ RTPDynamicProtocolHandler ff_ ## m ## _rtp_ ## n ## _handler = { \
     .open             = qt_rtp_new,    \
     .close            = qt_rtp_free,   \
     .parse_packet     = qt_rtp_parse_packet, \
-};
+}
 
-RTP_QT_HANDLER(qt,        vid, "X-QT",        CODEC_TYPE_VIDEO);
-RTP_QT_HANDLER(qt,        aud, "X-QT",        CODEC_TYPE_AUDIO);
-RTP_QT_HANDLER(quicktime, vid, "X-QUICKTIME", CODEC_TYPE_VIDEO);
-RTP_QT_HANDLER(quicktime, aud, "X-QUICKTIME", CODEC_TYPE_AUDIO);
+RTP_QT_HANDLER(qt,        vid, "X-QT",        AVMEDIA_TYPE_VIDEO);
+RTP_QT_HANDLER(qt,        aud, "X-QT",        AVMEDIA_TYPE_AUDIO);
+RTP_QT_HANDLER(quicktime, vid, "X-QUICKTIME", AVMEDIA_TYPE_VIDEO);
+RTP_QT_HANDLER(quicktime, aud, "X-QUICKTIME", AVMEDIA_TYPE_AUDIO);

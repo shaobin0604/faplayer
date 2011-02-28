@@ -134,6 +134,10 @@ const AVCodecTag codec_movvideo_tags[] = {
     { CODEC_ID_RAWVIDEO, MKTAG('W', 'R', 'A', 'W') },
 
     { CODEC_ID_H264, MKTAG('a', 'v', 'c', '1') }, /* AVC-1/H.264 */
+    { CODEC_ID_H264, MKTAG('a', 'i', '5', '5') }, /* AVC Intra  50 / 1080 */
+    { CODEC_ID_H264, MKTAG('a', 'i', '5', 'q') }, /* AVC Intra  50 /  720 */
+    { CODEC_ID_H264, MKTAG('a', 'i', '1', '5') }, /* AVC Intra 100 / 1080 */
+    { CODEC_ID_H264, MKTAG('a', 'i', '1', 'q') }, /* AVC Intra 100 /  720 */
 
     { CODEC_ID_MPEG1VIDEO, MKTAG('m', '1', 'v', '1') }, /* Apple MPEG-1 Camcorder */
     { CODEC_ID_MPEG1VIDEO, MKTAG('m', 'p', 'e', 'g') }, /* MPEG */
@@ -193,6 +197,12 @@ const AVCodecTag codec_movvideo_tags[] = {
     { CODEC_ID_SGI,   MKTAG('s', 'g', 'i', ' ') }, /* SGI  */
     { CODEC_ID_DPX,   MKTAG('d', 'p', 'x', ' ') }, /* DPX */
 
+    { CODEC_ID_PRORES, MKTAG('a', 'p', 'c', 'h') }, /* Apple ProRes 422 High Quality */
+    { CODEC_ID_PRORES, MKTAG('a', 'p', 'c', 'n') }, /* Apple ProRes 422 Standard Definition */
+    { CODEC_ID_PRORES, MKTAG('a', 'p', 'c', 's') }, /* Apple ProRes 422 LT */
+    { CODEC_ID_PRORES, MKTAG('a', 'p', 'c', 'o') }, /* Apple ProRes 422 Proxy */
+    { CODEC_ID_PRORES, MKTAG('a', 'p', '4', 'h') }, /* Apple ProRes 4444 */
+
     { CODEC_ID_NONE, 0 },
 };
 
@@ -241,6 +251,7 @@ const AVCodecTag codec_movaudio_tags[] = {
     { CODEC_ID_QCELP, MKTAG('Q','c','l','q') },
     { CODEC_ID_QCELP, MKTAG('s','q','c','p') }, /* ISO Media fourcc */
 
+    { CODEC_ID_QDMC, MKTAG('Q', 'D', 'M', 'C') }, /* QDMC */
     { CODEC_ID_QDM2, MKTAG('Q', 'D', 'M', '2') }, /* QDM2 */
 
     { CODEC_ID_DVAUDIO, MKTAG('v', 'd', 'v', 'a') },
@@ -332,12 +343,12 @@ int ff_mov_lang_to_iso639(unsigned code, char to[4])
     return 1;
 }
 
-int ff_mp4_read_descr_len(ByteIOContext *pb)
+int ff_mp4_read_descr_len(AVIOContext *pb)
 {
     int len = 0;
     int count = 4;
     while (count--) {
-        int c = get_byte(pb);
+        int c = avio_r8(pb);
         len = (len << 7) | (c & 0x7f);
         if (!(c & 0x80))
             break;
@@ -345,10 +356,10 @@ int ff_mp4_read_descr_len(ByteIOContext *pb)
     return len;
 }
 
-int ff_mp4_read_descr(AVFormatContext *fc, ByteIOContext *pb, int *tag)
+int ff_mp4_read_descr(AVFormatContext *fc, AVIOContext *pb, int *tag)
 {
     int len;
-    *tag = get_byte(pb);
+    *tag = avio_r8(pb);
     len = ff_mp4_read_descr_len(pb);
     av_dlog(fc, "MPEG4 description: tag=0x%02x len=%d\n", *tag, len);
     return len;
@@ -363,14 +374,14 @@ static const AVCodecTag mp4_audio_types[] = {
     { CODEC_ID_NONE,   AOT_NULL },
 };
 
-int ff_mp4_read_dec_config_descr(AVFormatContext *fc, AVStream *st, ByteIOContext *pb)
+int ff_mp4_read_dec_config_descr(AVFormatContext *fc, AVStream *st, AVIOContext *pb)
 {
     int len, tag;
-    int object_type_id = get_byte(pb);
-    get_byte(pb); /* stream type */
-    get_be24(pb); /* buffer size db */
-    get_be32(pb); /* max bitrate */
-    get_be32(pb); /* avg bitrate */
+    int object_type_id = avio_r8(pb);
+    avio_r8(pb); /* stream type */
+    avio_rb24(pb); /* buffer size db */
+    avio_rb32(pb); /* max bitrate */
+    avio_rb32(pb); /* avg bitrate */
 
     st->codec->codec_id= ff_codec_get_id(ff_mp4_obj_type, object_type_id);
     av_dlog(fc, "esds object type id 0x%02x\n", object_type_id);
@@ -383,7 +394,7 @@ int ff_mp4_read_dec_config_descr(AVFormatContext *fc, AVStream *st, ByteIOContex
         st->codec->extradata = av_mallocz(len + FF_INPUT_BUFFER_PADDING_SIZE);
         if (!st->codec->extradata)
             return AVERROR(ENOMEM);
-        get_buffer(pb, st->codec->extradata, len);
+        avio_read(pb, st->codec->extradata, len);
         st->codec->extradata_size = len;
         if (st->codec->codec_id == CODEC_ID_AAC) {
             MPEG4AudioConfig cfg;

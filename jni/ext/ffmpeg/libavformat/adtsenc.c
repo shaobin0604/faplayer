@@ -118,20 +118,20 @@ int ff_adts_write_frame_header(ADTSContext *ctx,
 static int adts_write_packet(AVFormatContext *s, AVPacket *pkt)
 {
     ADTSContext *adts = s->priv_data;
-    ByteIOContext *pb = s->pb;
+    AVIOContext *pb = s->pb;
     uint8_t buf[ADTS_HEADER_SIZE];
 
     if (!pkt->size)
         return 0;
     if (adts->write_adts) {
         ff_adts_write_frame_header(adts, buf, pkt->size, adts->pce_size);
-        put_buffer(pb, buf, ADTS_HEADER_SIZE);
+        avio_write(pb, buf, ADTS_HEADER_SIZE);
         if (adts->pce_size) {
-            put_buffer(pb, adts->pce_data, adts->pce_size);
+            avio_write(pb, adts->pce_data, adts->pce_size);
             adts->pce_size = 0;
         }
     }
-    put_buffer(pb, pkt->data, pkt->size);
+    avio_write(pb, pkt->data, pkt->size);
     put_flush_packet(pb);
 
     return 0;

@@ -35,10 +35,10 @@
 #include "libswscale/swscale.h"
 #include "libpostproc/postprocess.h"
 #include "libavutil/avstring.h"
+#include "libavutil/parseutils.h"
 #include "libavutil/pixdesc.h"
 #include "libavutil/eval.h"
 #include "libavcodec/opt.h"
-#include "libavcore/avcore.h"
 #include "cmdutils.h"
 #include "version.h"
 #if CONFIG_NETWORK
@@ -78,6 +78,16 @@ void uninit_opts(void)
 #if CONFIG_SWSCALE
     av_freep(&sws_opts);
 #endif
+    for (i = 0; i < opt_name_count; i++) {
+        //opt_values are only stored for codec-specific options in which case
+        //both the name and value are dup'd
+        if (opt_values[i]) {
+            av_freep(&opt_names[i]);
+            av_freep(&opt_values[i]);
+        }
+    }
+    av_freep(&opt_names);
+    av_freep(&opt_values);
 }
 
 void log_callback_help(void* ptr, int level, const char* fmt, va_list vl)
@@ -104,8 +114,8 @@ double parse_number_or_die(const char *context, const char *numstr, int type, do
 
 int64_t parse_time_or_die(const char *context, const char *timestr, int is_duration)
 {
-    int64_t us = parse_date(timestr, is_duration);
-    if (us == INT64_MIN) {
+    int64_t us;
+    if (av_parse_time(&us, timestr, is_duration) < 0) {
         fprintf(stderr, "Invalid %s specification for %s: %s\n",
                 is_duration ? "duration" : "date", context, timestr);
         exit(1);
@@ -268,9 +278,9 @@ int opt_default(const char *opt, const char *arg){
 
     //FIXME we should always use avcodec_opts, ... for storing options so there will not be any need to keep track of what i set over this
     opt_values= av_realloc(opt_values, sizeof(void*)*(opt_name_count+1));
-    opt_values[opt_name_count]= o ? NULL : arg;
+    opt_values[opt_name_count]= o ? NULL : av_strdup(arg);
     opt_names= av_realloc(opt_names, sizeof(void*)*(opt_name_count+1));
-    opt_names[opt_name_count++]= o ? o->name : opt;
+    opt_names[opt_name_count++]= o ? o->name : av_strdup(opt);
 
     if ((*avcodec_opts && avcodec_opts[0]->debug) || (avformat_opts && avformat_opts->debug))
         av_log_set_level(AV_LOG_DEBUG);
@@ -403,7 +413,6 @@ static int warned_cfg = 0;
 static void print_all_libs_info(FILE* outstream, int flags)
 {
     PRINT_LIB_INFO(outstream, avutil,   AVUTIL,   flags);
-    PRINT_LIB_INFO(outstream, avcore,   AVCORE,   flags);
     PRINT_LIB_INFO(outstream, avcodec,  AVCODEC,  flags);
     PRINT_LIB_INFO(outstream, avformat, AVFORMAT, flags);
     PRINT_LIB_INFO(outstream, avdevice, AVDEVICE, flags);

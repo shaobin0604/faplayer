@@ -323,7 +323,7 @@ FF_SYMVER(void, av_init_packet, (AVPacket *pkt), "LIBAVFORMAT_52")
 }
 #endif
 
-int av_get_packet(ByteIOContext *s, AVPacket *pkt, int size)
+int av_get_packet(AVIOContext *s, AVPacket *pkt, int size)
 {
     int ret= av_new_packet(pkt, size);
 
@@ -332,7 +332,7 @@ int av_get_packet(ByteIOContext *s, AVPacket *pkt, int size)
 
     pkt->pos= url_ftell(s);
 
-    ret= get_buffer(s, pkt->data, size);
+    ret= avio_read(s, pkt->data, size);
     if(ret<=0)
         av_free_packet(pkt);
     else
@@ -341,7 +341,7 @@ int av_get_packet(ByteIOContext *s, AVPacket *pkt, int size)
     return ret;
 }
 
-int av_append_packet(ByteIOContext *s, AVPacket *pkt, int size)
+int av_append_packet(AVIOContext *s, AVPacket *pkt, int size)
 {
     int ret;
     int old_size;
@@ -351,7 +351,7 @@ int av_append_packet(ByteIOContext *s, AVPacket *pkt, int size)
     ret = av_grow_packet(pkt, size);
     if (ret < 0)
         return ret;
-    ret = get_buffer(s, pkt->data + old_size, size);
+    ret = avio_read(s, pkt->data + old_size, size);
     av_shrink_packet(pkt, old_size + FFMAX(ret, 0));
     return ret;
 }
@@ -442,7 +442,7 @@ static int set_codec_from_probe_data(AVFormatContext *s, AVStream *st, AVProbeDa
  * Open a media file from an IO stream. 'fmt' must be specified.
  */
 int av_open_input_stream(AVFormatContext **ic_ptr,
-                         ByteIOContext *pb, const char *filename,
+                         AVIOContext *pb, const char *filename,
                          AVInputFormat *fmt, AVFormatParameters *ap)
 {
     int err;
@@ -479,7 +479,7 @@ int av_open_input_stream(AVFormatContext **ic_ptr,
         ic->priv_data = NULL;
     }
 
-    // e.g. AVFMT_NOFILE formats will not have a ByteIOContext
+    // e.g. AVFMT_NOFILE formats will not have a AVIOContext
     if (ic->pb)
         ff_id3v2_read(ic, ID3v2_DEFAULT_MAGIC);
 
@@ -524,7 +524,7 @@ int av_open_input_stream(AVFormatContext **ic_ptr,
 #define PROBE_BUF_MIN 2048
 #define PROBE_BUF_MAX (1<<20)
 
-int ff_probe_input_buffer(ByteIOContext **pb, AVInputFormat **fmt,
+int av_probe_input_buffer(AVIOContext *pb, AVInputFormat **fmt,
                           const char *filename, void *logctx,
                           unsigned int offset, unsigned int max_probe_size)
 {
@@ -555,7 +555,7 @@ int ff_probe_input_buffer(ByteIOContext **pb, AVInputFormat **fmt,
 
         /* read probe data */
         buf = av_realloc(buf, probe_size + AVPROBE_PADDING_SIZE);
-        if ((ret = get_buffer(*pb, buf + buf_offset, probe_size - buf_offset)) < 0) {
+        if ((ret = avio_read(pb, buf + buf_offset, probe_size - buf_offset)) < 0) {
             /* fail if error was not end of file, otherwise, lower score */
             if (ret != AVERROR_EOF) {
                 av_free(buf);
@@ -585,7 +585,7 @@ int ff_probe_input_buffer(ByteIOContext **pb, AVInputFormat **fmt,
     }
 
     /* rewind. reuse probe buffer to avoid seeking */
-    if ((ret = ff_rewind_with_probe_data(*pb, buf, pd.buf_size)) < 0)
+    if ((ret = ff_rewind_with_probe_data(pb, buf, pd.buf_size)) < 0)
         av_free(buf);
 
     return ret;
@@ -598,7 +598,7 @@ int av_open_input_file(AVFormatContext **ic_ptr, const char *filename,
 {
     int err;
     AVProbeData probe_data, *pd = &probe_data;
-    ByteIOContext *pb = NULL;
+    AVIOContext *pb = NULL;
     void *logctx= ap && ap->prealloced_context ? *ic_ptr : NULL;
 
     pd->filename = "";
@@ -616,13 +616,13 @@ int av_open_input_file(AVFormatContext **ic_ptr, const char *filename,
        hack needed to handle RTSP/TCP */
     if (!fmt || !(fmt->flags & AVFMT_NOFILE)) {
         /* if no file needed do not try to open one */
-        if ((err=url_fopen(&pb, filename, URL_RDONLY)) < 0) {
+        if ((err=avio_open(&pb, filename, URL_RDONLY)) < 0) {
             goto fail;
         }
         if (buf_size > 0) {
             url_setbufsize(pb, buf_size);
         }
-        if (!fmt && (err = ff_probe_input_buffer(&pb, &fmt, filename, logctx, 0, logctx ? (*ic_ptr)->probesize : 0)) < 0) {
+        if (!fmt && (err = av_probe_input_buffer(pb, &fmt, filename, logctx, 0, logctx ? (*ic_ptr)->probesize : 0)) < 0) {
             goto fail;
         }
     }
@@ -647,7 +647,7 @@ int av_open_input_file(AVFormatContext **ic_ptr, const char *filename,
  fail:
     av_freep(&pd->buf);
     if (pb)
-        url_fclose(pb);
+        avio_close(pb);
     if (ap && ap->prealloced_context)
         av_free(*ic_ptr);
     *ic_ptr = NULL;
@@ -930,6 +930,12 @@ static void compute_pkt_fields(AVFormatContext *s, AVStream *st,
     /* do we have a video B-frame ? */
     delay= st->codec->has_b_frames;
     presentation_delayed = 0;
+
+    // ignore delay caused by frame threading so that the mpeg2-without-dts
+    // warning will not trigger
+    if (delay && st->codec->active_thread_type&FF_THREAD_FRAME)
+        delay -= st->codec->thread_count-1;
+
     /* XXX: need has_b_frame, but cannot get it if the codec is
         not initialized */
     if (delay &&
@@ -1370,28 +1376,30 @@ void ff_reduce_index(AVFormatContext *s, int stream_index)
     }
 }
 
-int av_add_index_entry(AVStream *st,
-                            int64_t pos, int64_t timestamp, int size, int distance, int flags)
+int ff_add_index_entry(AVIndexEntry **index_entries,
+                       int *nb_index_entries,
+                       unsigned int *index_entries_allocated_size,
+                       int64_t pos, int64_t timestamp, int size, int distance, int flags)
 {
     AVIndexEntry *entries, *ie;
     int index;
 
-    if((unsigned)st->nb_index_entries + 1 >= UINT_MAX / sizeof(AVIndexEntry))
+    if((unsigned)*nb_index_entries + 1 >= UINT_MAX / sizeof(AVIndexEntry))
         return -1;
 
-    entries = av_fast_realloc(st->index_entries,
-                              &st->index_entries_allocated_size,
-                              (st->nb_index_entries + 1) *
+    entries = av_fast_realloc(*index_entries,
+                              index_entries_allocated_size,
+                              (*nb_index_entries + 1) *
                               sizeof(AVIndexEntry));
     if(!entries)
         return -1;
 
-    st->index_entries= entries;
+    *index_entries= entries;
 
-    index= av_index_search_timestamp(st, timestamp, AVSEEK_FLAG_ANY);
+    index= ff_index_search_timestamp(*index_entries, *nb_index_entries, timestamp, AVSEEK_FLAG_ANY);
 
     if(index<0){
-        index= st->nb_index_entries++;
+        index= (*nb_index_entries)++;
         ie= &entries[index];
         assert(index==0 || ie[-1].timestamp < timestamp);
     }else{
@@ -1399,8 +1407,8 @@ int av_add_index_entry(AVStream *st,
         if(ie->timestamp != timestamp){
             if(ie->timestamp <= timestamp)
                 return -1;
-            memmove(entries + index + 1, entries + index, sizeof(AVIndexEntry)*(st->nb_index_entries - index));
-            st->nb_index_entries++;
+            memmove(entries + index + 1, entries + index, sizeof(AVIndexEntry)*(*nb_index_entries - index));
+            (*nb_index_entries)++;
         }else if(ie->pos == pos && distance < ie->min_distance) //do not reduce the distance
             distance= ie->min_distance;
     }
@@ -1414,11 +1422,17 @@ int av_add_index_entry(AVStream *st,
     return index;
 }
 
-int av_index_search_timestamp(AVStream *st, int64_t wanted_timestamp,
-                              int flags)
+int av_add_index_entry(AVStream *st,
+                       int64_t pos, int64_t timestamp, int size, int distance, int flags)
 {
-    AVIndexEntry *entries= st->index_entries;
-    int nb_entries= st->nb_index_entries;
+    return ff_add_index_entry(&st->index_entries, &st->nb_index_entries,
+                              &st->index_entries_allocated_size, pos,
+                              timestamp, size, distance, flags);
+}
+
+int ff_index_search_timestamp(const AVIndexEntry *entries, int nb_entries,
+                              int64_t wanted_timestamp, int flags)
+{
     int a, b, m;
     int64_t timestamp;
 
@@ -1448,6 +1462,13 @@ int av_index_search_timestamp(AVStream *st, int64_t wanted_timestamp,
     if(m == nb_entries)
         return -1;
     return  m;
+}
+
+int av_index_search_timestamp(AVStream *st, int64_t wanted_timestamp,
+                              int flags)
+{
+    return ff_index_search_timestamp(st->index_entries, st->nb_index_entries,
+                                     wanted_timestamp, flags);
 }
 
 #define DEBUG_SEEK
@@ -2495,6 +2516,8 @@ int av_find_best_stream(AVFormatContext *ic,
             continue;
         if (wanted_stream_nb >= 0 && stream_number++ != wanted_stream_nb)
             continue;
+        if (st->disposition & (AV_DISPOSITION_HEARING_IMPAIRED|AV_DISPOSITION_VISUAL_IMPAIRED))
+            continue;
         if (decoder_ret) {
             decoder = avcodec_find_decoder(ic->streams[i]->codec->codec_id);
             if (!decoder) {
@@ -2506,7 +2529,7 @@ int av_find_best_stream(AVFormatContext *ic,
         if (best_count >= st->codec_info_nb_frames)
             continue;
         best_count = st->codec_info_nb_frames;
-        ret = i;
+        ret = program ? program[i] : i;
         best_decoder = decoder;
         if (program && i == nb_streams - 1 && ret < 0) {
             program = NULL;
@@ -2541,12 +2564,17 @@ int av_read_pause(AVFormatContext *s)
 
 void av_close_input_stream(AVFormatContext *s)
 {
-    int i;
-    AVStream *st;
-
     flush_packet_queue(s);
     if (s->iformat->read_close)
         s->iformat->read_close(s);
+    avformat_free_context(s);
+}
+
+void avformat_free_context(AVFormatContext *s)
+{
+    int i;
+    AVStream *st;
+
     for(i=0;i<s->nb_streams;i++) {
         /* free all data in a stream component */
         st = s->streams[i];
@@ -2592,10 +2620,10 @@ void av_close_input_stream(AVFormatContext *s)
 
 void av_close_input_file(AVFormatContext *s)
 {
-    ByteIOContext *pb = s->iformat->flags & AVFMT_NOFILE ? NULL : s->pb;
+    AVIOContext *pb = s->iformat->flags & AVFMT_NOFILE ? NULL : s->pb;
     av_close_input_stream(s);
     if (pb)
-        url_fclose(pb);
+        avio_close(pb);
 }
 
 AVStream *av_new_stream(AVFormatContext *s, int id)
@@ -3209,14 +3237,44 @@ static void dump_stream_format(AVFormatContext *ic, int i, int index, int is_out
         if(st->codec->time_base.den && st->codec->time_base.num)
             print_fps(1/av_q2d(st->codec->time_base), "tbc");
     }
+    if (st->disposition & AV_DISPOSITION_DEFAULT)
+        av_log(NULL, AV_LOG_INFO, " (default)");
+    if (st->disposition & AV_DISPOSITION_DUB)
+        av_log(NULL, AV_LOG_INFO, " (dub)");
+    if (st->disposition & AV_DISPOSITION_ORIGINAL)
+        av_log(NULL, AV_LOG_INFO, " (original)");
+    if (st->disposition & AV_DISPOSITION_COMMENT)
+        av_log(NULL, AV_LOG_INFO, " (comment)");
+    if (st->disposition & AV_DISPOSITION_LYRICS)
+        av_log(NULL, AV_LOG_INFO, " (lyrics)");
+    if (st->disposition & AV_DISPOSITION_KARAOKE)
+        av_log(NULL, AV_LOG_INFO, " (karaoke)");
+    if (st->disposition & AV_DISPOSITION_FORCED)
+        av_log(NULL, AV_LOG_INFO, " (forced)");
+    if (st->disposition & AV_DISPOSITION_HEARING_IMPAIRED)
+        av_log(NULL, AV_LOG_INFO, " (hearing impaired)");
+    if (st->disposition & AV_DISPOSITION_VISUAL_IMPAIRED)
+        av_log(NULL, AV_LOG_INFO, " (visual impaired)");
+    if (st->disposition & AV_DISPOSITION_CLEAN_EFFECTS)
+        av_log(NULL, AV_LOG_INFO, " (clean effects)");
     av_log(NULL, AV_LOG_INFO, "\n");
     dump_metadata(NULL, st->metadata, "    ");
 }
 
+#if FF_API_DUMP_FORMAT
 void dump_format(AVFormatContext *ic,
                  int index,
                  const char *url,
                  int is_output)
+{
+    av_dump_format(ic, index, url, is_output);
+}
+#endif
+
+void av_dump_format(AVFormatContext *ic,
+                    int index,
+                    const char *url,
+                    int is_output)
 {
     int i;
     uint8_t *printed = av_mallocz(ic->nb_streams);
@@ -3293,7 +3351,7 @@ void dump_format(AVFormatContext *ic,
 }
 
 #if FF_API_PARSE_FRAME_PARAM
-#include "libavcore/parseutils.h"
+#include "libavutil/parseutils.h"
 
 int parse_image_size(int *width_ptr, int *height_ptr, const char *str)
 {
@@ -3322,163 +3380,25 @@ uint64_t ff_ntp_time(void)
   return (av_gettime() / 1000) * 1000 + NTP_OFFSET_US;
 }
 
-int64_t parse_date(const char *datestr, int duration)
+#if FF_API_PARSE_DATE
+#include "libavutil/parseutils.h"
+
+int64_t parse_date(const char *timestr, int duration)
 {
-    const char *p;
-    int64_t t;
-    struct tm dt;
-    int i;
-    static const char * const date_fmt[] = {
-        "%Y-%m-%d",
-        "%Y%m%d",
-    };
-    static const char * const time_fmt[] = {
-        "%H:%M:%S",
-        "%H%M%S",
-    };
-    const char *q;
-    int is_utc, len;
-    char lastch;
-    int negative = 0;
-
-#undef time
-    time_t now = time(0);
-
-    len = strlen(datestr);
-    if (len > 0)
-        lastch = datestr[len - 1];
-    else
-        lastch = '\0';
-    is_utc = (lastch == 'z' || lastch == 'Z');
-
-    memset(&dt, 0, sizeof(dt));
-
-    p = datestr;
-    q = NULL;
-    if (!duration) {
-        if (!strncasecmp(datestr, "now", len))
-            return (int64_t) now * 1000000;
-
-        /* parse the year-month-day part */
-        for (i = 0; i < FF_ARRAY_ELEMS(date_fmt); i++) {
-            q = small_strptime(p, date_fmt[i], &dt);
-            if (q) {
-                break;
-            }
-        }
-
-        /* if the year-month-day part is missing, then take the
-         * current year-month-day time */
-        if (!q) {
-            if (is_utc) {
-                dt = *gmtime(&now);
-            } else {
-                dt = *localtime(&now);
-            }
-            dt.tm_hour = dt.tm_min = dt.tm_sec = 0;
-        } else {
-            p = q;
-        }
-
-        if (*p == 'T' || *p == 't' || *p == ' ')
-            p++;
-
-        /* parse the hour-minute-second part */
-        for (i = 0; i < FF_ARRAY_ELEMS(time_fmt); i++) {
-            q = small_strptime(p, time_fmt[i], &dt);
-            if (q) {
-                break;
-            }
-        }
-    } else {
-        /* parse datestr as a duration */
-        if (p[0] == '-') {
-            negative = 1;
-            ++p;
-        }
-        /* parse datestr as HH:MM:SS */
-        q = small_strptime(p, time_fmt[0], &dt);
-        if (!q) {
-            /* parse datestr as S+ */
-            dt.tm_sec = strtol(p, (char **)&q, 10);
-            if (q == p)
-                /* the parsing didn't succeed */
-                return INT64_MIN;
-            dt.tm_min = 0;
-            dt.tm_hour = 0;
-        }
-    }
-
-    /* Now we have all the fields that we can get */
-    if (!q) {
-        return INT64_MIN;
-    }
-
-    if (duration) {
-        t = dt.tm_hour * 3600 + dt.tm_min * 60 + dt.tm_sec;
-    } else {
-        dt.tm_isdst = -1;       /* unknown */
-        if (is_utc) {
-            t = mktimegm(&dt);
-        } else {
-            t = mktime(&dt);
-        }
-    }
-
-    t *= 1000000;
-
-    /* parse the .m... part */
-    if (*q == '.') {
-        int val, n;
-        q++;
-        for (val = 0, n = 100000; n >= 1; n /= 10, q++) {
-            if (!isdigit(*q))
-                break;
-            val += n * (*q - '0');
-        }
-        t += val;
-    }
-    return negative ? -t : t;
+    int64_t timeval;
+    av_parse_time(&timeval, timestr, duration);
+    return timeval;
 }
+#endif
+
+#if FF_API_FIND_INFO_TAG
+#include "libavutil/parseutils.h"
 
 int find_info_tag(char *arg, int arg_size, const char *tag1, const char *info)
 {
-    const char *p;
-    char tag[128], *q;
-
-    p = info;
-    if (*p == '?')
-        p++;
-    for(;;) {
-        q = tag;
-        while (*p != '\0' && *p != '=' && *p != '&') {
-            if ((q - tag) < sizeof(tag) - 1)
-                *q++ = *p;
-            p++;
-        }
-        *q = '\0';
-        q = arg;
-        if (*p == '=') {
-            p++;
-            while (*p != '&' && *p != '\0') {
-                if ((q - arg) < arg_size - 1) {
-                    if (*p == '+')
-                        *q++ = ' ';
-                    else
-                        *q++ = *p;
-                }
-                p++;
-            }
-        }
-        *q = '\0';
-        if (!strcmp(tag, tag1))
-            return 1;
-        if (*p != '&')
-            break;
-        p++;
-    }
-    return 0;
+    return av_find_info_tag(arg, arg_size, tag1, info);
 }
+#endif
 
 int av_get_frame_filename(char *buf, int buf_size,
                           const char *path, int number)
@@ -3742,16 +3662,19 @@ int ff_hex_to_data(uint8_t *data, const char *p)
 void av_set_pts_info(AVStream *s, int pts_wrap_bits,
                      unsigned int pts_num, unsigned int pts_den)
 {
-    s->pts_wrap_bits = pts_wrap_bits;
-
-    if(av_reduce(&s->time_base.num, &s->time_base.den, pts_num, pts_den, INT_MAX)){
-        if(s->time_base.num != pts_num)
-            av_log(NULL, AV_LOG_DEBUG, "st:%d removing common factor %d from timebase\n", s->index, pts_num/s->time_base.num);
+    AVRational new_tb;
+    if(av_reduce(&new_tb.num, &new_tb.den, pts_num, pts_den, INT_MAX)){
+        if(new_tb.num != pts_num)
+            av_log(NULL, AV_LOG_DEBUG, "st:%d removing common factor %d from timebase\n", s->index, pts_num/new_tb.num);
     }else
         av_log(NULL, AV_LOG_WARNING, "st:%d has too large timebase, reducing\n", s->index);
 
-    if(!s->time_base.num || !s->time_base.den)
-        s->time_base.num= s->time_base.den= 0;
+    if(new_tb.num <= 0 || new_tb.den <= 0) {
+        av_log(NULL, AV_LOG_ERROR, "Ignoring attempt to set invalid timebase for st:%d\n", s->index);
+        return;
+    }
+    s->time_base = new_tb;
+    s->pts_wrap_bits = pts_wrap_bits;
 }
 
 int ff_url_join(char *str, int size, const char *proto,

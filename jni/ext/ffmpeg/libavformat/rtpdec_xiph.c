@@ -42,7 +42,7 @@
 struct PayloadContext {
     unsigned ident;             ///< 24-bit stream configuration identifier
     uint32_t timestamp;
-    ByteIOContext* fragment;    ///< buffer for split payloads
+    AVIOContext* fragment;    ///< buffer for split payloads
     uint8_t *split_buf;
     int split_pos, split_buf_len, split_buf_size;
     int split_pkts;
@@ -179,7 +179,7 @@ static int xiph_handle_packet(AVFormatContext * ctx,
         if((res = url_open_dyn_buf(&data->fragment)) < 0)
             return res;
 
-        put_buffer(data->fragment, buf, pkt_len);
+        avio_write(data->fragment, buf, pkt_len);
         data->timestamp = *timestamp;
 
     } else {
@@ -198,7 +198,7 @@ static int xiph_handle_packet(AVFormatContext * ctx,
         }
 
         // copy data to fragment buffer
-        put_buffer(data->fragment, buf, pkt_len);
+        avio_write(data->fragment, buf, pkt_len);
 
         if (fragmented == 3) {
             // end of xiph data packet

@@ -120,7 +120,7 @@ typedef struct IPMVEContext {
 
 } IPMVEContext;
 
-static int load_ipmovie_packet(IPMVEContext *s, ByteIOContext *pb,
+static int load_ipmovie_packet(IPMVEContext *s, AVIOContext *pb,
     AVPacket *pkt) {
 
     int chunk_type;
@@ -166,7 +166,7 @@ static int load_ipmovie_packet(IPMVEContext *s, ByteIOContext *pb,
         url_fseek(pb, s->decode_map_chunk_offset, SEEK_SET);
         s->decode_map_chunk_offset = 0;
 
-        if (get_buffer(pb, pkt->data, s->decode_map_chunk_size) !=
+        if (avio_read(pb, pkt->data, s->decode_map_chunk_size) !=
             s->decode_map_chunk_size) {
             av_free_packet(pkt);
             return CHUNK_EOF;
@@ -175,7 +175,7 @@ static int load_ipmovie_packet(IPMVEContext *s, ByteIOContext *pb,
         url_fseek(pb, s->video_chunk_offset, SEEK_SET);
         s->video_chunk_offset = 0;
 
-        if (get_buffer(pb, pkt->data + s->decode_map_chunk_size,
+        if (avio_read(pb, pkt->data + s->decode_map_chunk_size,
             s->video_chunk_size) != s->video_chunk_size) {
             av_free_packet(pkt);
             return CHUNK_EOF;
@@ -203,7 +203,7 @@ static int load_ipmovie_packet(IPMVEContext *s, ByteIOContext *pb,
 
 /* This function loads and processes a single chunk in an IP movie file.
  * It returns the type of chunk that was processed. */
-static int process_ipmovie_chunk(IPMVEContext *s, ByteIOContext *pb,
+static int process_ipmovie_chunk(IPMVEContext *s, AVIOContext *pb,
     AVPacket *pkt)
 {
     unsigned char chunk_preamble[CHUNK_PREAMBLE_SIZE];
@@ -227,7 +227,7 @@ static int process_ipmovie_chunk(IPMVEContext *s, ByteIOContext *pb,
     /* read the next chunk, wherever the file happens to be pointing */
     if (url_feof(pb))
         return CHUNK_EOF;
-    if (get_buffer(pb, chunk_preamble, CHUNK_PREAMBLE_SIZE) !=
+    if (avio_read(pb, chunk_preamble, CHUNK_PREAMBLE_SIZE) !=
         CHUNK_PREAMBLE_SIZE)
         return CHUNK_BAD;
     chunk_size = AV_RL16(&chunk_preamble[0]);
@@ -275,7 +275,7 @@ static int process_ipmovie_chunk(IPMVEContext *s, ByteIOContext *pb,
             chunk_type = CHUNK_EOF;
             break;
         }
-        if (get_buffer(pb, opcode_preamble, CHUNK_PREAMBLE_SIZE) !=
+        if (avio_read(pb, opcode_preamble, CHUNK_PREAMBLE_SIZE) !=
             CHUNK_PREAMBLE_SIZE) {
             chunk_type = CHUNK_BAD;
             break;
@@ -314,7 +314,7 @@ static int process_ipmovie_chunk(IPMVEContext *s, ByteIOContext *pb,
                 chunk_type = CHUNK_BAD;
                 break;
             }
-            if (get_buffer(pb, scratch, opcode_size) !=
+            if (avio_read(pb, scratch, opcode_size) !=
                 opcode_size) {
                 chunk_type = CHUNK_BAD;
                 break;
@@ -331,7 +331,7 @@ static int process_ipmovie_chunk(IPMVEContext *s, ByteIOContext *pb,
                 chunk_type = CHUNK_BAD;
                 break;
             }
-            if (get_buffer(pb, scratch, opcode_size) !=
+            if (avio_read(pb, scratch, opcode_size) !=
                 opcode_size) {
                 chunk_type = CHUNK_BAD;
                 break;
@@ -369,7 +369,7 @@ static int process_ipmovie_chunk(IPMVEContext *s, ByteIOContext *pb,
                 chunk_type = CHUNK_BAD;
                 break;
             }
-            if (get_buffer(pb, scratch, opcode_size) !=
+            if (avio_read(pb, scratch, opcode_size) !=
                 opcode_size) {
                 chunk_type = CHUNK_BAD;
                 break;
@@ -434,7 +434,7 @@ static int process_ipmovie_chunk(IPMVEContext *s, ByteIOContext *pb,
                 chunk_type = CHUNK_BAD;
                 break;
             }
-            if (get_buffer(pb, scratch, opcode_size) != opcode_size) {
+            if (avio_read(pb, scratch, opcode_size) != opcode_size) {
                 chunk_type = CHUNK_BAD;
                 break;
             }
@@ -521,17 +521,17 @@ static int ipmovie_read_header(AVFormatContext *s,
                                AVFormatParameters *ap)
 {
     IPMVEContext *ipmovie = s->priv_data;
-    ByteIOContext *pb = s->pb;
+    AVIOContext *pb = s->pb;
     AVPacket pkt;
     AVStream *st;
     unsigned char chunk_preamble[CHUNK_PREAMBLE_SIZE];
     int chunk_type;
     uint8_t signature_buffer[sizeof(signature)];
 
-    get_buffer(pb, signature_buffer, sizeof(signature_buffer));
+    avio_read(pb, signature_buffer, sizeof(signature_buffer));
     while (memcmp(signature_buffer, signature, sizeof(signature))) {
         memmove(signature_buffer, signature_buffer + 1, sizeof(signature_buffer) - 1);
-        signature_buffer[sizeof(signature_buffer) - 1] = get_byte(pb);
+        signature_buffer[sizeof(signature_buffer) - 1] = avio_r8(pb);
         if (url_feof(pb))
             return AVERROR_EOF;
     }
@@ -549,7 +549,7 @@ static int ipmovie_read_header(AVFormatContext *s,
 
     /* peek ahead to the next chunk-- if it is an init audio chunk, process
      * it; if it is the first video chunk, this is a silent file */
-    if (get_buffer(pb, chunk_preamble, CHUNK_PREAMBLE_SIZE) !=
+    if (avio_read(pb, chunk_preamble, CHUNK_PREAMBLE_SIZE) !=
         CHUNK_PREAMBLE_SIZE)
         return AVERROR(EIO);
     chunk_type = AV_RL16(&chunk_preamble[2]);
@@ -602,7 +602,7 @@ static int ipmovie_read_packet(AVFormatContext *s,
                                AVPacket *pkt)
 {
     IPMVEContext *ipmovie = s->priv_data;
-    ByteIOContext *pb = s->pb;
+    AVIOContext *pb = s->pb;
     int ret;
 
     ret = process_ipmovie_chunk(ipmovie, pb, pkt);

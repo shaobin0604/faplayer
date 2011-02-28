@@ -77,7 +77,7 @@ def loadmf(mf, cf)
 end
 
 arch = 'arm'
-dirs = 'libavcodec|libavcore|libavfilter|libavformat|libavutil|libswscale'
+dirs = 'libavcodec|libavfilter|libavformat|libavutil|libswscale'
 
 cf = loadcf('config.mk')
 

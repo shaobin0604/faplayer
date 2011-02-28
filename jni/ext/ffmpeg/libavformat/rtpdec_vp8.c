@@ -31,7 +31,7 @@
 #include "rtpdec_formats.h"
 
 struct PayloadContext {
-    ByteIOContext *data;
+    AVIOContext *data;
     uint32_t       timestamp;
     int is_keyframe;
 };
@@ -111,7 +111,7 @@ static int vp8_handle_packet(AVFormatContext *ctx,
             }
         }
 
-        put_buffer(vp8->data, buf, au_len);
+        avio_write(vp8->data, buf, au_len);
         buf += au_len;
         len -= au_len;
     }

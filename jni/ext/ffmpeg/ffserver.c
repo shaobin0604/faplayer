@@ -36,7 +36,7 @@
 #include "libavutil/avstring.h"
 #include "libavutil/lfg.h"
 #include "libavutil/random_seed.h"
-#include "libavcore/parseutils.h"
+#include "libavutil/parseutils.h"
 #include "libavcodec/opt.h"
 #include <stdarg.h>
 #include <unistd.h>
@@ -163,7 +163,7 @@ typedef struct HTTPContext {
 
     /* RTSP state specific */
     uint8_t *pb_buffer; /* XXX: use that in all the code */
-    ByteIOContext *pb;
+    AVIOContext *pb;
     int seq; /* RTSP sequence number */
 
     /* RTP state specific */
@@ -692,8 +692,8 @@ static int http_server(void)
            second to handle timeouts */
         do {
             ret = poll(poll_table, poll_entry - poll_table, delay);
-            if (ret < 0 && ff_neterrno() != FF_NETERROR(EAGAIN) &&
-                ff_neterrno() != FF_NETERROR(EINTR))
+            if (ret < 0 && ff_neterrno() != AVERROR(EAGAIN) &&
+                ff_neterrno() != AVERROR(EINTR))
                 return -1;
         } while (ret < 0);
 
@@ -916,8 +916,8 @@ static int handle_connection(HTTPContext *c)
     read_loop:
         len = recv(c->fd, c->buffer_ptr, 1, 0);
         if (len < 0) {
-            if (ff_neterrno() != FF_NETERROR(EAGAIN) &&
-                ff_neterrno() != FF_NETERROR(EINTR))
+            if (ff_neterrno() != AVERROR(EAGAIN) &&
+                ff_neterrno() != AVERROR(EINTR))
                 return -1;
         } else if (len == 0) {
             return -1;
@@ -952,8 +952,8 @@ static int handle_connection(HTTPContext *c)
             return 0;
         len = send(c->fd, c->buffer_ptr, c->buffer_end - c->buffer_ptr, 0);
         if (len < 0) {
-            if (ff_neterrno() != FF_NETERROR(EAGAIN) &&
-                ff_neterrno() != FF_NETERROR(EINTR)) {
+            if (ff_neterrno() != AVERROR(EAGAIN) &&
+                ff_neterrno() != AVERROR(EINTR)) {
                 /* error : close connection */
                 av_freep(&c->pb_buffer);
                 return -1;
@@ -1022,8 +1022,8 @@ static int handle_connection(HTTPContext *c)
             return 0;
         len = send(c->fd, c->buffer_ptr, c->buffer_end - c->buffer_ptr, 0);
         if (len < 0) {
-            if (ff_neterrno() != FF_NETERROR(EAGAIN) &&
-                ff_neterrno() != FF_NETERROR(EINTR)) {
+            if (ff_neterrno() != AVERROR(EAGAIN) &&
+                ff_neterrno() != AVERROR(EINTR)) {
                 /* error : close connection */
                 av_freep(&c->pb_buffer);
                 return -1;
@@ -1049,8 +1049,8 @@ static int handle_connection(HTTPContext *c)
         len = send(c->fd, c->packet_buffer_ptr,
                     c->packet_buffer_end - c->packet_buffer_ptr, 0);
         if (len < 0) {
-            if (ff_neterrno() != FF_NETERROR(EAGAIN) &&
-                ff_neterrno() != FF_NETERROR(EINTR)) {
+            if (ff_neterrno() != AVERROR(EAGAIN) &&
+                ff_neterrno() != AVERROR(EINTR)) {
                 /* error : close connection */
                 av_freep(&c->packet_buffer);
                 return -1;
@@ -1854,7 +1854,7 @@ static int http_parse_request(HTTPContext *c)
     return 0;
 }
 
-static void fmt_bytecount(ByteIOContext *pb, int64_t count)
+static void fmt_bytecount(AVIOContext *pb, int64_t count)
 {
     static const char *suffix = " kMGTP";
     const char *s;
@@ -1871,7 +1871,7 @@ static void compute_status(HTTPContext *c)
     char *p;
     time_t ti;
     int i, len;
-    ByteIOContext *pb;
+    AVIOContext *pb;
 
     if (url_open_dyn_buf(&pb) < 0) {
         /* XXX: return an error ? */
@@ -2135,11 +2135,10 @@ static int open_input_stream(HTTPContext *c, const char *info)
         strcpy(input_filename, c->stream->feed->feed_filename);
         buf_size = FFM_PACKET_SIZE;
         /* compute position (absolute time) */
-        if (find_info_tag(buf, sizeof(buf), "date", info)) {
-            stream_pos = parse_date(buf, 0);
-            if (stream_pos == INT64_MIN)
-                return -1;
-        } else if (find_info_tag(buf, sizeof(buf), "buffer", info)) {
+        if (av_find_info_tag(buf, sizeof(buf), "date", info)) {
+            if ((ret = av_parse_time(&stream_pos, buf, 0)) < 0)
+                return ret;
+        } else if (av_find_info_tag(buf, sizeof(buf), "buffer", info)) {
             int prebuffer = strtol(buf, 0, 10);
             stream_pos = av_gettime() - prebuffer * (int64_t)1000000;
         } else
@@ -2148,10 +2147,9 @@ static int open_input_stream(HTTPContext *c, const char *info)
         strcpy(input_filename, c->stream->feed_filename);
         buf_size = 0;
         /* compute position (relative time) */
-        if (find_info_tag(buf, sizeof(buf), "date", info)) {
-            stream_pos = parse_date(buf, 1);
-            if (stream_pos == INT64_MIN)
-                return -1;
+        if (av_find_info_tag(buf, sizeof(buf), "date", info)) {
+            if ((ret = av_parse_time(&stream_pos, buf, 1)) < 0)
+                return ret;
         } else
             stream_pos = 0;
     }
@@ -2493,7 +2491,7 @@ static int http_send_data(HTTPContext *c)
 
                 if (c->rtp_protocol == RTSP_LOWER_TRANSPORT_TCP) {
                     /* RTP packets are sent inside the RTSP TCP connection */
-                    ByteIOContext *pb;
+                    AVIOContext *pb;
                     int interleaved_index, size;
                     uint8_t header[4];
                     HTTPContext *rtsp_c;
@@ -2516,10 +2514,10 @@ static int http_send_data(HTTPContext *c)
                     header[1] = interleaved_index;
                     header[2] = len >> 8;
                     header[3] = len;
-                    put_buffer(pb, header, 4);
+                    avio_write(pb, header, 4);
                     /* write RTP packet data */
                     c->buffer_ptr += 4;
-                    put_buffer(pb, c->buffer_ptr, len);
+                    avio_write(pb, c->buffer_ptr, len);
                     size = url_close_dyn_buf(pb, &c->packet_buffer);
                     /* prepare asynchronous TCP sending */
                     rtsp_c->packet_buffer_ptr = c->packet_buffer;
@@ -2552,8 +2550,8 @@ static int http_send_data(HTTPContext *c)
                 /* TCP data output */
                 len = send(c->fd, c->buffer_ptr, c->buffer_end - c->buffer_ptr, 0);
                 if (len < 0) {
-                    if (ff_neterrno() != FF_NETERROR(EAGAIN) &&
-                        ff_neterrno() != FF_NETERROR(EINTR))
+                    if (ff_neterrno() != AVERROR(EAGAIN) &&
+                        ff_neterrno() != AVERROR(EINTR))
                         /* error : close connection */
                         return -1;
                     else
@@ -2626,8 +2624,8 @@ static int http_receive_data(HTTPContext *c)
         len = recv(c->fd, c->buffer_ptr, 1, 0);
 
         if (len < 0) {
-            if (ff_neterrno() != FF_NETERROR(EAGAIN) &&
-                ff_neterrno() != FF_NETERROR(EINTR))
+            if (ff_neterrno() != AVERROR(EAGAIN) &&
+                ff_neterrno() != AVERROR(EINTR))
                 /* error : close connection */
                 goto fail;
             return 0;
@@ -2653,8 +2651,8 @@ static int http_receive_data(HTTPContext *c)
         len = recv(c->fd, c->buffer_ptr,
                    FFMIN(c->chunk_size, c->buffer_end - c->buffer_ptr), 0);
         if (len < 0) {
-            if (ff_neterrno() != FF_NETERROR(EAGAIN) &&
-                ff_neterrno() != FF_NETERROR(EINTR))
+            if (ff_neterrno() != AVERROR(EAGAIN) &&
+                ff_neterrno() != AVERROR(EINTR))
                 /* error : close connection */
                 goto fail;
         } else if (len == 0)
@@ -2714,7 +2712,7 @@ static int http_receive_data(HTTPContext *c)
         } else {
             /* We have a header in our hands that contains useful data */
             AVFormatContext *s = NULL;
-            ByteIOContext *pb;
+            AVIOContext *pb;
             AVInputFormat *fmt_in;
             int i;
 
@@ -3020,7 +3018,7 @@ static void rtsp_cmd_describe(HTTPContext *c, const char *url)
     url_fprintf(c->pb, "Content-Type: application/sdp\r\n");
     url_fprintf(c->pb, "Content-Length: %d\r\n", content_length);
     url_fprintf(c->pb, "\r\n");
-    put_buffer(c->pb, content, content_length);
+    avio_write(c->pb, content, content_length);
     av_free(content);
 }
 
@@ -3201,7 +3199,7 @@ static HTTPContext *find_rtp_session_with_url(const char *url,
     char path1[1024];
     const char *path;
     char buf[1024];
-    int s;
+    int s, len;
 
     rtp_c = find_rtp_session(session_id);
     if (!rtp_c)
@@ -3221,6 +3219,10 @@ static HTTPContext *find_rtp_session_with_url(const char *url,
         return rtp_c;
       }
     }
+    len = strlen(path);
+    if (len > 0 && path[len - 1] == '/' &&
+        !strncmp(path, rtp_c->stream->filename, len - 1))
+        return rtp_c;
     return NULL;
 }
 
@@ -3487,7 +3489,7 @@ static AVStream *add_av_stream1(FFStream *stream, AVCodecContext *codec, int cop
     fst->priv_data = av_mallocz(sizeof(FeedData));
     fst->index = stream->nb_streams;
     av_set_pts_info(fst, 33, 1, 90000);
-    fst->sample_aspect_ratio = (AVRational){0,1};
+    fst->sample_aspect_ratio = codec->sample_aspect_ratio;
     stream->streams[stream->nb_streams++] = fst;
     return fst;
 }
@@ -3762,7 +3764,7 @@ static void build_feed_streams(void)
             }
 
             /* only write the header of the ffm file */
-            if (url_fopen(&s->pb, feed->feed_filename, URL_WRONLY) < 0) {
+            if (avio_open(&s->pb, feed->feed_filename, URL_WRONLY) < 0) {
                 http_log("Could not open output feed file '%s'\n",
                          feed->feed_filename);
                 exit(1);
@@ -3781,7 +3783,7 @@ static void build_feed_streams(void)
             }
             /* XXX: need better api */
             av_freep(&s->priv_data);
-            url_fclose(s->pb);
+            avio_close(s->pb);
         }
         /* get feed size and write index */
         fd = open(feed->feed_filename, O_RDONLY);

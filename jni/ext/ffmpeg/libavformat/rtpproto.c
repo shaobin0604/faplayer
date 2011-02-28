@@ -24,6 +24,7 @@
  * RTP protocol
  */
 
+#include "libavutil/parseutils.h"
 #include "libavutil/avstring.h"
 #include "avformat.h"
 #include "rtpdec.h"
@@ -161,25 +162,25 @@ static int rtp_open(URLContext *h, const char *uri, int flags)
 
     p = strchr(uri, '?');
     if (p) {
-        if (find_info_tag(buf, sizeof(buf), "ttl", p)) {
+        if (av_find_info_tag(buf, sizeof(buf), "ttl", p)) {
             ttl = strtol(buf, NULL, 10);
         }
-        if (find_info_tag(buf, sizeof(buf), "rtcpport", p)) {
+        if (av_find_info_tag(buf, sizeof(buf), "rtcpport", p)) {
             rtcp_port = strtol(buf, NULL, 10);
         }
-        if (find_info_tag(buf, sizeof(buf), "localport", p)) {
+        if (av_find_info_tag(buf, sizeof(buf), "localport", p)) {
             local_rtp_port = strtol(buf, NULL, 10);
         }
-        if (find_info_tag(buf, sizeof(buf), "localrtpport", p)) {
+        if (av_find_info_tag(buf, sizeof(buf), "localrtpport", p)) {
             local_rtp_port = strtol(buf, NULL, 10);
         }
-        if (find_info_tag(buf, sizeof(buf), "localrtcpport", p)) {
+        if (av_find_info_tag(buf, sizeof(buf), "localrtcpport", p)) {
             local_rtcp_port = strtol(buf, NULL, 10);
         }
-        if (find_info_tag(buf, sizeof(buf), "pkt_size", p)) {
+        if (av_find_info_tag(buf, sizeof(buf), "pkt_size", p)) {
             max_packet_size = strtol(buf, NULL, 10);
         }
-        if (find_info_tag(buf, sizeof(buf), "connect", p)) {
+        if (av_find_info_tag(buf, sizeof(buf), "connect", p)) {
             connect = strtol(buf, NULL, 10);
         }
     }
@@ -230,8 +231,8 @@ static int rtp_read(URLContext *h, uint8_t *buf, int size)
         len = recvfrom (s->rtp_fd, buf, size, 0,
                         (struct sockaddr *)&from, &from_len);
         if (len < 0) {
-            if (ff_neterrno() == FF_NETERROR(EAGAIN) ||
-                ff_neterrno() == FF_NETERROR(EINTR))
+            if (ff_neterrno() == AVERROR(EAGAIN) ||
+                ff_neterrno() == AVERROR(EINTR))
                 continue;
             return AVERROR(EIO);
         }
@@ -250,8 +251,8 @@ static int rtp_read(URLContext *h, uint8_t *buf, int size)
                 len = recvfrom (s->rtcp_fd, buf, size, 0,
                                 (struct sockaddr *)&from, &from_len);
                 if (len < 0) {
-                    if (ff_neterrno() == FF_NETERROR(EAGAIN) ||
-                        ff_neterrno() == FF_NETERROR(EINTR))
+                    if (ff_neterrno() == AVERROR(EAGAIN) ||
+                        ff_neterrno() == AVERROR(EINTR))
                         continue;
                     return AVERROR(EIO);
                 }
@@ -263,15 +264,15 @@ static int rtp_read(URLContext *h, uint8_t *buf, int size)
                 len = recvfrom (s->rtp_fd, buf, size, 0,
                                 (struct sockaddr *)&from, &from_len);
                 if (len < 0) {
-                    if (ff_neterrno() == FF_NETERROR(EAGAIN) ||
-                        ff_neterrno() == FF_NETERROR(EINTR))
+                    if (ff_neterrno() == AVERROR(EAGAIN) ||
+                        ff_neterrno() == AVERROR(EINTR))
                         continue;
                     return AVERROR(EIO);
                 }
                 break;
             }
         } else if (n < 0) {
-            if (ff_neterrno() == FF_NETERROR(EINTR))
+            if (ff_neterrno() == AVERROR(EINTR))
                 continue;
             return AVERROR(EIO);
         }

@@ -28,6 +28,7 @@
  */
 
 #include "avformat.h"
+#include "avio_internal.h"
 #include "pcm.h"
 #include "riff.h"
 
@@ -49,22 +50,22 @@ static const AVCodecTag codec_au_tags[] = {
 
 #if CONFIG_AU_MUXER
 /* AUDIO_FILE header */
-static int put_au_header(ByteIOContext *pb, AVCodecContext *enc)
+static int put_au_header(AVIOContext *pb, AVCodecContext *enc)
 {
     if(!enc->codec_tag)
         return -1;
-    put_tag(pb, ".snd");       /* magic number */
-    put_be32(pb, 24);           /* header size */
-    put_be32(pb, AU_UNKNOWN_SIZE); /* data size */
-    put_be32(pb, (uint32_t)enc->codec_tag);     /* codec ID */
-    put_be32(pb, enc->sample_rate);
-    put_be32(pb, (uint32_t)enc->channels);
+    ffio_wfourcc(pb, ".snd");    /* magic number */
+    avio_wb32(pb, 24);           /* header size */
+    avio_wb32(pb, AU_UNKNOWN_SIZE); /* data size */
+    avio_wb32(pb, (uint32_t)enc->codec_tag);     /* codec ID */
+    avio_wb32(pb, enc->sample_rate);
+    avio_wb32(pb, (uint32_t)enc->channels);
     return 0;
 }
 
 static int au_write_header(AVFormatContext *s)
 {
-    ByteIOContext *pb = s->pb;
+    AVIOContext *pb = s->pb;
 
     s->priv_data = NULL;
 
@@ -80,14 +81,14 @@ static int au_write_header(AVFormatContext *s)
 
 static int au_write_packet(AVFormatContext *s, AVPacket *pkt)
 {
-    ByteIOContext *pb = s->pb;
-    put_buffer(pb, pkt->data, pkt->size);
+    AVIOContext *pb = s->pb;
+    avio_write(pb, pkt->data, pkt->size);
     return 0;
 }
 
 static int au_write_trailer(AVFormatContext *s)
 {
-    ByteIOContext *pb = s->pb;
+    AVIOContext *pb = s->pb;
     int64_t file_size;
 
     if (!url_is_streamed(s->pb)) {
@@ -95,7 +96,7 @@ static int au_write_trailer(AVFormatContext *s)
         /* update file size */
         file_size = url_ftell(pb);
         url_fseek(pb, 8, SEEK_SET);
-        put_be32(pb, (uint32_t)(file_size - 24));
+        avio_wb32(pb, (uint32_t)(file_size - 24));
         url_fseek(pb, file_size, SEEK_SET);
 
         put_flush_packet(pb);
@@ -121,21 +122,21 @@ static int au_read_header(AVFormatContext *s,
 {
     int size;
     unsigned int tag;
-    ByteIOContext *pb = s->pb;
+    AVIOContext *pb = s->pb;
     unsigned int id, channels, rate;
     enum CodecID codec;
     AVStream *st;
 
     /* check ".snd" header */
-    tag = get_le32(pb);
+    tag = avio_rl32(pb);
     if (tag != MKTAG('.', 's', 'n', 'd'))
         return -1;
-    size = get_be32(pb); /* header size */
-    get_be32(pb); /* data size */
+    size = avio_rb32(pb); /* header size */
+    avio_rb32(pb); /* data size */
 
-    id = get_be32(pb);
-    rate = get_be32(pb);
-    channels = get_be32(pb);
+    id = avio_rb32(pb);
+    rate = avio_rb32(pb);
+    channels = avio_rb32(pb);
 
     codec = ff_codec_get_id(codec_au_tags, id);
 
