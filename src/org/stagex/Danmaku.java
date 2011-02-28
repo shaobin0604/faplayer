@@ -70,7 +70,7 @@ public class Danmaku extends Application {
 		// start VLC
 		String libd = String.format("%s/lib", root);
 		VLC.setenv("VLC_PLUGIN_PATH", libd, true);
-		String conf = String.format("%s/etc/vlcrc.4", root);
+		String conf = String.format("%s/etc/vlcrc.3", root);
 		int code = SystemUtility.getSDKVersionCode();
 		if (code == 6 || code == 7)
 			code = 5;

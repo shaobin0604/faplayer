@@ -220,15 +220,20 @@ static inline void copyrow2(uint16_t *src, int src_w, uint16_t *dst, int dst_w) 
     int pos, inc;
     uint16_t pixel = 0;
 
-    pos = 0x10000;
-    inc = (src_w << 16) / dst_w;
-    for (i = dst_w; i > 0; --i) {
-        while (pos >= 0x10000) {
-            pixel = *src++;
-            pos -= 0x10000;
+    if (src_w == dst_w) {
+        vlc_memcpy(dst, src, src_w * sizeof(*src));
+    }
+    else {
+        pos = 0x10000;
+        inc = (src_w << 16) / dst_w;
+        for (i = dst_w; i > 0; --i) {
+            while (pos >= 0x10000) {
+                pixel = *src++;
+                pos -= 0x10000;
+            }
+            *dst++ = pixel;
+            pos += inc;
         }
-        *dst++ = pixel;
-        pos += inc;
     }
 }
 
@@ -236,22 +241,12 @@ static void picture_Strech2(vout_display_t *vd, picture_t *dst_p, picture_t *src
     vout_display_sys_t *sys = vd->sys;
     vout_display_place_t *place = &sys->place;
 
-    // TODO: shall i handle all the planes?
-    if (src_p->i_planes != dst_p->i_planes) {
-        msg_Dbg(VLC_OBJECT(vd), "FIXME: src_p->i_planes != dst_p->i_planes");
-        return;
-    }
     if (src_p->i_planes != 1 || dst_p->i_planes != 1)
         return;
-    //for (int i = 0; i < src->i_planes; i++) {
-    //    if (src->p[i].i_pixel_pitch != dst->p[i].i_pixel_pitch)
-    //        return;
-    //}
     if ((sys->width < place->x + place->width) || (sys->height < place->y + place->height)) {
         msg_Dbg(VLC_OBJECT(vd), "Surface %dx%d, place %d, %d %dx%d, out of region", sys->width, sys->height, place->x, place->y, place->width, place->height);
         return;
     }
-    // TODO: shall i handle all the planes?
     plane_t *sp = &src_p->p[0];
     plane_t *dp = &dst_p->p[0];
     uint16_t *src, *dst;
