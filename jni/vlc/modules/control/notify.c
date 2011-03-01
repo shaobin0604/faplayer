@@ -397,9 +397,9 @@ static void ProcessCommand(intf_thread_t *p_intf, const char *p_string) {
                 if (ch < 32 || ch > 127) {
                     uri[j] = '%';
                     uri[j + 1] = ch >> 4;
-                    uri[j + 1] += (uri[j + 1] > 9 ? 7 : 0);
+                    uri[j + 1] += (uri[j + 1] > 9 ? 0x37 : 0x30);
                     uri[j + 2] = ch & 15;
-                    uri[j + 2] += (uri[j + 2] > 9 ? 7 : 0);
+                    uri[j + 2] += (uri[j + 2] > 9 ? 0x37 : 0x30);
                     j += 3;
                 }
                 else {
@@ -418,7 +418,7 @@ static void ProcessCommand(intf_thread_t *p_intf, const char *p_string) {
                 i += 1;
                 strcpy(name, path + i);
             }
-            input_item_t *p_item = input_item_New(p_intf, p_argv[1], name);
+            input_item_t *p_item = input_item_New(p_intf, uri, name);
             if (name)
                 free(name);
             int i_ret = playlist_AddInput(p_playlist, p_item, PLAYLIST_GO | PLAYLIST_APPEND, PLAYLIST_END, true, pl_Unlocked);

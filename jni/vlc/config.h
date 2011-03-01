@@ -8,7 +8,7 @@
 /* #undef ALLOW_RUN_AS_ROOT */
 
 /* Define to 1 if the operating system uses UTF-8 internally */
-/* #undef ASSUME_UTF8 */
+#define ASSUME_UTF8 1
 
 /* Maximum supported data alignment */
 #define ATTRIBUTE_ALIGNED_MAX 64
